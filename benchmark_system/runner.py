@@ -3,6 +3,7 @@ import json
 import requests
 import datetime
 import time
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -26,19 +27,15 @@ if not JUDGE_SPEC_PATH.exists():
 with open(JUDGE_SPEC_PATH, "r") as f:
     JUDGE_SPEC = f.read()
 
-JUDGE_PROMPT_TEMPLATE = f"""
-You are a deterministic code auditor. Your task is to audit the provided HTML/JS code for an analog clock based on the following specification:
+JUDGE_PROMPT_TEMPLATE = (
+    "You are a deterministic code auditor. Your task is to audit the provided HTML/JS code for an analog clock based on the following specification:\n\n"
+    + JUDGE_SPEC +
+    "\nAnalyze the code and return ONLY a valid JSON object following the \"Audit JSON\" schema defined in the specification. "
+    "Do not include any markdown formatting, preamble, or explanation. Just the raw JSON.\n\n"
+    "CODE TO AUDIT:\n"
+)
 
-{JUDGE_SPEC}
-
-Analyze the code and return ONLY a valid JSON object following the "Audit JSON" schema defined in the specification. 
-Do not include any markdown formatting, preamble, or explanation. Just the raw JSON.
-
-CODE TO AUDIT:
-{{code}}
-"""
-
-def call_openrouter(model, messages, stream=False):
+def call_openrouter(model, messages, stream=False, timeout=120, max_tokens=None):
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
@@ -49,7 +46,9 @@ def call_openrouter(model, messages, stream=False):
         "model": model,
         "messages": messages,
     }
-    response = requests.post(OPENROUTER_URL, headers=headers, data=json.dumps(data))
+    if max_tokens:
+        data["max_tokens"] = max_tokens
+    response = requests.post(OPENROUTER_URL, headers=headers, data=json.dumps(data), timeout=timeout)
     if response.status_code != 200:
         print(f"API Error {response.status_code}: {response.text}")
     response.raise_for_status()
@@ -61,44 +60,55 @@ def generate_clock(model):
         messages = [{"role": "user", "content": PROMPT}]
         response = call_openrouter(model, messages)
         content = response['choices'][0]['message']['content']
-        
+
         # Simple extraction of HTML if the model wrapped it in markdown
         if "```html" in content:
             content = content.split("```html")[1].split("```")[0].strip()
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
-        
+
         return content
     except Exception as e:
         print(f"Error generating clock with {model}: {e}")
         return None
 
-def evaluate_clock(judge_model, clock_code):
+def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
         return None
     print(f"Evaluating clock with judge {judge_model}...")
-    prompt = JUDGE_PROMPT_TEMPLATE.format(code=clock_code)
+    prompt = JUDGE_PROMPT_TEMPLATE + clock_code
     messages = [{"role": "user", "content": prompt}]
-    response = call_openrouter(judge_model, messages)
-    content = response['choices'][0]['message']['content'].strip()
-    
-    # Strip markdown if present
-    if content.startswith("```json"):
-        content = content[7:-3].strip()
-    elif content.startswith("```"):
-        content = content[3:-3].strip()
-        
+
     try:
-        return json.loads(content)
+        response = call_openrouter(judge_model, messages, max_tokens=max_tokens)
+        content = response['choices'][0]['message']['content'].strip()
+
+        # Robust JSON extraction: Find the first '{' and last '}'
+        match = re.search(r"(\{.*\})", content, re.DOTALL)
+        if match:
+            json_str = match.group(1)
+        else:
+            json_str = content
+
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError:
+            # Fallback: try to strip common markdown/preamble if regex was too broad
+            clean_json = json_str.strip()
+            if "```json" in clean_json:
+                clean_json = clean_json.split("```json")[1].split("```")[0].strip()
+            elif "```" in clean_json:
+                clean_json = clean_json.split("```")[1].split("```")[0].strip()
+            return json.loads(clean_json)
+
     except Exception as e:
-        print(f"Error parsing judge response: {e}")
-        print(f"Raw response: {content}")
+        print(f"Error during evaluation with {judge_model}: {e}")
         return None
 
 def calculate_score(audit_data):
     if not audit_data:
         return 0, {k: 0 for k in ["time", "visual", "dial", "code", "motion"]}
-    
+
     # Weights and Logic based on JUDGE_V1.md
     time_score = (
         (2.5 if audit_data.get('time', {}).get('hour_continuous') else 0) +
@@ -106,7 +116,7 @@ def calculate_score(audit_data):
         (2.5 if audit_data.get('time', {}).get('second_ms_precision') else 0) +
         (2.5 if audit_data.get('time', {}).get('correct_12_top') else 0)
     )
-    
+
     visual_score = (
         (2.0 if audit_data.get('visual', {}).get('has_shadows') else 0) +
         (2.0 if audit_data.get('visual', {}).get('has_gradients') else 0) +
@@ -114,7 +124,7 @@ def calculate_score(audit_data):
         (2.0 if audit_data.get('visual', {}).get('has_center_cap') else 0) +
         (2.0 if audit_data.get('visual', {}).get('has_bezel') else 0)
     )
-    
+
     dial_score = (
         (2.0 if audit_data.get('dial', {}).get('hour_ticks_count', 0) >= 12 else 0) +
         (2.0 if audit_data.get('dial', {}).get('minute_ticks_count', 0) >= 48 else 0) +
@@ -122,18 +132,18 @@ def calculate_score(audit_data):
         (2.0 if audit_data.get('dial', {}).get('automated_marker_generation') else 0) +
         (2.0 if audit_data.get('dial', {}).get('skips_minute_at_hour') else 0)
     )
-    
+
     code_score = (
         (3.0 if audit_data.get('code', {}).get('globals_count', 99) <= 2 else 0) +
         (3.0 if audit_data.get('code', {}).get('is_responsive') else 0) +
         (2.0 if audit_data.get('code', {}).get('uses_helpers') else 0) +
         (2.0 if audit_data.get('code', {}).get('zero_dependencies') else 0)
     )
-    
+
     smoothness = audit_data.get('smoothness', {})
     motion_val = 10 if smoothness.get('method') == "rAF" else (7 if smoothness.get('method') == "high_freq" else 2)
     bonus = 1 if smoothness.get('zero_latency_init') else 0
-    
+
     total = (time_score * 0.3) + (visual_score * 0.2) + (dial_score * 0.15) + (code_score * 0.15) + (motion_val * 0.1) + (bonus * 0.1 * 10)
     return round(total, 2), {
         "time": time_score,
@@ -143,32 +153,89 @@ def calculate_score(audit_data):
         "motion": motion_val
     }
 
+def evaluate_directory(directory_path, judge_model):
+    run_dir = Path(directory_path)
+    if not run_dir.exists():
+        print(f"Directory {run_dir} does not exist.")
+        return
+
+    summary_path = run_dir / "summary.json"
+    if summary_path.exists():
+        with open(summary_path, "r") as f:
+            summary = json.load(f)
+            prompt = summary.get("prompt", PROMPT)
+    else:
+        prompt = PROMPT
+
+    html_files = list(run_dir.glob("*.html"))
+    html_files = [f for f in html_files if f.name != "index.html"]
+
+    results = []
+    for file_path in html_files:
+        print(f"Processing {file_path.name}...")
+        with open(file_path, "r") as f:
+            html_content = f.read()
+
+        model_name = file_path.stem.replace("_", "/").replace("__", ":")
+
+        audit_data = evaluate_clock(judge_model, html_content)
+        if not audit_data:
+            print(f"Skipping {model_name} due to evaluation failure.")
+            continue
+
+        final_score, breakdown = calculate_score(audit_data)
+        results.append({
+            "model": model_name,
+            "file": str(file_path),
+            "score": final_score,
+            "breakdown": breakdown,
+            "audit": audit_data
+        })
+
+    results.sort(key=lambda x: x['score'], reverse=True)
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    new_summary = {
+        "timestamp": timestamp,
+        "reevaluation": True,
+        "original_dir": str(run_dir),
+        "judge_model": judge_model,
+        "prompt": prompt,
+        "results": results
+    }
+
+    with open(run_dir / f"summary_eval_{timestamp}.json", "w") as f:
+        json.dump(new_summary, f, indent=2)
+
+    generate_report(run_dir, new_summary)
+    print(f"Evaluation complete! New report generated in {run_dir}/index.html")
+
 def run_benchmark(models, judge_model):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = RUNS_DIR / timestamp
     run_dir.mkdir(parents=True, exist_ok=True)
-    
+
     results = []
-    
+
     for model in models:
         try:
             html_content = generate_clock(model)
             if not html_content:
                 print(f"Skipping evaluation for {model} due to generation failure.")
                 continue
-                
+
             safe_model_name = model.replace("/", "_").replace(":", "_")
             file_path = run_dir / f"{safe_model_name}.html"
             with open(file_path, "w") as f:
                 f.write(html_content)
-            
+
             audit_data = evaluate_clock(judge_model, html_content)
             if not audit_data:
                 print(f"Skipping score calculation for {model} due to judge failure.")
                 continue
 
             final_score, breakdown = calculate_score(audit_data)
-            
+
             results.append({
                 "model": model,
                 "file": str(file_path),
@@ -176,13 +243,13 @@ def run_benchmark(models, judge_model):
                 "breakdown": breakdown,
                 "audit": audit_data
             })
-            
+
         except Exception as e:
             print(f"Failed benchmark for {model}: {e}")
-            
+
     # Sort results
     results.sort(key=lambda x: x['score'], reverse=True)
-    
+
     # Save results summary
     summary = {
         "timestamp": timestamp,
@@ -192,12 +259,11 @@ def run_benchmark(models, judge_model):
     }
     with open(run_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
-        
+
     generate_report(run_dir, summary)
     print(f"Benchmark complete! Report generated in {run_dir}/index.html")
 
 def generate_report(run_dir, summary):
-    # This will be a simplified version of the main dashboard
     template = """
 <!DOCTYPE html>
 <html>
@@ -250,10 +316,10 @@ def generate_report(run_dir, summary):
 </body>
 </html>
     """
-    
+
     table_rows = ""
     cards = ""
-    
+
     for res in summary['results']:
         row = f"""
         <tr>
@@ -267,10 +333,9 @@ def generate_report(run_dir, summary):
         </tr>
         """
         table_rows += row
-        
-        # Adjust path for iframe if the report is in the same dir
+
         iframe_src = os.path.basename(res['file'])
-        
+
         card = f"""
         <div class="card">
             <header>
@@ -284,7 +349,7 @@ def generate_report(run_dir, summary):
         </div>
         """
         cards += card
-        
+
     html = template.format(
         timestamp=summary['timestamp'],
         judge_model=summary['judge_model'],
@@ -292,11 +357,9 @@ def generate_report(run_dir, summary):
         table_rows=table_rows,
         cards=cards
     )
-    
+
     with open(run_dir / "index.html", "w") as f:
         f.write(html)
 
 if __name__ == "__main__":
-    # Example usage - would be driven by a config or CLI args
-    # For now, I'll just leave the structure.
     pass

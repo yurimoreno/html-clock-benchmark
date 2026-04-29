@@ -1,1 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+
+# Generated outputs
+log.txt
+runs/
+
+# macOS
 .DS_Store

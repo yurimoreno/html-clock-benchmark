@@ -15,9 +15,23 @@ Automated system for generating and evaluating HTML analog clocks across differe
 
 ## Usage
 
+### Interactive CLI
+
 Run the interactive CLI:
 ```bash
 python cli.py
+```
+
+Choose between:
+- **Run Full Benchmark**: Generate + audit new models (select multiple models and a judge)
+- **Run Evaluation Only**: Re-evaluate an existing run folder with a different judge
+
+### Single Model CLI
+
+For adding one model to the benchmark without the interactive prompt:
+
+```bash
+python add_model.py <model_id> [--judge <judge_model>]
 ```
 
 ## How it works
