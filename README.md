@@ -37,7 +37,7 @@ html clock benchmark/
 ## The Prompt
 
 ```
-Build a single HTML file that renders an animated, real-time analog clock.
+Generate a single HTML file that displays a working analog clock showing the current time with hour, minute, and second hands.
 ```
 
 ## License
