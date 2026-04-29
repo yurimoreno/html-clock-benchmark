@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HTML Analog Clock Benchmark</title>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, system-ui, sans-serif; background:#1a1a1a; color:#eee; margin:0; padding:24px; overflow-x: hidden; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p.sub { color:#999; margin: 0 0 24px; max-width: 820px; line-height: 1.5; }
+
+  .about {
+    display: none;
+  }
+
+  .accordion {
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    max-width: 820px;
+    overflow: hidden;
+  }
+  .accordion-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    background: #191919;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-align: left;
+  }
+  .accordion-toggle:hover { color: #999; }
+  .accordion-toggle svg { transition: transform .2s; flex-shrink: 0; }
+  .accordion-toggle.open svg { transform: rotate(90deg); }
+  .accordion-toggle.open { color: #ccc; }
+  .accordion-body {
+    display: none;
+    padding: 0 16px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #888;
+  }
+  .accordion-body.open { display: block; }
+  .accordion-body h2 { color: #ccc; font-size: 14px; margin: 0 0 10px; }
+  .accordion-body p { margin-bottom: 10px; }
+  .accordion-body a { color: #6b9fd9; text-decoration: none; }
+  .accordion-body a:hover { text-decoration: underline; }
+  .accordion-body .prompt {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  .accordion-body .judge-credit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: #777;
+  }
+  .accordion-body .judge-credit strong { color: #bbb; }
+  .accordion-body .judge-credit span { color: #555; font-size: 11px; }
+
+  .tabs { display:flex; gap:2px; margin-bottom:20px; }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color:#888;
+    background:#2a2a2a;
+    border:1px solid #333;
+    border-bottom:none;
+  }
+  .tab:hover { color:#ccc; }
+  .tab.active { color:#fff; background:#222; border-color:#444; }
+
+  .table-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color:#666;
+    user-select: none;
+  }
+  .table-toggle:hover { color:#999; }
+  .table-toggle input[type="checkbox"] { accent-color: #3a5c2c; width: 14px; height: 14px; cursor: pointer; }
+  .table-toggle label { cursor: pointer; margin: 0; }
+
+  .score-table { border-collapse: collapse; width: 100%; margin-bottom: 32px; font-size: 13px; }
+  .score-table th {
+    background:#2a2a2a;
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color:#666;
+    border-bottom: 3px solid #444;
+    position: relative;
+    cursor: help;
+    user-select: none;
+    vertical-align: middle;
+    line-height: 1.2;
+  }
+  .score-table th.sortable { cursor: pointer; }
+  .score-table th.sortable:hover { color:#aaa; }
+  .score-table th .sort-icon { display: inline-block; margin-left: 4px; opacity: .4; font-size: 9px; vertical-align: middle; line-height: 1; }
+  .score-table th.sortable.asc .sort-icon { opacity: 1; color: #7ab86a; }
+  .score-table th.sortable.desc .sort-icon { opacity: 1; color: #c66; }
+  .score-table th.r { text-align: right; }
+  .score-table th[data-sort="rank"] { text-align: center; }
+  .score-table th:first-child { text-align: center; }
+  .score-table th .tip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 220px;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #ccc;
+    line-height: 1.5;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .score-table th .tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+  }
+  .score-table th:hover .tip { display: block; }
+  .score-table td { padding: 7px 12px; border-bottom: 1px solid #2a2a2a; vertical-align: middle; text-align: center; }
+  .score-table td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .score-table tr:hover td { background:#222; }
+  .badge {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 18px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .b-1 { background:#2c5e2c; color:#d6f5d6; }
+  .b-2 { background:#3a5c2c; color:#dff5c6; }
+  .b-3 { background:#5e562c; color:#f5edd6; }
+  .b-4 { background:#5e3e2c; color:#f5dcc6; }
+  .b-5 { background:#5e2c2c; color:#f5c6c6; }
+  .overall { font-weight: 700; font-size: 15px; }
+  .price { font-family: ui-monospace, monospace; font-size: 11px; color:#888; white-space: nowrap; }
+  .cost-eff { font-family: ui-monospace, monospace; font-size: 11px; white-space: nowrap; }
+.cost-eff.green { color: #7ab86a; }
+  .cost-eff.yellow { color: #c9b86a; }
+  .cost-eff.red { color: #c66; }
+
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; }
+  .card { background:#222; border:1px solid #333; border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card header { padding: 10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; }
+  .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color:#bbb; }
+  .score { font-weight: 700; font-size: 14px; padding: 3px 8px; border-radius: 4px; }
+  .s-1 { background:#2c5e2c; color:#d6f5d6; }
+  .s-2 { background:#3a5c2c; color:#dff5c6; }
+  .s-3 { background:#5e562c; color:#f5edd6; }
+  .s-4 { background:#5e3e2c; color:#f5dcc6; }
+  .s-5 { background:#5e2c2c; color:#f5c6c6; }
+  iframe { width:100%; height: 480px; border:0; background:#fff; }
+  .verdict { padding: 10px 14px; font-size: 13px; color:#ccc; line-height: 1.45; }
+  .verdict b { color:#fff; }
+  .verdict code { font-size: 11px; background:#333; padding: 1px 4px; border-radius: 3px; }
+
+  [data-tab] { display:none; }
+  [data-tab].active { display:block; }
+</style>
+</head>
+<body>
+<h1>HTML Analog Clock Benchmark</h1>
+<p class="sub">One-shot prompt: build an analog clock as a single HTML file. Scored on time accuracy, visuals, dial completeness, code quality, and smoothness.</p>
+
+<div class="accordion">
+<button class="accordion-toggle" onclick="toggleAccordion(this)">
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  About this benchmark
+</button>
+<div class="accordion-body">
+  <h2>About this benchmark</h2>
+  <p>
+    The task is simple but revealing: give a frontier LLM a one-shot prompt to build an analog clock in a single HTML file and see what it produces. The prompt makes no special concessions for any model — it expects the model to infer everything about clock geometry from the request alone.
+  </p>
+<p>
+    The rubric scores five dimensions: <strong>Time Accuracy</strong> (×3 weighting) — do hands point to the correct positions using correct math? <strong>Visuals</strong> (×2) — does it look like a real clock? <strong>Markers &amp; Numbers</strong> (×1.5) — dial completeness and placement. <strong>Code Quality</strong> (×1.5) — clean architecture, no leaky globals. <strong>Smoothness</strong> (×1) — smooth sweep vs. snapping tick.
+  </p>
+  <div class="prompt">Build a single HTML file that renders an animated, real-time analog clock.</div>
+  <div class="judge-credit">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#444" stroke-width="1.5"/><path d="M8 4v4l3 2" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <div>
+      <strong>Opus 4.7</strong> acted as judge — scoring all model outputs across every dimension.
+    </div>
+  </div>
+  <p class="license">
+    MIT License — Copyright 2026 Yuri Moreno. Released for educational and personal use. Built by <a href="https://www.yurimoreno.com">Yuri Moreno</a>.
+  </p>
+</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('cloud')">Cloud Models</div>
+  <div class="tab" onclick="showTab('local')">Local Models</div>
+</div>
+
+<div data-tab="cloud" class="active">
+
+  <div class="table-toggle">
+    <input type="checkbox" id="cloud-table-toggle" checked onchange="toggleTable('cloud')">
+    <label for="cloud-table-toggle">Show rankings table</label>
+  </div>
+
+  <div class="table-wrap">
+  <table id="cloud-table" class="score-table">
+    <thead>
+      <tr>
+        <th style="width:32px" class="sortable" data-sort="rank" onclick="sortTable('cloud','rank')">#<span class="sort-icon">↕</span>
+          <span class="tip">Rank by overall score</span>
+        </th>
+        <th style="min-width:160px">Model
+          <span class="tip">Model name and provider</span>
+        </th>
+        <th class="r sortable" data-sort="time" onclick="sortTable('cloud','time')">Time<span class="sort-icon">↕</span>
+          <span class="tip">Correct hand angles for the current time. 10 = perfect math with ms precision. 0 = broken formulas.</span>
+        </th>
+        <th class="r sortable" data-sort="visual" onclick="sortTable('cloud','visual')">Visual<span class="sort-icon">↕</span>
+          <span class="tip">Overall aesthetic: bezel, face gradient, hand differentiation, shadows, numerals, center cap.</span>
+        </th>
+        <th class="r sortable" data-sort="markers" onclick="sortTable('cloud','markers')">Markers<span class="sort-icon">↕</span>
+          <span class="tip">Hour and minute tick completeness and placement. 10 = all ticks correctly placed, numerals present.</span>
+        </th>
+        <th class="r sortable" data-sort="code" onclick="sortTable('cloud','code')">Code<span class="sort-icon">↕</span>
+          <span class="tip">Architecture and correctness: single coordinate frame, proper pivot origins, clean abstractions.</span>
+        </th>
+        <th class="r sortable" data-sort="smooth" onclick="sortTable('cloud','smooth')">Smooth<span class="sort-icon">↕</span>
+          <span class="tip">Second hand movement. 10 = smooth sweep via requestAnimationFrame with ms precision. 0 = 1 Hz setInterval.</span>
+        </th>
+        <th class="r" style="width:72px">Overall
+          <span class="tip">Weighted average: Time×3, Visual×2, Markers×1.5, Code×1.5, Smooth×1</span>
+        </th>
+        <th class="r sortable" data-sort="cost" onclick="sortTable('cloud','cost')">Cost/Score<span class="sort-icon">↕</span>
+          <span class="tip">Total token cost (in+out) per point of overall score. Lower = better value.</span>
+        </th>
+        <th style="width:130px">Input
+          <span class="tip">OpenRouter input pricing in USD per million tokens</span>
+        </th>
+        <th style="width:130px">Output
+          <span class="tip">OpenRouter output pricing in USD per million tokens</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge b-1">1</span></td>
+        <td>GLM 5.1</td>
+        <td class="r">10</td><td class="r">9</td><td class="r">10</td><td class="r">9</td><td class="r">9</td>
+        <td class="r overall" style="color:#d6f5d6">9.5</td>
+        <td class="cost-eff yellow">$0.48</td>
+        <td class="price">$1.05/M</td>
+        <td class="price">$3.50/M</td>
+      </tr>
+<tr>
+        <td><span class="badge b-1">4</span></td>
+        <td>Kimi K2.5</td>
+        <td class="r">10</td><td class="r">9</td><td class="r">9</td><td class="r">7</td><td class="r">9</td>
+        <td class="r overall" style="color:#d6f5d6">9.0</td>
+        <td class="cost-eff green">$0.27</td>
+        <td class="price">$0.44/M</td>
+        <td class="price">$2/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-2">5</span></td>
+        <td>Sonnet 4.6</td>
+        <td class="r">10</td><td class="r">8</td><td class="r">8</td><td class="r">9</td><td class="r">9</td>
+        <td class="r overall" style="color:#dff5c6">8.9</td>
+        <td class="cost-eff red">$2.02</td>
+        <td class="price">$3/M</td>
+        <td class="price">$15/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-2">6</span></td>
+        <td>Kimi K2.6</td>
+        <td class="r">10</td><td class="r">8</td><td class="r">9</td><td class="r">9</td><td class="r">6</td>
+        <td class="r overall" style="color:#dff5c6">8.8</td>
+        <td class="cost-eff yellow">$0.61</td>
+        <td class="price">$0.74/M</td>
+        <td class="price">$4.66/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-3">7</span></td>
+        <td>Gemini 3.1 Pro</td>
+        <td class="r">10</td><td class="r">8</td><td class="r">7</td><td class="r">7</td><td class="r">6</td>
+        <td class="r overall" style="color:#f5edd6">8.1</td>
+        <td class="cost-eff red">$1.73</td>
+        <td class="price">$2/M</td>
+        <td class="price">$12/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-4">8</span></td>
+        <td>ChatGPT Free</td>
+        <td class="r">9</td><td class="r">7</td><td class="r">8</td><td class="r">7</td><td class="r">5</td>
+        <td class="r overall" style="color:#f5dcc6">7.6</td>
+        <td class="cost-eff red">$2.07</td>
+        <td class="price">$1.75/M</td>
+        <td class="price">$14/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-4">9</span></td>
+        <td>MiMo 2.5 Pro</td>
+        <td class="r">9</td><td class="r">6</td><td class="r">7</td><td class="r">6</td><td class="r">9</td>
+        <td class="r overall" style="color:#f5dcc6">7.5</td>
+        <td class="cost-eff yellow">$0.53</td>
+        <td class="price">$1/M</td>
+        <td class="price">$3/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-4">10</span></td>
+        <td>Qwen 3.6 Plus</td>
+        <td class="r">9</td><td class="r">6</td><td class="r">7</td><td class="r">6</td><td class="r">5</td>
+        <td class="r overall" style="color:#f5dcc6">7.1</td>
+        <td class="cost-eff green">$0.32</td>
+        <td class="price">$0.325/M</td>
+        <td class="price">$1.95/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-5">11</span></td>
+        <td>Grok 4.2 Expert</td>
+        <td class="r">8</td><td class="r">4</td><td class="r">8</td><td class="r">7</td><td class="r">8</td>
+        <td class="r overall" style="color:#f5c6c6">6.9</td>
+        <td class="cost-eff red">$1.16</td>
+        <td class="price">$2/M</td>
+        <td class="price">$6/M</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-5">12</span></td>
+        <td>MiniMax M2.7</td>
+        <td class="r">8</td><td class="r">7</td><td class="r">5</td><td class="r">6</td><td class="r">5</td>
+        <td class="r overall" style="color:#f5c6c6">6.6</td>
+        <td class="cost-eff green">$0.23</td>
+        <td class="price">$0.30/M</td>
+        <td class="price">$1.20/M</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <header>
+        <span class="name">GLM 5.1</span>
+        <span class="score s-1">#1 · 9.5</span>
+      </header>
+      <iframe src="cloud/glm-5.1.html"></iframe>
+      <div class="verdict"><b>Cloud winner.</b> Canvas with cream radial-gradient face, serif numerals 1–12, 12 hour and 48 minute markers, triangular polygon hour/minute hands, thin red second hand with counterweight. requestAnimationFrame loop. Real-watch aesthetic.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">DeepSeek V4 Pro</span>
+        <span class="score s-1">#2 · 9.4</span>
+      </header>
+      <iframe src="cloud/deepseek-v4-pro.html"></iframe>
+      <div class="verdict"><b>Only SVG entry.</b> <code>viewBox="-120 -120 240 240"</code> puts the origin at the clock center — off-by-eight bugs are not even possible. ms precision, 50 ms refresh. Minimal but tasteful styling.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Opus 4.7</span>
+        <span class="score s-1">#3 · 9.3</span>
+      </header>
+      <iframe src="cloud/opus 4.7.html"></iframe>
+      <div class="verdict"><b>Most polished CSS clock.</b> Numbers, 60 ticks (12 major), correct pivot pattern, 50 ms refresh, ms-precision second hand. Tick <code>transform-origin</code> computed exactly to land at the rim.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Kimi K2.5</span>
+        <span class="score s-1">#4 · 9.0</span>
+      </header>
+      <iframe src="cloud/kimi k2.5.html"></iframe>
+      <div class="verdict"><b>Feature-rich, source-bloated.</b> Numerals, 60 ticks, gradient hands, glowing center, embedded digital readout. Correct everything, but ticks are 60 hand-written divs.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Sonnet 4.6</span>
+        <span class="score s-2">#5 · 8.9</span>
+      </header>
+      <iframe src="cloud/sonnet 4.6.html"></iframe>
+      <div class="verdict"><b>Cleanest correct code.</b> Canvas, ms-precision, three hands with small tails, quarter-hour markers thicker, 48 minute markers, layered center dot. No numerals — only markers.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Kimi K2.6</span>
+        <span class="score s-2">#6 · 8.8</span>
+      </header>
+      <iframe src="cloud/kimi k2.6.html"></iframe>
+      <div class="verdict"><b>Cleaner K2.5 with a regression.</b> Same red-bezel look. Ticks refactored into a loop. Correct math, correct pivots — but 1 Hz <code>setInterval</code> so the second hand snaps.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Gemini 3.1 Pro</span>
+        <span class="score s-3">#7 · 8.1</span>
+      </header>
+      <iframe src="cloud/gemini-3.1-pro.html"></iframe>
+      <div class="verdict"><b>Classic JS30 look.</b> Clean white face, twelve numerals, three hands with a tasteful overshoot-bounce on each second. Includes snap-glitch hack for minute rollover. No tick marks; 1 Hz refresh.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">ChatGPT Free</span>
+        <span class="score s-4">#8 · 7.6</span>
+      </header>
+      <iframe src="cloud/chatgpt-free.html"></iframe>
+      <div class="verdict"><b>Correct but jumpy.</b> Numbers, 60 ticks, three hands, properly centered pivots. Flaw: <code>setInterval(…, 1000)</code> with no millisecond term — the second hand jumps a full step each tick.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">MiMo 2.5 Pro</span>
+        <span class="score s-4">#9 · 7.5</span>
+      </header>
+      <iframe src="cloud/mimo-2.5-pro.html"></iframe>
+      <div class="verdict"><b>Off-by-eight dial.</b> Glowing red bezel, full numerals, 60 ticks, ms-precision math, rAF loop. But <code>box-sizing: border-box</code> mismatch puts the tick ring and number ring on different centers than the hands.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Qwen 3.6 Plus</span>
+        <span class="score s-4">#10 · 7.1</span>
+      </header>
+      <iframe src="cloud/qwen-3.6-plus.html"></iframe>
+      <div class="verdict"><b>Same border-box bug, jumpier seconds.</b> Same hard-coded-center bug as mimo but with a 1 Hz <code>setInterval</code> second hand that snaps each tick.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Grok 4.2 Expert</span>
+        <span class="score s-5">#11 · 6.9</span>
+      </header>
+      <iframe src="cloud/grok 4.2 expert.html"></iframe>
+      <div class="verdict"><b>Breaks out of its container.</b> 420 px container holds a <code>width: 100%</code> clock with 48 px border and no <code>box-sizing: border-box</code> — bezel spills past the layout frame. Hand pivots 2–6 px below center; second hand pulses opacity.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">MiniMax M2.7</span>
+        <span class="score s-5">#12 · 6.6</span>
+      </header>
+      <iframe src="cloud/minimax-m2.7.html"></iframe>
+      <div class="verdict"><b>Compound centering bug.</b> <code>margin-left: -halfWidth</code> in CSS and <code>translateX(-50%)</code> in JS both apply — compounding the pivot offset. No minute markers or numerals; 1 Hz refresh.</div>
+    </div>
+  </div>
+</div>
+
+<div data-tab="local">
+
+  <div class="table-toggle">
+    <input type="checkbox" id="local-table-toggle" checked onchange="toggleTable('local')">
+    <label for="local-table-toggle">Show rankings table</label>
+  </div>
+
+  <div class="table-wrap">
+  <table id="local-table" class="score-table">
+    <thead>
+      <tr>
+        <th style="width:32px" class="sortable" data-sort="rank" onclick="sortTable('local','rank')">#<span class="sort-icon">↕</span>
+          <span class="tip">Rank by overall score</span>
+        </th>
+        <th>Model
+          <span class="tip">Model name, size, and provider</span>
+        </th>
+        <th class="r sortable" data-sort="time" onclick="sortTable('local','time')">Time<span class="sort-icon">↕</span>
+          <span class="tip">Correct hand angles for the current time. 10 = perfect math with ms precision. 0 = broken formulas.</span>
+        </th>
+        <th class="r sortable" data-sort="visual" onclick="sortTable('local','visual')">Visual<span class="sort-icon">↕</span>
+          <span class="tip">Overall aesthetic: bezel, face gradient, hand differentiation, shadows, numerals, center cap.</span>
+        </th>
+        <th class="r sortable" data-sort="markers" onclick="sortTable('local','markers')">Markers<span class="sort-icon">↕</span>
+          <span class="tip">Hour and minute tick completeness and placement. 10 = all ticks correctly placed, numerals present.</span>
+        </th>
+        <th class="r sortable" data-sort="code" onclick="sortTable('local','code')">Code<span class="sort-icon">↕</span>
+          <span class="tip">Architecture and correctness: single coordinate frame, proper pivot origins, clean abstractions.</span>
+        </th>
+        <th class="r sortable" data-sort="smooth" onclick="sortTable('local','smooth')">Smooth<span class="sort-icon">↕</span>
+          <span class="tip">Second hand movement. 10 = smooth sweep via requestAnimationFrame with ms precision. 0 = 1 Hz setInterval.</span>
+        </th>
+        <th class="r" style="width:72px">Overall
+          <span class="tip">Weighted average: Time×3, Visual×2, Markers×1.5, Code×1.5, Smooth×1</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge b-1">1</span></td>
+        <td>Qwen2.5 Coder 14B</td>
+        <td class="r">10</td><td class="r">5</td><td class="r">9</td><td class="r">8</td><td class="r">5</td>
+        <td class="r overall" style="color:#d6f5d6">7.8</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-1">2</span></td>
+        <td>Gemma 4 E4B Uncensored</td>
+        <td class="r">9</td><td class="r">6</td><td class="r">2</td><td class="r">6</td><td class="r">7</td>
+        <td class="r overall" style="color:#d6f5d6">6.5</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-2">3</span></td>
+        <td>Gemma 4 E4B</td>
+        <td class="r">5</td><td class="r">6</td><td class="r">1</td><td class="r">7</td><td class="r">9</td>
+        <td class="r overall" style="color:#f5edd6">5.4</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-3">4</span></td>
+        <td>GLM 4.6V Flash</td>
+        <td class="r">2</td><td class="r">6</td><td class="r">8</td><td class="r">7</td><td class="r">9</td>
+        <td class="r overall" style="color:#f5dcc6">5.1</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-4">5</span></td>
+        <td>Qwen3.5 9B</td>
+        <td class="r">3</td><td class="r">7</td><td class="r">2</td><td class="r">6</td><td class="r">7</td>
+        <td class="r overall" style="color:#f5dcc6">4.6</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-5">6</span></td>
+        <td>LFM 2.5 1.2B</td>
+        <td class="r">0</td><td class="r">1</td><td class="r">0</td><td class="r">2</td><td class="r">1</td>
+        <td class="r overall" style="color:#f5c6c6">0.7</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <header>
+        <span class="name">Qwen2.5 Coder 14B</span>
+        <span class="score s-1">#1 · 7.8</span>
+      </header>
+      <iframe src="local%20/qwen2.5-coder-14b.html"></iframe>
+      <div class="verdict"><b>New leader.</b> First clock that gets <i>everything</i> about timekeeping right — hands and ticks rotate around true center, all 12 hour ticks plus 48 minute ticks, correct hour/minute/second math. Plain style, no center dot, second hand ticks (no sweep).</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Gemma 4 E4B Uncensored</span>
+        <span class="score s-1">#2 · 6.5</span>
+      </header>
+      <iframe src="local%20/gemma-4-e4b-uncensored-hauhaucs-aggressive.html"></iframe>
+      <div class="verdict"><b>Correct hands, broken markers.</b> Hands pivot at true center, time math is right. Hour markers are all stacked at 12 because CSS <code>rotate()</code> never pushes them outward to the rim.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Gemma 4 E4B</span>
+        <span class="score s-2">#3 · 5.4</span>
+      </header>
+      <iframe src="local%20/gemma-4-e4b.html"></iframe>
+      <div class="verdict"><b>Off-center pivot.</b> Cleanest code, smooth 50ms loop, correct rotation formulas — but hand geometry puts the pivot ~20px above center, so hands orbit instead of rotate. No markers.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">GLM 4.6V Flash</span>
+        <span class="score s-3">#4 · 5.1</span>
+      </header>
+      <iframe src="local%20/glm-4.6v-flash.html"></iframe>
+      <div class="verdict"><b>Dial rotated 90°.</b> Most complete face among the runners-up — hour and minute ticks, three hands, rAF loop. But no -π/2 offset, so 12 sits at the 3 o'clock position.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">Qwen3.5 9B</span>
+        <span class="score s-4">#5 · 4.6</span>
+      </header>
+      <iframe src="local%20/qwen3.5-9b.html"></iframe>
+      <div class="verdict"><b>Pretty, mathematically wrong.</b> Best-looking dial, but the hour-hand formula collapses the hour position, and a JS <code>transform</code> reset wipes the horizontal centering of the hands.</div>
+    </div>
+    <div class="card">
+      <header>
+        <span class="name">LFM 2.5 1.2B</span>
+        <span class="score s-5">#6 · 0.7</span>
+      </header>
+      <iframe src="local%20/lfm2.5-1.2b.html"></iframe>
+      <div class="verdict"><b>Non-functional.</b> Hands have no defined size; JS sets <code>width</code> from the time value, so hand "length" grows over the day while height stays 0 — nothing visible inside the circle.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleAccordion(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('open');
+  }
+  function showTab(name) {
+    document.querySelectorAll('[data-tab]').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+    document.querySelector('.tab:nth-child(' + (name === 'cloud' ? 1 : 2) + ')').classList.add('active');
+  }
+  function sortTable(tab, col) {
+    const table = document.getElementById(tab + '-table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const headers = table.querySelectorAll('th.sortable');
+    const colIndexMap = tab === 'cloud'
+      ? { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7, cost: 8 }
+      : { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7 };
+    const colIndex = colIndexMap[col];
+    if (colIndex === undefined) return;
+
+    const currentDir = table.dataset.sortCol === col ? table.dataset.sortDir : 'asc';
+    const dir = currentDir === 'asc' ? 'desc' : 'asc';
+
+    headers.forEach(h => h.classList.remove('asc', 'desc'));
+    const header = table.querySelector('th[data-sort="' + col + '"]');
+    if (header) header.classList.add(dir);
+
+    rows.sort((a, b) => {
+      const aVal = a.children[colIndex].textContent.trim();
+      const bVal = b.children[colIndex].textContent.trim();
+      const aNum = parseFloat(aVal.replace(/[$,]/g, ''));
+      const bNum = parseFloat(bVal.replace(/[$,]/g, ''));
+      if (!isNaN(aNum) && !isNaN(bNum)) return dir === 'asc' ? aNum - bNum : bNum - aNum;
+      return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+
+    table.dataset.sortCol = col;
+    table.dataset.sortDir = dir;
+    rows.forEach(row => tbody.appendChild(row));
+  }
+  function toggleTable(name) {
+    const checkbox = document.getElementById(name + '-table-toggle');
+    const table = document.getElementById(name + '-table');
+    table.style.display = checkbox.checked ? '' : 'none';
+  }
+</script>
+</body>
+</html>

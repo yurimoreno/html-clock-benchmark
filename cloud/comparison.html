@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cloud LLM Clock Benchmark — 12 Models</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background:#1a1a1a; color:#eee; margin:0; padding:24px; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p.sub { color:#999; margin: 0 0 24px; max-width: 820px; line-height: 1.5; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; }
+  .card { background:#222; border:1px solid #333; border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card header { padding: 10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; }
+  .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color:#bbb; }
+  .score { font-weight: 700; font-size: 14px; padding: 3px 8px; border-radius: 4px; }
+  .s-1 { background:#2c5e2c; color:#d6f5d6; } /* 9.0+ */
+  .s-2 { background:#3a5c2c; color:#dff5c6; } /* 8.5–8.9 */
+  .s-3 { background:#5e562c; color:#f5edd6; } /* 8.0–8.4 */
+  .s-4 { background:#5e3e2c; color:#f5dcc6; } /* 7.0–7.9 */
+  .s-5 { background:#5e2c2c; color:#f5c6c6; } /* under 7.0 */
+  iframe { width:100%; height: 480px; border:0; background:#fff; }
+  .verdict { padding: 10px 14px; font-size: 13px; color:#ccc; line-height: 1.45; }
+  .verdict b { color:#fff; }
+</style>
+</head>
+<body>
+<h1>Cloud LLM Clock Benchmark — 12 Models</h1>
+<p class="sub">Twelve frontier-class cloud models, same one-shot prompt: build an analog clock as a single HTML file. Live render of each, scored on time accuracy, visuals, dial completeness, code quality, and smoothness. (Strongest local model on this prompt — qwen2.5-coder-14b — scored 7.8 on the same rubric and would land between #7 and #8 here.)</p>
+
+<div class="grid">
+
+  <div class="card">
+    <header>
+      <span class="name">glm-5.1.html</span>
+      <span class="score s-1">#1 · 9.5</span>
+    </header>
+    <iframe src="glm-5.1.html"></iframe>
+    <div class="verdict"><b>Cloud winner.</b> Canvas with cream radial-gradient face, serif numerals 1–12, 12 hour and 48 minute markers, triangular polygon hour/minute hands, thin red second hand with counterweight. requestAnimationFrame loop. Real-watch aesthetic.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">deepseek-v4-pro.html</span>
+      <span class="score s-1">#2 · 9.4</span>
+    </header>
+    <iframe src="deepseek-v4-pro.html"></iframe>
+    <div class="verdict"><b>Only SVG entry.</b> <code>viewBox="-120 -120 240 240"</code> puts the origin at the clock center, so every element shares one coordinate frame — off-by-eight bugs are not even possible. Minimal but tasteful styling: red bezel, dark face, red/white/yellow hands. ms precision, 50 ms refresh.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">opus 4.7.html</span>
+      <span class="score s-1">#3 · 9.3</span>
+    </header>
+    <iframe src="opus 4.7.html"></iframe>
+    <div class="verdict"><b>Most polished CSS clock.</b> Numbers, 60 ticks (12 major), correct pivot pattern (no double-centering bug), 50 ms refresh, ms-precision second hand. Tick <code>transform-origin: 50% 176px</code> computed exactly to land at the rim.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">kimi k2.5.html</span>
+      <span class="score s-1">#4 · 9.0</span>
+    </header>
+    <iframe src="kimi k2.5.html"></iframe>
+    <div class="verdict"><b>Feature-rich, source-bloated.</b> Numerals, 60 ticks, gradient hands, glowing center, embedded digital readout. Correct everything, but ticks are hand-written as 60 individual divs and the second hand has a slight overshoot bounce.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">sonnet 4.6.html</span>
+      <span class="score s-2">#5 · 8.9</span>
+    </header>
+    <iframe src="sonnet 4.6.html"></iframe>
+    <div class="verdict"><b>Cleanest correct code.</b> Canvas, ms-precision, three hands with small tails, quarter-hour markers thicker, 48 minute markers, layered center dot. No numerals — only markers — so visually leaner than the top three.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">kimi k2.6.html</span>
+      <span class="score s-2">#6 · 8.8</span>
+    </header>
+    <iframe src="kimi k2.6.html"></iframe>
+    <div class="verdict"><b>Cleaner k2.5 with a smoothness regression.</b> Same red-bezel / dark-face look. Refactored 60 ticks into a loop, dropped the digital readout. Correct math, correct pivots — but 1 Hz <code>setInterval</code> and no ms term, so the second hand snaps each tick instead of sweeping.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">gemini-3.1-pro.html</span>
+      <span class="score s-3">#7 · 8.1</span>
+    </header>
+    <iframe src="gemini-3.1-pro.html"></iframe>
+    <div class="verdict"><b>Classic JS30 look.</b> Clean white face, thick light bezel, twelve numerals, three hands with a tasteful overshoot-bounce on each second. Includes the snap-glitch hack so hands don't unwind 360° at minute rollover. No tick marks; 1 Hz refresh.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">chatgpt-free.html</span>
+      <span class="score s-4">#8 · 7.6</span>
+    </header>
+    <iframe src="chatgpt-free.html"></iframe>
+    <div class="verdict"><b>Correct but jumpy.</b> Numbers, 60 ticks, three hands, correct math, properly centered pivots. Only flaw: <code>setInterval(…, 1000)</code> with no millisecond term so the second hand jumps a full step each tick.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">mimo-2.5-pro.html</span>
+      <span class="score s-4">#9 · 7.5</span>
+    </header>
+    <iframe src="mimo-2.5-pro.html"></iframe>
+    <div class="verdict"><b>Off-by-eight dial.</b> Glowing red bezel, full numerals, 60 ticks, ms-precision math, rAF loop. But <code>box-sizing: border-box</code> makes the inner face 304 px while the JS lays out ticks and numbers as if it were 320 px. Hands rotate around true center; tick ring sits ~8 px low; number ring ~8 px down-right. Three different centers in one clock.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">qwen-3.6-plus.html</span>
+      <span class="score s-4">#10 · 7.1</span>
+    </header>
+    <iframe src="qwen-3.6-plus.html"></iframe>
+    <div class="verdict"><b>Same border-box bug, jumpier seconds.</b> Clean classic look, correct hand pivot — but identical hard-coded-center bug to mimo: face is 284 px not 300 px, so ticks orbit ~8 px below center and numbers ~8 px down-right. Worse, the second hand is <code>s * 6</code> on a 1 Hz setInterval, so it snaps each tick.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">grok 4.2 expert.html</span>
+      <span class="score s-5">#11 · 6.9</span>
+    </header>
+    <iframe src="grok 4.2 expert.html"></iframe>
+    <div class="verdict"><b>Breaks out of its container.</b> 420 px clock-container holds a <code>width: 100%</code> clock with 48 px of border and no <code>box-sizing: border-box</code> — total visible 468 px, so the bezel spills past the layout frame on every side. On top of that: hand pivots are 2–6 px below the geometric center, and the second hand pulses opacity — a clock should not fade. <em>(Revised from 7.6 after re-checking the rendered output.)</em></div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">minimax-m2.7.html</span>
+      <span class="score s-5">#12 · 6.6</span>
+    </header>
+    <iframe src="minimax-m2.7.html"></iframe>
+    <div class="verdict"><b>Compound centering bug.</b> Hands have <code>margin-left: -halfWidth</code> in CSS *and* <code>translateX(-50%)</code> in the JS rotate — both shift left, so pivots end up halfWidth left of true center. No minute markers or numerals; 1 Hz refresh.</div>
+  </div>
+
+</div>
+</body>
+</html>

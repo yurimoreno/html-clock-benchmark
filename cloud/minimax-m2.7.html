@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+    }
+    .clock {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: #16213e;
+      border: 8px solid #e94560;
+      position: relative;
+    }
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 4px;
+    }
+    .hour {
+      width: 6px;
+      height: 70px;
+      background: #e94560;
+      margin-left: -3px;
+      z-index: 3;
+    }
+    .minute {
+      width: 4px;
+      height: 100px;
+      background: #0f3460;
+      margin-left: -2px;
+      z-index: 2;
+    }
+    .second {
+      width: 2px;
+      height: 120px;
+      background: #ffcc00;
+      margin-left: -1px;
+      z-index: 4;
+    }
+    .center {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #e94560;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+    .marker {
+      position: absolute;
+      width: 2px;
+      height: 12px;
+      background: #e94560;
+      top: 10px;
+      left: 50%;
+      transform-origin: center 140px;
+    }
+    .marker.major { height: 18px; width: 3px; }
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <div class="hand hour" id="hour"></div>
+    <div class="hand minute" id="minute"></div>
+    <div class="hand second" id="second"></div>
+    <div class="center"></div>
+  </div>
+
+  <script>
+    for (let i = 0; i < 12; i++) {
+      const marker = document.createElement('div');
+      marker.className = 'marker' + (i % 3 === 0 ? ' major' : '');
+      marker.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+      document.querySelector('.clock').appendChild(marker);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours() % 12;
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+
+      const secondDeg = s * 6;
+      const minuteDeg = (m + s / 60) * 6;
+      const hourDeg = (h + m / 60) * 30;
+
+      document.getElementById('second').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+      document.getElementById('minute').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+      document.getElementById('hour').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>

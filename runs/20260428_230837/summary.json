@@ -1,0 +1,6 @@
+{
+  "timestamp": "20260428_230837",
+  "judge_model": "anthropic/claude-3.5-sonnet",
+  "prompt": "Generate a single HTML file that displays a working analog clock showing the current time with hour, minute, and second hands.",
+  "results": []
+}

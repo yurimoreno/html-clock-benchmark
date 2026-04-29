@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clock Benchmark — Side by Side</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background:#1a1a1a; color:#eee; margin:0; padding:24px; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p.sub { color:#999; margin: 0 0 24px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 18px; }
+  .card { background:#222; border:1px solid #333; border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card header { padding: 10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; }
+  .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color:#bbb; }
+  .score { font-weight: 700; font-size: 14px; padding: 3px 8px; border-radius: 4px; }
+  .s-1 { background:#2c5e2c; color:#d6f5d6; }
+  .s-2 { background:#5e562c; color:#f5edd6; }
+  .s-3 { background:#5e3e2c; color:#f5dcc6; }
+  .s-4 { background:#5e2c2c; color:#f5c6c6; }
+  .s-5 { background:#3c1e1e; color:#f59999; }
+  iframe { width:100%; height: 360px; border:0; background:#fff; }
+  .verdict { padding: 10px 14px; font-size: 13px; color:#ccc; line-height: 1.45; }
+  .verdict b { color:#fff; }
+</style>
+</head>
+<body>
+<h1>HTML Analog Clock Benchmark</h1>
+<p class="sub">6 models, same prompt. Live render of each, with a one-line verdict.</p>
+
+<div class="grid">
+
+  <div class="card">
+    <header>
+      <span class="name">qwen2.5-coder-14b.html</span>
+      <span class="score s-1">#1 · 7.8</span>
+    </header>
+    <iframe src="qwen2.5-coder-14b.html"></iframe>
+    <div class="verdict"><b>New leader.</b> First entry that gets every timekeeping detail right — hands and all ticks rotate around the true center, all 12 hour ticks plus 48 minute ticks at correct positions, correct hour/minute/second math. Plain visual style, no center dot, second hand ticks (no sweep).</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">gemma-4-e4b-uncensored-hauhaucs-aggressive.html</span>
+      <span class="score s-1">#2 · 6.5</span>
+    </header>
+    <iframe src="gemma-4-e4b-uncensored-hauhaucs-aggressive.html"></iframe>
+    <div class="verdict"><b>Correct hands, broken markers.</b> Hands pivot at true center, time math is right. Hour markers are all stacked at 12 because the CSS rotate() never pushes them outward to the rim.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">gemma-4-e4b.html</span>
+      <span class="score s-2">#3 · 5.4</span>
+    </header>
+    <iframe src="gemma-4-e4b.html"></iframe>
+    <div class="verdict"><b>Off-center pivot.</b> Cleanest code of the lot, smooth 50ms loop, correct rotation formulas — but the hand geometry puts the pivot ~20px above center, so hands orbit instead of rotate. No markers.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">glm-4.6v-flash.html</span>
+      <span class="score s-3">#4 · 5.1</span>
+    </header>
+    <iframe src="glm-4.6v-flash.html"></iframe>
+    <div class="verdict"><b>Dial rotated 90°.</b> Most complete face among the runners-up — proper hour and minute ticks, three hands — but no -π/2 offset, so 12 sits at the 3 o'clock position. Tells the time consistently, just sideways.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">qwen3.5-9b.html</span>
+      <span class="score s-4">#5 · 4.6</span>
+    </header>
+    <iframe src="qwen3.5-9b.html"></iframe>
+    <div class="verdict"><b>Pretty, mathematically wrong.</b> Best-looking dial, but the hour-hand formula (<code>% 30 * 12</code>) collapses the hour position, and a JS <code>transform</code> reset wipes the horizontal centering of the hands.</div>
+  </div>
+
+  <div class="card">
+    <header>
+      <span class="name">lfm2.5-1.2b.html</span>
+      <span class="score s-5">#6 · 0.7</span>
+    </header>
+    <iframe src="lfm2.5-1.2b.html"></iframe>
+    <div class="verdict"><b>Non-functional.</b> Hands have no defined size, JS sets <code>width</code> from the time value (so hand length grows over the day), height stays 0 — nothing visible inside the circle.</div>
+  </div>
+
+</div>
+</body>
+</html>
