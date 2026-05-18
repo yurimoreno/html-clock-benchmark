@@ -4,6 +4,7 @@ import requests
 import datetime
 import time
 import re
+import statistics as _stats
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -54,28 +55,90 @@ def call_openrouter(model, messages, stream=False, timeout=120, max_tokens=None)
     response.raise_for_status()
     return response.json()
 
+def static_precheck(html_code):
+    """Deterministically verify criteria that regex can reliably check,
+    reducing reliance on LLM judgment for objective facts."""
+    code_lower = html_code.lower()
+
+    # Update method detection
+    if 'requestanimationframe' in code_lower:
+        method = "rAF"
+    else:
+        intervals = re.findall(r'setinterval\s*\([^,]+,\s*(\d+)', code_lower)
+        if intervals:
+            min_interval = min(int(x) for x in intervals)
+            method = "high_freq" if min_interval < 100 else "low_freq"
+        else:
+            method = "low_freq"
+
+    # External script/CDN dependencies
+    has_external_script = bool(re.search(r'<script[^>]+src\s*=', html_code, re.IGNORECASE))
+    has_cdn = bool(re.search(
+        r'(cdn\.|googleapis\.com|unpkg\.com|jsdelivr\.net|cloudflare\.com)',
+        html_code, re.IGNORECASE
+    ))
+    zero_dependencies = not has_external_script and not has_cdn
+
+    # Millisecond precision — only confirm True; LLM catches performance.now() etc.
+    second_ms_precision = bool(re.search(r'getmilliseconds\(\)', code_lower))
+
+    return {
+        "method": method,
+        "zero_dependencies": zero_dependencies,
+        "second_ms_precision": second_ms_precision,
+    }
+
+
+def fetch_model_pricing(model_id):
+    """Return {"input_per_m": float|None, "output_per_m": float|None} in $/M tokens."""
+    if not OPENROUTER_API_KEY:
+        return {"input_per_m": None, "output_per_m": None}
+    try:
+        response = requests.get(
+            "https://openrouter.ai/api/v1/models",
+            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            timeout=15
+        )
+        response.raise_for_status()
+        for m in response.json().get("data", []):
+            if m["id"] == model_id:
+                pricing = m.get("pricing", {})
+                return {
+                    "input_per_m": round(float(pricing.get("prompt", 0)) * 1_000_000, 4),
+                    "output_per_m": round(float(pricing.get("completion", 0)) * 1_000_000, 4),
+                }
+    except Exception as e:
+        print(f"Warning: Could not fetch pricing for {model_id}: {e}")
+    return {"input_per_m": None, "output_per_m": None}
+
+
 def generate_clock(model):
     print(f"Generating clock with {model}...")
     try:
         messages = [{"role": "user", "content": PROMPT}]
+        start = time.time()
         response = call_openrouter(model, messages)
+        latency_s = round(time.time() - start, 1)
+        usage = response.get('usage', {})
         content = response['choices'][0]['message']['content']
 
-        # Simple extraction of HTML if the model wrapped it in markdown
         if "```html" in content:
             content = content.split("```html")[1].split("```")[0].strip()
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
 
-        return content
+        return content, latency_s, usage
     except Exception as e:
         print(f"Error generating clock with {model}: {e}")
-        return None
+        return None, None, {}
 
 def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
         return None
     print(f"Evaluating clock with judge {judge_model}...")
+
+    precheck = static_precheck(clock_code)
+
     prompt = JUDGE_PROMPT_TEMPLATE + clock_code
     messages = [{"role": "user", "content": prompt}]
 
@@ -91,7 +154,7 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
             json_str = content
 
         try:
-            return json.loads(json_str)
+            audit_data = json.loads(json_str)
         except json.JSONDecodeError:
             # Fallback: try to strip common markdown/preamble if regex was too broad
             clean_json = json_str.strip()
@@ -99,11 +162,74 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
                 clean_json = clean_json.split("```json")[1].split("```")[0].strip()
             elif "```" in clean_json:
                 clean_json = clean_json.split("```")[1].split("```")[0].strip()
-            return json.loads(clean_json)
+            audit_data = json.loads(clean_json)
+
+        # Override with deterministic pre-check results
+        audit_data.setdefault("smoothness", {})["method"] = precheck["method"]
+        audit_data.setdefault("code", {})["zero_dependencies"] = precheck["zero_dependencies"]
+        # Only upgrade to True; LLM may catch performance.now() and similar patterns regex misses
+        if precheck["second_ms_precision"]:
+            audit_data.setdefault("time", {})["second_ms_precision"] = True
+
+        return audit_data
 
     except Exception as e:
         print(f"Error during evaluation with {judge_model}: {e}")
         return None
+
+def _fmt_run_date(timestamp_str):
+    """Convert '20260428_230837' -> 'Apr 28'."""
+    try:
+        dt = datetime.datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+        return dt.strftime("%b %-d")
+    except Exception:
+        return "—"
+
+
+def _aggregate_audits(audits):
+    """Merge N audit JSONs: majority vote for booleans, median for ints, mode for strings."""
+    sections = set()
+    for a in audits:
+        sections.update(a.keys())
+
+    result = {}
+    for sec in sections:
+        fields = set()
+        for a in audits:
+            fields.update(a.get(sec, {}).keys())
+        result[sec] = {}
+        for field in fields:
+            vals = [a[sec][field] for a in audits if sec in a and field in a[sec]]
+            if not vals:
+                continue
+            v = vals[0]
+            if isinstance(v, bool):
+                result[sec][field] = sum(bool(x) for x in vals) > len(vals) / 2
+            elif isinstance(v, int):
+                result[sec][field] = int(_stats.median(vals))
+            elif isinstance(v, str):
+                result[sec][field] = max(set(vals), key=vals.count)
+            else:
+                result[sec][field] = v
+    return result
+
+
+def evaluate_clock_reliable(judge_model, clock_code, n_runs=3, max_tokens=30000):
+    """Run judge n_runs times, return (aggregated_audit, runs_completed)."""
+    results = []
+    for i in range(n_runs):
+        print(f"  Judge run {i + 1}/{n_runs}...")
+        r = evaluate_clock(judge_model, clock_code, max_tokens)
+        if r is not None:
+            results.append(r)
+        else:
+            print(f"  Judge run {i + 1} failed, continuing...")
+    if not results:
+        return None, 0
+    if len(results) == 1:
+        return results[0], 1
+    return _aggregate_audits(results), len(results)
+
 
 def calculate_score(audit_data):
     if not audit_data:
@@ -178,18 +304,28 @@ def evaluate_directory(directory_path, judge_model):
 
         model_name = file_path.stem.replace("_", "/").replace("__", ":")
 
-        audit_data = evaluate_clock(judge_model, html_content)
+        pricing = fetch_model_pricing(model_name)
+        audit_data, runs_completed = evaluate_clock_reliable(judge_model, html_content, n_runs=3)
         if not audit_data:
             print(f"Skipping {model_name} due to evaluation failure.")
             continue
 
         final_score, breakdown = calculate_score(audit_data)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         results.append({
             "model": model_name,
+            "model_id": model_name,
             "file": str(file_path),
             "score": final_score,
             "breakdown": breakdown,
-            "audit": audit_data
+            "audit": audit_data,
+            "latency_s": None,
+            "pricing": pricing,
+            "actual_cost": None,
+            "token_usage": {},
+            "judge_runs": runs_completed,
+            "judge_runs_attempted": 3,
+            "run_date": timestamp,
         })
 
     results.sort(key=lambda x: x['score'], reverse=True)
@@ -210,7 +346,7 @@ def evaluate_directory(directory_path, judge_model):
     generate_report(run_dir, new_summary)
     print(f"Evaluation complete! New report generated in {run_dir}/index.html")
 
-def run_benchmark(models, judge_model):
+def run_benchmark(models, judge_model, judge_runs=3):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = RUNS_DIR / timestamp
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -219,7 +355,7 @@ def run_benchmark(models, judge_model):
 
     for model in models:
         try:
-            html_content = generate_clock(model)
+            html_content, latency_s, usage = generate_clock(model)
             if not html_content:
                 print(f"Skipping evaluation for {model} due to generation failure.")
                 continue
@@ -229,7 +365,14 @@ def run_benchmark(models, judge_model):
             with open(file_path, "w") as f:
                 f.write(html_content)
 
-            audit_data = evaluate_clock(judge_model, html_content)
+            pricing = fetch_model_pricing(model)
+            actual_cost = None
+            if usage and pricing.get('input_per_m') is not None:
+                inp = usage.get('prompt_tokens', 0) * pricing['input_per_m'] / 1_000_000
+                out = usage.get('completion_tokens', 0) * pricing.get('output_per_m', 0) / 1_000_000
+                actual_cost = round(inp + out, 6)
+
+            audit_data, runs_completed = evaluate_clock_reliable(judge_model, html_content, n_runs=judge_runs)
             if not audit_data:
                 print(f"Skipping score calculation for {model} due to judge failure.")
                 continue
@@ -238,10 +381,18 @@ def run_benchmark(models, judge_model):
 
             results.append({
                 "model": model,
+                "model_id": model,
                 "file": str(file_path),
                 "score": final_score,
                 "breakdown": breakdown,
-                "audit": audit_data
+                "audit": audit_data,
+                "latency_s": latency_s,
+                "pricing": pricing,
+                "actual_cost": actual_cost,
+                "token_usage": usage,
+                "judge_runs": runs_completed,
+                "judge_runs_attempted": judge_runs,
+                "run_date": timestamp,
             })
 
         except Exception as e:
@@ -297,12 +448,18 @@ def generate_report(run_dir, summary):
         <thead>
             <tr>
                 <th>Model</th>
+                <th>Run Date</th>
                 <th>Overall Score</th>
                 <th>Time (30%)</th>
                 <th>Visual (20%)</th>
                 <th>Dial (15%)</th>
                 <th>Code (15%)</th>
                 <th>Motion (10%)</th>
+                <th>Runs</th>
+                <th>Act. Cost</th>
+                <th>Gen. Latency</th>
+                <th>Input $/M</th>
+                <th>Output $/M</th>
             </tr>
         </thead>
         <tbody>
@@ -321,15 +478,34 @@ def generate_report(run_dir, summary):
     cards = ""
 
     for res in summary['results']:
+        latency_str = f"{res.get('latency_s')}s" if res.get('latency_s') is not None else "—"
+        pricing = res.get('pricing') or {}
+        inp = pricing.get('input_per_m')
+        out = pricing.get('output_per_m')
+        input_str = f"${inp}/M" if inp is not None else "—"
+        output_str = f"${out}/M" if out is not None else "—"
+        run_date_str = _fmt_run_date(res.get('run_date', ''))
+        runs = res.get('judge_runs', '—')
+        runs_att = res.get('judge_runs_attempted', runs)
+        runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
+        actual_cost = res.get('actual_cost')
+        cost_str = f"${actual_cost:.4f}" if actual_cost is not None else "—"
+
         row = f"""
         <tr>
             <td>{res['model']}</td>
+            <td>{run_date_str}</td>
             <td><strong>{res['score']}</strong></td>
             <td>{res['breakdown']['time']}</td>
             <td>{res['breakdown']['visual']}</td>
             <td>{res['breakdown']['dial']}</td>
             <td>{res['breakdown']['code']}</td>
             <td>{res['breakdown']['motion']}</td>
+            <td>{runs_str}</td>
+            <td>{cost_str}</td>
+            <td>{latency_str}</td>
+            <td>{input_str}</td>
+            <td>{output_str}</td>
         </tr>
         """
         table_rows += row

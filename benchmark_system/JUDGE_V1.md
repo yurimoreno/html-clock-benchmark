@@ -52,8 +52,10 @@ The final score is a weighted average of five dimensions (Total: /10):
 ### E. Motion & Logic (Weight: 1.0)
 | Criteria | Implementation Check | Points |
 | :--- | :--- | :--- |
-| **Update Method** | `requestAnimationFrame` (10) or `<100ms` (7). | 10.0 |
+| **Update Method** | `requestAnimationFrame` (10), `setInterval <100ms` (7), `setInterval ≥100ms` (2), absent/broken (0). | 10.0 |
 | **First Frame** | Is the clock accurate on load (no 12:00 snap)? | +1 Bonus |
+
+> **Bonus math:** The First Frame bonus adds +1.0 to the final weighted total (equivalent to +10% of the 10-point scale). Full formula: `total = (time×0.3) + (visual×0.2) + (dial×0.15) + (code×0.15) + (motion×0.1) + (bonus×1.0)`.
 
 ---
 
