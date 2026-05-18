@@ -4,6 +4,7 @@ import requests
 import datetime
 import time
 import re
+import statistics as _stats
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -118,18 +119,18 @@ def generate_clock(model):
         start = time.time()
         response = call_openrouter(model, messages)
         latency_s = round(time.time() - start, 1)
+        usage = response.get('usage', {})
         content = response['choices'][0]['message']['content']
 
-        # Simple extraction of HTML if the model wrapped it in markdown
         if "```html" in content:
             content = content.split("```html")[1].split("```")[0].strip()
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
 
-        return content, latency_s
+        return content, latency_s, usage
     except Exception as e:
         print(f"Error generating clock with {model}: {e}")
-        return None, None
+        return None, None, {}
 
 def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
@@ -175,6 +176,60 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     except Exception as e:
         print(f"Error during evaluation with {judge_model}: {e}")
         return None
+
+def _fmt_run_date(timestamp_str):
+    """Convert '20260428_230837' -> 'Apr 28'."""
+    try:
+        dt = datetime.datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+        return dt.strftime("%b %-d")
+    except Exception:
+        return "—"
+
+
+def _aggregate_audits(audits):
+    """Merge N audit JSONs: majority vote for booleans, median for ints, mode for strings."""
+    sections = set()
+    for a in audits:
+        sections.update(a.keys())
+
+    result = {}
+    for sec in sections:
+        fields = set()
+        for a in audits:
+            fields.update(a.get(sec, {}).keys())
+        result[sec] = {}
+        for field in fields:
+            vals = [a[sec][field] for a in audits if sec in a and field in a[sec]]
+            if not vals:
+                continue
+            v = vals[0]
+            if isinstance(v, bool):
+                result[sec][field] = sum(bool(x) for x in vals) > len(vals) / 2
+            elif isinstance(v, int):
+                result[sec][field] = int(_stats.median(vals))
+            elif isinstance(v, str):
+                result[sec][field] = max(set(vals), key=vals.count)
+            else:
+                result[sec][field] = v
+    return result
+
+
+def evaluate_clock_reliable(judge_model, clock_code, n_runs=3, max_tokens=30000):
+    """Run judge n_runs times, return (aggregated_audit, runs_completed)."""
+    results = []
+    for i in range(n_runs):
+        print(f"  Judge run {i + 1}/{n_runs}...")
+        r = evaluate_clock(judge_model, clock_code, max_tokens)
+        if r is not None:
+            results.append(r)
+        else:
+            print(f"  Judge run {i + 1} failed, continuing...")
+    if not results:
+        return None, 0
+    if len(results) == 1:
+        return results[0], 1
+    return _aggregate_audits(results), len(results)
+
 
 def calculate_score(audit_data):
     if not audit_data:
@@ -250,20 +305,27 @@ def evaluate_directory(directory_path, judge_model):
         model_name = file_path.stem.replace("_", "/").replace("__", ":")
 
         pricing = fetch_model_pricing(model_name)
-        audit_data = evaluate_clock(judge_model, html_content)
+        audit_data, runs_completed = evaluate_clock_reliable(judge_model, html_content, n_runs=3)
         if not audit_data:
             print(f"Skipping {model_name} due to evaluation failure.")
             continue
 
         final_score, breakdown = calculate_score(audit_data)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         results.append({
             "model": model_name,
+            "model_id": model_name,
             "file": str(file_path),
             "score": final_score,
             "breakdown": breakdown,
             "audit": audit_data,
             "latency_s": None,
             "pricing": pricing,
+            "actual_cost": None,
+            "token_usage": {},
+            "judge_runs": runs_completed,
+            "judge_runs_attempted": 3,
+            "run_date": timestamp,
         })
 
     results.sort(key=lambda x: x['score'], reverse=True)
@@ -284,7 +346,7 @@ def evaluate_directory(directory_path, judge_model):
     generate_report(run_dir, new_summary)
     print(f"Evaluation complete! New report generated in {run_dir}/index.html")
 
-def run_benchmark(models, judge_model):
+def run_benchmark(models, judge_model, judge_runs=3):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = RUNS_DIR / timestamp
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -293,7 +355,7 @@ def run_benchmark(models, judge_model):
 
     for model in models:
         try:
-            html_content, latency_s = generate_clock(model)
+            html_content, latency_s, usage = generate_clock(model)
             if not html_content:
                 print(f"Skipping evaluation for {model} due to generation failure.")
                 continue
@@ -304,7 +366,13 @@ def run_benchmark(models, judge_model):
                 f.write(html_content)
 
             pricing = fetch_model_pricing(model)
-            audit_data = evaluate_clock(judge_model, html_content)
+            actual_cost = None
+            if usage and pricing.get('input_per_m') is not None:
+                inp = usage.get('prompt_tokens', 0) * pricing['input_per_m'] / 1_000_000
+                out = usage.get('completion_tokens', 0) * pricing.get('output_per_m', 0) / 1_000_000
+                actual_cost = round(inp + out, 6)
+
+            audit_data, runs_completed = evaluate_clock_reliable(judge_model, html_content, n_runs=judge_runs)
             if not audit_data:
                 print(f"Skipping score calculation for {model} due to judge failure.")
                 continue
@@ -313,12 +381,18 @@ def run_benchmark(models, judge_model):
 
             results.append({
                 "model": model,
+                "model_id": model,
                 "file": str(file_path),
                 "score": final_score,
                 "breakdown": breakdown,
                 "audit": audit_data,
                 "latency_s": latency_s,
                 "pricing": pricing,
+                "actual_cost": actual_cost,
+                "token_usage": usage,
+                "judge_runs": runs_completed,
+                "judge_runs_attempted": judge_runs,
+                "run_date": timestamp,
             })
 
         except Exception as e:
@@ -374,12 +448,15 @@ def generate_report(run_dir, summary):
         <thead>
             <tr>
                 <th>Model</th>
+                <th>Run Date</th>
                 <th>Overall Score</th>
                 <th>Time (30%)</th>
                 <th>Visual (20%)</th>
                 <th>Dial (15%)</th>
                 <th>Code (15%)</th>
                 <th>Motion (10%)</th>
+                <th>Runs</th>
+                <th>Act. Cost</th>
                 <th>Gen. Latency</th>
                 <th>Input $/M</th>
                 <th>Output $/M</th>
@@ -407,16 +484,25 @@ def generate_report(run_dir, summary):
         out = pricing.get('output_per_m')
         input_str = f"${inp}/M" if inp is not None else "—"
         output_str = f"${out}/M" if out is not None else "—"
+        run_date_str = _fmt_run_date(res.get('run_date', ''))
+        runs = res.get('judge_runs', '—')
+        runs_att = res.get('judge_runs_attempted', runs)
+        runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
+        actual_cost = res.get('actual_cost')
+        cost_str = f"${actual_cost:.4f}" if actual_cost is not None else "—"
 
         row = f"""
         <tr>
             <td>{res['model']}</td>
+            <td>{run_date_str}</td>
             <td><strong>{res['score']}</strong></td>
             <td>{res['breakdown']['time']}</td>
             <td>{res['breakdown']['visual']}</td>
             <td>{res['breakdown']['dial']}</td>
             <td>{res['breakdown']['code']}</td>
             <td>{res['breakdown']['motion']}</td>
+            <td>{runs_str}</td>
+            <td>{cost_str}</td>
             <td>{latency_str}</td>
             <td>{input_str}</td>
             <td>{output_str}</td>
