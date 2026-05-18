@@ -282,6 +282,9 @@
         <th style="width:130px">Output
           <span class="tip">OpenRouter output pricing in USD per million tokens</span>
         </th>
+        <th class="r sortable" data-sort="latency" onclick="sortTable('cloud','latency')">Latency<span class="sort-icon">↕</span>
+          <span class="tip">Server-to-server generation time in seconds — how long the API took to return the full response.</span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -293,8 +296,29 @@
         <td class="cost-eff yellow">$0.48</td>
         <td class="price">$1.05/M</td>
         <td class="price">$3.50/M</td>
+        <td class="r latency">—</td>
       </tr>
-<tr>
+      <tr>
+        <td><span class="badge b-1">2</span></td>
+        <td>DeepSeek V4 Pro</td>
+        <td class="r">10</td><td class="r">8</td><td class="r">10</td><td class="r">10</td><td class="r">9</td>
+        <td class="r overall" style="color:#d6f5d6">9.4</td>
+        <td class="cost-eff green">$0.14</td>
+        <td class="price">$0.44/M</td>
+        <td class="price">$0.87/M</td>
+        <td class="r latency">—</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-1">3</span></td>
+        <td>Opus 4.7</td>
+        <td class="r">10</td><td class="r">9</td><td class="r">9</td><td class="r">9</td><td class="r">9</td>
+        <td class="r overall" style="color:#d6f5d6">9.3</td>
+        <td class="cost-eff red">$3.23</td>
+        <td class="price">$5/M</td>
+        <td class="price">$25/M</td>
+        <td class="r latency">—</td>
+      </tr>
+      <tr>
         <td><span class="badge b-1">4</span></td>
         <td>Kimi K2.5</td>
         <td class="r">10</td><td class="r">9</td><td class="r">9</td><td class="r">7</td><td class="r">9</td>
@@ -302,6 +326,7 @@
         <td class="cost-eff green">$0.27</td>
         <td class="price">$0.44/M</td>
         <td class="price">$2/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-2">5</span></td>
@@ -311,6 +336,7 @@
         <td class="cost-eff red">$2.02</td>
         <td class="price">$3/M</td>
         <td class="price">$15/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-2">6</span></td>
@@ -320,6 +346,7 @@
         <td class="cost-eff yellow">$0.61</td>
         <td class="price">$0.74/M</td>
         <td class="price">$4.66/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-3">7</span></td>
@@ -329,6 +356,7 @@
         <td class="cost-eff red">$1.73</td>
         <td class="price">$2/M</td>
         <td class="price">$12/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-4">8</span></td>
@@ -338,6 +366,7 @@
         <td class="cost-eff red">$2.07</td>
         <td class="price">$1.75/M</td>
         <td class="price">$14/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-4">9</span></td>
@@ -347,6 +376,7 @@
         <td class="cost-eff yellow">$0.53</td>
         <td class="price">$1/M</td>
         <td class="price">$3/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-4">10</span></td>
@@ -356,6 +386,7 @@
         <td class="cost-eff green">$0.32</td>
         <td class="price">$0.325/M</td>
         <td class="price">$1.95/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-5">11</span></td>
@@ -365,6 +396,7 @@
         <td class="cost-eff red">$1.16</td>
         <td class="price">$2/M</td>
         <td class="price">$6/M</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-5">12</span></td>
@@ -374,6 +406,7 @@
         <td class="cost-eff green">$0.23</td>
         <td class="price">$0.30/M</td>
         <td class="price">$1.20/M</td>
+        <td class="r latency">—</td>
       </tr>
     </tbody>
   </table>
@@ -514,6 +547,9 @@
         <th class="r" style="width:72px">Overall
           <span class="tip">Weighted average: Time×3, Visual×2, Markers×1.5, Code×1.5, Smooth×1</span>
         </th>
+        <th class="r sortable" data-sort="latency" onclick="sortTable('local','latency')">Latency<span class="sort-icon">↕</span>
+          <span class="tip">Server-to-server generation time in seconds — how long the API took to return the full response.</span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -522,36 +558,42 @@
         <td>Qwen2.5 Coder 14B</td>
         <td class="r">10</td><td class="r">5</td><td class="r">9</td><td class="r">8</td><td class="r">5</td>
         <td class="r overall" style="color:#d6f5d6">7.8</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-1">2</span></td>
         <td>Gemma 4 E4B Uncensored</td>
         <td class="r">9</td><td class="r">6</td><td class="r">2</td><td class="r">6</td><td class="r">7</td>
         <td class="r overall" style="color:#d6f5d6">6.5</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-2">3</span></td>
         <td>Gemma 4 E4B</td>
         <td class="r">5</td><td class="r">6</td><td class="r">1</td><td class="r">7</td><td class="r">9</td>
         <td class="r overall" style="color:#f5edd6">5.4</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-3">4</span></td>
         <td>GLM 4.6V Flash</td>
         <td class="r">2</td><td class="r">6</td><td class="r">8</td><td class="r">7</td><td class="r">9</td>
         <td class="r overall" style="color:#f5dcc6">5.1</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-4">5</span></td>
         <td>Qwen3.5 9B</td>
         <td class="r">3</td><td class="r">7</td><td class="r">2</td><td class="r">6</td><td class="r">7</td>
         <td class="r overall" style="color:#f5dcc6">4.6</td>
+        <td class="r latency">—</td>
       </tr>
       <tr>
         <td><span class="badge b-5">6</span></td>
         <td>LFM 2.5 1.2B</td>
         <td class="r">0</td><td class="r">1</td><td class="r">0</td><td class="r">2</td><td class="r">1</td>
         <td class="r overall" style="color:#f5c6c6">0.7</td>
+        <td class="r latency">—</td>
       </tr>
     </tbody>
   </table>
@@ -626,8 +668,8 @@
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const headers = table.querySelectorAll('th.sortable');
     const colIndexMap = tab === 'cloud'
-      ? { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7, cost: 8 }
-      : { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7 };
+      ? { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7, cost: 8, latency: 11 }
+      : { rank: 0, time: 2, visual: 3, markers: 4, code: 5, smooth: 6, overall: 7, latency: 8 };
     const colIndex = colIndexMap[col];
     if (colIndex === undefined) return;
 

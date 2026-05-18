@@ -54,11 +54,70 @@ def call_openrouter(model, messages, stream=False, timeout=120, max_tokens=None)
     response.raise_for_status()
     return response.json()
 
+def static_precheck(html_code):
+    """Deterministically verify criteria that regex can reliably check,
+    reducing reliance on LLM judgment for objective facts."""
+    code_lower = html_code.lower()
+
+    # Update method detection
+    if 'requestanimationframe' in code_lower:
+        method = "rAF"
+    else:
+        intervals = re.findall(r'setinterval\s*\([^,]+,\s*(\d+)', code_lower)
+        if intervals:
+            min_interval = min(int(x) for x in intervals)
+            method = "high_freq" if min_interval < 100 else "low_freq"
+        else:
+            method = "low_freq"
+
+    # External script/CDN dependencies
+    has_external_script = bool(re.search(r'<script[^>]+src\s*=', html_code, re.IGNORECASE))
+    has_cdn = bool(re.search(
+        r'(cdn\.|googleapis\.com|unpkg\.com|jsdelivr\.net|cloudflare\.com)',
+        html_code, re.IGNORECASE
+    ))
+    zero_dependencies = not has_external_script and not has_cdn
+
+    # Millisecond precision — only confirm True; LLM catches performance.now() etc.
+    second_ms_precision = bool(re.search(r'getmilliseconds\(\)', code_lower))
+
+    return {
+        "method": method,
+        "zero_dependencies": zero_dependencies,
+        "second_ms_precision": second_ms_precision,
+    }
+
+
+def fetch_model_pricing(model_id):
+    """Return {"input_per_m": float|None, "output_per_m": float|None} in $/M tokens."""
+    if not OPENROUTER_API_KEY:
+        return {"input_per_m": None, "output_per_m": None}
+    try:
+        response = requests.get(
+            "https://openrouter.ai/api/v1/models",
+            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            timeout=15
+        )
+        response.raise_for_status()
+        for m in response.json().get("data", []):
+            if m["id"] == model_id:
+                pricing = m.get("pricing", {})
+                return {
+                    "input_per_m": round(float(pricing.get("prompt", 0)) * 1_000_000, 4),
+                    "output_per_m": round(float(pricing.get("completion", 0)) * 1_000_000, 4),
+                }
+    except Exception as e:
+        print(f"Warning: Could not fetch pricing for {model_id}: {e}")
+    return {"input_per_m": None, "output_per_m": None}
+
+
 def generate_clock(model):
     print(f"Generating clock with {model}...")
     try:
         messages = [{"role": "user", "content": PROMPT}]
+        start = time.time()
         response = call_openrouter(model, messages)
+        latency_s = round(time.time() - start, 1)
         content = response['choices'][0]['message']['content']
 
         # Simple extraction of HTML if the model wrapped it in markdown
@@ -67,15 +126,18 @@ def generate_clock(model):
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
 
-        return content
+        return content, latency_s
     except Exception as e:
         print(f"Error generating clock with {model}: {e}")
-        return None
+        return None, None
 
 def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
         return None
     print(f"Evaluating clock with judge {judge_model}...")
+
+    precheck = static_precheck(clock_code)
+
     prompt = JUDGE_PROMPT_TEMPLATE + clock_code
     messages = [{"role": "user", "content": prompt}]
 
@@ -91,7 +153,7 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
             json_str = content
 
         try:
-            return json.loads(json_str)
+            audit_data = json.loads(json_str)
         except json.JSONDecodeError:
             # Fallback: try to strip common markdown/preamble if regex was too broad
             clean_json = json_str.strip()
@@ -99,7 +161,16 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
                 clean_json = clean_json.split("```json")[1].split("```")[0].strip()
             elif "```" in clean_json:
                 clean_json = clean_json.split("```")[1].split("```")[0].strip()
-            return json.loads(clean_json)
+            audit_data = json.loads(clean_json)
+
+        # Override with deterministic pre-check results
+        audit_data.setdefault("smoothness", {})["method"] = precheck["method"]
+        audit_data.setdefault("code", {})["zero_dependencies"] = precheck["zero_dependencies"]
+        # Only upgrade to True; LLM may catch performance.now() and similar patterns regex misses
+        if precheck["second_ms_precision"]:
+            audit_data.setdefault("time", {})["second_ms_precision"] = True
+
+        return audit_data
 
     except Exception as e:
         print(f"Error during evaluation with {judge_model}: {e}")
@@ -178,6 +249,7 @@ def evaluate_directory(directory_path, judge_model):
 
         model_name = file_path.stem.replace("_", "/").replace("__", ":")
 
+        pricing = fetch_model_pricing(model_name)
         audit_data = evaluate_clock(judge_model, html_content)
         if not audit_data:
             print(f"Skipping {model_name} due to evaluation failure.")
@@ -189,7 +261,9 @@ def evaluate_directory(directory_path, judge_model):
             "file": str(file_path),
             "score": final_score,
             "breakdown": breakdown,
-            "audit": audit_data
+            "audit": audit_data,
+            "latency_s": None,
+            "pricing": pricing,
         })
 
     results.sort(key=lambda x: x['score'], reverse=True)
@@ -219,7 +293,7 @@ def run_benchmark(models, judge_model):
 
     for model in models:
         try:
-            html_content = generate_clock(model)
+            html_content, latency_s = generate_clock(model)
             if not html_content:
                 print(f"Skipping evaluation for {model} due to generation failure.")
                 continue
@@ -229,6 +303,7 @@ def run_benchmark(models, judge_model):
             with open(file_path, "w") as f:
                 f.write(html_content)
 
+            pricing = fetch_model_pricing(model)
             audit_data = evaluate_clock(judge_model, html_content)
             if not audit_data:
                 print(f"Skipping score calculation for {model} due to judge failure.")
@@ -241,7 +316,9 @@ def run_benchmark(models, judge_model):
                 "file": str(file_path),
                 "score": final_score,
                 "breakdown": breakdown,
-                "audit": audit_data
+                "audit": audit_data,
+                "latency_s": latency_s,
+                "pricing": pricing,
             })
 
         except Exception as e:
@@ -303,6 +380,9 @@ def generate_report(run_dir, summary):
                 <th>Dial (15%)</th>
                 <th>Code (15%)</th>
                 <th>Motion (10%)</th>
+                <th>Gen. Latency</th>
+                <th>Input $/M</th>
+                <th>Output $/M</th>
             </tr>
         </thead>
         <tbody>
@@ -321,6 +401,13 @@ def generate_report(run_dir, summary):
     cards = ""
 
     for res in summary['results']:
+        latency_str = f"{res.get('latency_s')}s" if res.get('latency_s') is not None else "—"
+        pricing = res.get('pricing') or {}
+        inp = pricing.get('input_per_m')
+        out = pricing.get('output_per_m')
+        input_str = f"${inp}/M" if inp is not None else "—"
+        output_str = f"${out}/M" if out is not None else "—"
+
         row = f"""
         <tr>
             <td>{res['model']}</td>
@@ -330,6 +417,9 @@ def generate_report(run_dir, summary):
             <td>{res['breakdown']['dial']}</td>
             <td>{res['breakdown']['code']}</td>
             <td>{res['breakdown']['motion']}</td>
+            <td>{latency_str}</td>
+            <td>{input_str}</td>
+            <td>{output_str}</td>
         </tr>
         """
         table_rows += row
