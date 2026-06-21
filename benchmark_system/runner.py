@@ -112,6 +112,25 @@ def fetch_model_pricing(model_id):
     return {"input_per_m": None, "output_per_m": None}
 
 
+def fetch_model_info(model_id):
+    """Return {"name": str} with the model's display name from OpenRouter."""
+    if not OPENROUTER_API_KEY:
+        return {"name": None}
+    try:
+        response = requests.get(
+            "https://openrouter.ai/api/v1/models",
+            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            timeout=15
+        )
+        response.raise_for_status()
+        for m in response.json().get("data", []):
+            if m["id"] == model_id:
+                return {"name": m.get("name") or m["id"]}
+    except Exception as e:
+        print(f"Warning: Could not fetch model info for {model_id}: {e}")
+    return {"name": None}
+
+
 def generate_clock(model):
     print(f"Generating clock with {model}...")
     try:

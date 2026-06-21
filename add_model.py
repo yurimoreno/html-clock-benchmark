@@ -8,9 +8,101 @@ import re
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from benchmark_system.runner import generate_clock, evaluate_clock, evaluate_clock_reliable, calculate_score, fetch_model_pricing, _fmt_run_date
+from benchmark_system.runner import generate_clock, evaluate_clock, evaluate_clock_reliable, calculate_score, fetch_model_pricing, fetch_model_info, _fmt_run_date
 
 LOG_FILE = "log.txt"
+
+_PROVIDER_NAMES = {
+    "minimax": "MiniMax",
+    "moonshotai": "Kimi",
+    "qwen": "Qwen",
+    "google": "Gemini",
+    "anthropic": "Anthropic",
+    "openai": "OpenAI",
+    "THUDM": "GLM",
+    "z-ai": "Zhipu",
+    "deepseek": "DeepSeek",
+}
+
+_MODEL_ALIASES = {
+    "minimax-m3": "M3",
+    "minimax-m2.7": "M2.7",
+    "minimax-m2.5": "M2.5",
+    "minimax-m2": "M2",
+    "minimax-m1": "M1",
+    "minimax-01": "01",
+    "kimi-k2.7-code": "K2.7 Code",
+    "kimi-k2.6": "K2.6",
+    "kimi-k2.5": "K2.5",
+    "qwen3.6-35b-a3b": "3.6 35B A3B",
+    "qwen3-coder": "3 Coder",
+    "qwen2.5-coder-14b": "2.5 Coder 14B",
+    "qwen3.5-9b": "3.5 9B",
+    "gemini-2.5-flash": "2.5 Flash",
+    "gemini-3-flash-preview": "3 Flash Preview",
+    "gemini-3.1-pro": "3.1 Pro",
+    "gemini-4.26b-a4b-it-free": "4 26B A4B IT Free",
+    "gemini-4-e4b": "4 E4B",
+    "gemini-4-e4b-uncensored-hauhaucs-aggressive": "4 E4B Uncensored",
+    "claude-sonnet-4.6": "Sonnet 4.6",
+    "claude-sonnet-4.5": "Sonnet 4.5",
+    "claude-sonnet-4": "Sonnet 4",
+    "claude-3.5-haiku": "3.5 Haiku",
+    "claude-3.7-sonnet": "3.7 Sonnet",
+    "gpt-oss-120b-free": "OSS 120B Free",
+    "gpt-oss-20b-free": "OSS 20B Free",
+    "gpt-5.4-nano": "5.4 Nano",
+    "grok-code-fast-1": "Code Fast 1",
+    "dolphin-mistral-24b-venice-edition": "Mistral 24B Venice",
+    "nemotron-nano-9b-v2": "Nano 9B v2",
+    "gemma-4-31b-it-free": "4 31B IT Free",
+    "deepseek-v4-flash": "V4 Flash",
+    "deepseek-v4-pro": "V4 Pro",
+    "deepseek-v3-flash": "V3 Flash",
+}
+
+def model_display_name(model_id):
+    if not model_id:
+        return ""
+    parts = model_id.split("/")
+    if len(parts) != 2:
+        return model_id
+    provider, model = parts
+    provider_name = _PROVIDER_NAMES.get(provider, provider.title())
+    model_lower = model.lower()
+    if model_lower in _MODEL_ALIASES:
+        return f"{provider_name} {_MODEL_ALIASES[model_lower]}"
+    openrouter_name = fetch_model_info(model_id).get("name")
+    if openrouter_name and openrouter_name != model_id:
+        # Strip provider prefix if OpenRouter name includes it
+        clean_name = openrouter_name
+        provider_lower = provider.lower().replace("-", "").replace("_", "")
+        prefixes_to_strip = [
+            f"{provider}: ",
+            f"{provider} ",
+            f"{provider.lower()}: ",
+            f"{provider.lower()} ",
+            f"z-ai: ",
+            f"z-ai ",
+            f"z.ai: ",
+            f"z.ai ",
+        ]
+        for prefix in prefixes_to_strip:
+            if clean_name.lower().startswith(prefix.lower()):
+                clean_name = clean_name[len(prefix):]
+                break
+        # If the clean name already starts with provider_name, don't duplicate
+        if clean_name.lower().startswith(provider_name.lower()):
+            return clean_name
+        # Don't prepend provider if clean_name starts with a known brand name
+        brand_names = ["GLM", "Kimi", "Qwen", "Gemini", "GPT", "Claude", "DeepSeek", "MiniMax", "Gemma", "Grok"]
+        first_word = clean_name.split()[0] if clean_name else ""
+        if first_word in brand_names:
+            return clean_name
+        return f"{provider_name} {clean_name}"
+    model = model.replace("-", " ").replace("_", " ")
+    model = re.sub(r'\s+', ' ', model).strip()
+    return f"{provider_name} {model}"
 
 def log(msg):
     ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -50,7 +142,7 @@ def _fmt_price(val):
 
 def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
                     actual_cost=None, model_id=None, run_date=None,
-                    judge_runs=None, judge_runs_attempted=None):
+                    judge_runs=None, judge_runs_attempted=None, display_name=None):
     score_class, badge_class = score_to_grade(score)
     overall_color = _OVERALL_COLORS[score_class]
     latency_str = f"{latency}s" if latency is not None else "—"
@@ -60,6 +152,7 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
     runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
     cost_str = f"${actual_cost:.4f}" if actual_cost is not None else "—"
     model_id_str = model_id or ""
+    display = display_name or model
 
     if pricing and pricing.get("input_per_m") is not None:
         inp, out = pricing["input_per_m"], pricing["output_per_m"]
@@ -75,7 +168,7 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
     return (
         f'      <tr>\n'
         f'        <td><span class="badge {badge_class}">{rank}</span></td>\n'
-        f'        <td><div>{model}</div><span class="model-id">{model_id_str}</span></td>\n'
+        f'        <td><div><a href="#card-{model_id_str}" class="model-link">{display}</a></div><span class="model-id">{model_id_str}</span></td>\n'
         f'        <td class="r run-date">{run_date_str}</td>\n'
         f'        <td class="r">{breakdown["time"]}</td>'
         f'<td class="r">{breakdown["visual"]}</td>'
@@ -95,7 +188,7 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
 
 def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None,
                model_id=None, run_date=None, actual_cost=None,
-               judge_runs=None, judge_runs_attempted=None):
+               judge_runs=None, judge_runs_attempted=None, display_name=None):
     score_class, _ = score_to_grade(score)
     relative_path = f"runs/{timestamp}/{os.path.basename(file_path)}"
     latency_note = f" | Latency: {latency}s" if latency is not None else ""
@@ -106,10 +199,11 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
     runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
     runs_note = f" | Runs: {runs_str}"
     model_id_str = model_id or ""
+    display = display_name or model
     return (
-        f'    <div class="card">\n'
+        f'    <div class="card" id="card-{model_id_str}">\n'
         f'      <header>\n'
-        f'        <span class="name">{model}</span>\n'
+        f'        <span class="name">{display}</span>\n'
         f'        <span class="score {score_class}">#{rank} · {score}</span>\n'
         f'      </header>\n'
         f'      <iframe src="{relative_path}"></iframe>\n'
@@ -125,7 +219,7 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
 
 def update_index(model, score, breakdown, file_path, timestamp, latency=None, pricing=None,
                  actual_cost=None, model_id=None, run_date=None,
-                 judge_runs=None, judge_runs_attempted=None):
+                 judge_runs=None, judge_runs_attempted=None, display_name=None):
     index_path = "index.html"
     if not os.path.exists(index_path):
         print(f"Warning: {index_path} not found, skipping index update")
@@ -151,7 +245,8 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
         scored_rows.append([score, _make_table_row(model, 0, score, breakdown, latency, pricing,
                                                    actual_cost=actual_cost, model_id=model_id,
                                                    run_date=run_date, judge_runs=judge_runs,
-                                                   judge_runs_attempted=judge_runs_attempted)])
+                                                   judge_runs_attempted=judge_runs_attempted,
+                                                   display_name=display_name)])
         scored_rows.sort(key=lambda x: x[0], reverse=True)
 
         # Renumber all ranks
@@ -195,7 +290,8 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
 
         scored_cards.append([score, _make_card(model, 0, score, breakdown, file_path, timestamp, latency,
                                                model_id=model_id, run_date=run_date, actual_cost=actual_cost,
-                                               judge_runs=judge_runs, judge_runs_attempted=judge_runs_attempted)])
+                                               judge_runs=judge_runs, judge_runs_attempted=judge_runs_attempted,
+                                               display_name=display_name)])
         scored_cards.sort(key=lambda x: x[0], reverse=True)
 
         # Renumber ranks in cards
@@ -288,9 +384,11 @@ def main():
         json.dump(result, f, indent=2)
 
     if not args.no_index:
+        display_name = model_display_name(model)
         update_index(model, score, breakdown, file_path, ts, latency=latency_s, pricing=pricing,
                      actual_cost=actual_cost, model_id=model, run_date=ts,
-                     judge_runs=judge_runs_completed, judge_runs_attempted=args.judge_runs)
+                     judge_runs=judge_runs_completed, judge_runs_attempted=args.judge_runs,
+                     display_name=display_name)
 
     print(f"\nDone! Score: {score}")
     print(f"Clock saved to: {file_path}")
