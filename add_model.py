@@ -5,6 +5,7 @@ import argparse
 import datetime
 import json
 import re
+import shutil
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -190,7 +191,16 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
                model_id=None, run_date=None, actual_cost=None,
                judge_runs=None, judge_runs_attempted=None, display_name=None):
     score_class, _ = score_to_grade(score)
-    relative_path = f"runs/{timestamp}/{os.path.basename(file_path)}"
+    # Previews must live in a committed dir; runs/ is gitignored so iframes
+    # pointing there 404 on GitHub Pages. Copy the generated HTML into previews/.
+    basename = os.path.basename(file_path)
+    previews_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "previews")
+    os.makedirs(previews_dir, exist_ok=True)
+    try:
+        shutil.copyfile(file_path, os.path.join(previews_dir, basename))
+    except (OSError, shutil.SameFileError):
+        pass
+    relative_path = f"previews/{basename}"
     latency_note = f" | Latency: {latency}s" if latency is not None else ""
     run_date_str = _fmt_run_date(run_date) if run_date else "—"
     cost_note = f" | Cost: ${actual_cost:.4f}" if actual_cost is not None else ""

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+            overflow: hidden; /* Prevent scrollbar if clock slightly extends */
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock-center {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            transform-origin: bottom center;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 80px;
+            top: calc(50% - 80px);
+            left: calc(50% - 4px);
+            background-color: #333;
+            z-index: 3;
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 110px;
+            top: calc(50% - 110px);
+            left: calc(50% - 3px);
+            background-color: #555;
+            z-index: 2;
+        }
+
+        .second-hand {
+            width: 3px;
+            height: 130px;
+            top: calc(50% - 130px);
+            left: calc(50% - 1.5px);
+            background-color: #e74c3c;
+            z-index: 1;
+        }
+
+        /* Clock markings (optional, for better visual) */
+        .marking {
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background-color: #ccc;
+            transform-origin: left center;
+        }
+
+        .marking.hour {
+            width: 15px;
+            height: 3px;
+            background-color: #666;
+        }
+
+        .number {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            transform: translate(-50%, -50%); /* Center the numbers */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock-container">
+        <div class="clock-center"></div>
+
+        <div class="hour-hand hand" id="hourHand"></div>
+        <div class="minute-hand hand" id="minuteHand"></div>
+        <div class="second-hand hand" id="secondHand"></div>
+
+        <!-- Clock markings (optional, for better visual) -->
+        <script>
+            const clockContainer = document.querySelector('.clock-container');
+            const radius = 135; // Approximately half of the clock width, adjusted for padding
+
+            for (let i = 1; i <= 12; i++) {
+                // Numbers
+                const numberDiv = document.createElement('div');
+                numberDiv.classList.add('number');
+                numberDiv.textContent = i;
+                const angleRad = (i - 3) * (Math.PI / 6); // Adjust 0 position to 3 o'clock
+                const x = radius * Math.cos(angleRad) + 150; // 150 = clockContainer.width / 2
+                const y = radius * Math.sin(angleRad) + 150; // 150 = clockContainer.height / 2
+                numberDiv.style.left = `${x}px`;
+                numberDiv.style.top = `${y}px`;
+                clockContainer.appendChild(numberDiv);
+
+                // Hour markings (larger)
+                const hourMarking = document.createElement('div');
+                hourMarking.classList.add('marking', 'hour');
+                const hourAngle = i * 30; // 360 / 12 = 30 degrees per hour
+                hourMarking.style.transform = `translate(-50%, -50%) rotate(${hourAngle}deg) translateX(${radius - 15}px)`; // Adjusted position
+                clockContainer.appendChild(hourMarking);
+            }
+
+            for (let i = 0; i < 60; i++) {
+                if (i % 5 !== 0) { // Skip minute markings where hour markings are
+                    const minuteMarking = document.createElement('div');
+                    minuteMarking.classList.add('marking');
+                    const minuteAngle = i * 6; // 360 / 60 = 6 degrees per minute
+                    minuteMarking.style.transform = `translate(-50%, -50%) rotate(${minuteAngle}deg) translateX(${radius - 10}px)`; // Adjusted position
+                    clockContainer.appendChild(minuteMarking);
+                }
+            }
+        </script>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate rotation degress
+            // Each second is 6 degrees (360 / 60)
+            // Each minute is 6 degrees (360 / 60), plus a fraction from seconds (seconds / 60 * 6 degrees)
+            // Each hour is 30 degrees (360 / 12), plus a fraction from minutes and seconds (minutes / 60 * 30 + seconds / 3600 * 30)
+
+            const secondDegrees = (seconds * 6);
+            const minuteDegrees = (minutes * 6) + (seconds / 60 * 6);
+            const hourDegrees = (hours % 12 * 30) + (minutes / 60 * 30) + (seconds / 3600 * 30);
+
+            // Apply rotation with a base of 180 degrees to point upwards initially
+            secondHand.style.transform = `rotate(${secondDegrees + 180}deg)`;
+            minuteHand.style.transform = `rotate(${minuteDegrees + 180}deg)`;
+            hourHand.style.transform = `rotate(${hourDegrees + 180}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+        // Set the initial clock position immediately
+        updateClock();
+    </script>
+
+</body>
+</html>
