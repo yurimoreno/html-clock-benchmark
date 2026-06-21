@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embers — Analog Timepiece</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;700&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a1416;
+    --bg-1:#0f1d20;
+    --face:#15262a;
+    --face-hi:#1d3438;
+    --ink:#f4ead5;
+    --muted:#7a8a8c;
+    --copper:#d97742;
+    --copper-hi:#f4a261;
+    --ember:#e9c46a;
+    --crimson:#c1432e;
+    --line:rgba(244,234,213,.12);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Cormorant Garamond', serif;
+    background:
+      radial-gradient(1200px 800px at 70% 110%, rgba(217,119,66,.10), transparent 60%),
+      radial-gradient(900px 700px at 10% -10%, rgba(33,150,166,.08), transparent 55%),
+      linear-gradient(160deg, var(--bg-0), var(--bg-1));
+    color:var(--ink);
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* Ambient floating embers */
+  .ambient{
+    position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  }
+  .ember{
+    position:absolute;
+    width:3px;height:3px;
+    background:radial-gradient(circle, var(--copper-hi), transparent 70%);
+    border-radius:50%;
+    opacity:0;
+    animation:float linear infinite;
+    filter:blur(.5px);
+  }
+  @keyframes float{
+    0%{transform:translateY(110vh) translateX(0) scale(.6);opacity:0}
+    10%{opacity:.8}
+    90%{opacity:.4}
+    100%{transform:translateY(-10vh) translateX(40px) scale(1);opacity:0}
+  }
+
+  /* Page layout */
+  .stage{
+    position:relative;z-index:1;
+    display:flex;flex-direction:column;align-items:center;gap:34px;
+    padding:40px 20px;
+  }
+
+  .meta{
+    text-align:center;
+    display:flex;flex-direction:column;gap:6px;
+    margin-bottom:-8px;
+  }
+  .brand{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--copper);
+    opacity:.9;
+  }
+  .brand::before, .brand::after{
+    content:"";display:inline-block;width:32px;height:1px;
+    background:var(--copper);vertical-align:middle;margin:0 14px;opacity:.6;
+  }
+  .title{
+    font-size:clamp(34px, 5vw, 52px);
+    font-weight:300;
+    letter-spacing:.04em;
+    color:var(--ink);
+  }
+  .title em{
+    font-style:italic;font-weight:500;
+    color:var(--copper-hi);
+  }
+
+  /* Clock */
+  .clock-wrap{
+    position:relative;
+    width:min(82vmin, 560px);
+    aspect-ratio:1;
+    display:grid;place-items:center;
+  }
+
+  /* outer glow ring */
+  .clock-wrap::before{
+    content:"";
+    position:absolute;inset:-30px;border-radius:50%;
+    background:
+      radial-gradient(circle, rgba(217,119,66,.18), transparent 65%);
+    filter:blur(20px);
+    z-index:0;
+  }
+
+  .clock{
+    position:relative;
+    width:100%;height:100%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 25%, var(--face-hi), var(--face) 55%, #0c1a1d 100%);
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.55),
+      0 0 0 1px rgba(244,234,213,.04),
+      inset 0 0 0 2px rgba(217,119,66,.10),
+      inset 0 2px 30px rgba(244,234,213,.04),
+      inset 0 -40px 80px rgba(0,0,0,.4);
+    z-index:1;
+  }
+
+  /* Subtle inner ring */
+  .clock::before{
+    content:"";
+    position:absolute;inset:6%;border-radius:50%;
+    background:
+      conic-gradient(from 0deg,
+        rgba(244,234,213,.03),
+        rgba(244,234,213,.00) 40%,
+        rgba(244,234,213,.04) 60%,
+        rgba(244,234,213,.00) 100%);
+    pointer-events:none;
+  }
+
+  /* Tick marks */
+  .ticks{position:absolute;inset:0;}
+  .tick{
+    position:absolute;
+    left:50%;top:0;
+    width:2px;height:14px;
+    background:var(--muted);
+    transform-origin:50% calc(50vmin * .5);
+    opacity:.55;
+  }
+  .tick.major{
+    width:3px;height:22px;
+    background:var(--copper-hi);
+    opacity:.95;
+    box-shadow:0 0 8px rgba(244,162,97,.5);
+  }
+  .tick.quarter{
+    width:4px;height:28px;
+    background:var(--ember);
+    box-shadow:0 0 12px rgba(233,196,106,.6);
+  }
+
+  /* Numerals */
+  .numerals{position:absolute;inset:0;pointer-events:none;}
+  .num{
+    position:absolute;
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(20px, 3.4vmin, 30px);
+    color:var(--ink);
+    transform:translate(-50%,-50%);
+    letter-spacing:.02em;
+  }
+  .num.roman{font-style:italic;color:var(--copper-hi);font-weight:700;}
+
+  /* Center cap */
+  .cap{
+    position:absolute;left:50%;top:50%;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, var(--copper-hi), var(--copper) 60%, #5a2a14 100%);
+    transform:translate(-50%,-50%);
+    box-shadow:
+      0 0 12px rgba(217,119,66,.7),
+      inset 0 -2px 4px rgba(0,0,0,.5);
+    z-index:10;
+  }
+  .cap::after{
+    content:"";position:absolute;inset:35%;border-radius:50%;
+    background:#1a0a04;
+  }
+
+  /* Hands */
+  .hand{
+    position:absolute;left:50%;top:50%;
+    transform-origin:50% 100%;
+    transform:translate(-50%,-100%) rotate(0deg);
+    border-radius:6px 6px 2px 2px;
+    z-index:5;
+    will-change:transform;
+  }
+  .hour-hand{
+    width:8px;height:26%;
+    background:linear-gradient(180deg, var(--ink) 0%, var(--ink) 70%, var(--copper) 100%);
+    box-shadow:0 0 8px rgba(0,0,0,.4);
+    z-index:7;
+  }
+  .min-hand{
+    width:5px;height:38%;
+    background:linear-gradient(180deg, var(--ember) 0%, var(--copper-hi) 70%, var(--copper) 100%);
+    box-shadow:0 0 10px rgba(244,162,97,.4);
+    z-index:6;
+  }
+  .sec-hand{
+    width:2px;height:42%;
+    background:linear-gradient(180deg, var(--crimson) 0%, var(--crimson) 85%, transparent 100%);
+    box-shadow:0 0 8px rgba(193,67,46,.6);
+    z-index:8;
+  }
+  .sec-hand::before{
+    content:"";position:absolute;
+    left:50%;top:-14px;width:10px;height:10px;
+    background:var(--crimson);border-radius:50%;
+    transform:translateX(-50%);
+    box-shadow:0 0 10px rgba(193,67,46,.7);
+  }
+  .sec-hand::after{
+    content:"";position:absolute;
+    left:50%;bottom:-8px;width:14px;height:14px;
+    background:var(--crimson);border-radius:50%;
+    transform:translateX(-50%);
+    box-shadow:0 0 12px rgba(193,67,46,.5);
+  }
+
+  /* Digital readout */
+  .readout{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .digits{
+    font-size:clamp(20px, 2.4vw, 26px);
+    letter-spacing:.18em;
+    color:var(--ink);
+    font-weight:300;
+  }
+  .digits .sep{color:var(--copper-hi);animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .date{
+    font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .date span{color:var(--ember)}
+
+  .footnote{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--muted);opacity:.55;
+  }
+
+  @media (max-width:480px){
+    .brand::before,.brand::after{width:18px;margin:0 8px}
+    .footnote{display:none}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .ember{display:none}
+    .digits .sep{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" id="ambient" aria-hidden="true"></div>
+
+<main class="stage">
+  <header class="meta">
+    <div class="brand">Maison Embers · Est. MMXXV</div>
+    <h1 class="title">A quiet <em>moment</em> in time</h1>
+  </header>
+
+  <section class="clock-wrap" aria-label="Analog clock">
+    <div class="clock" id="clock">
+      <div class="ticks" id="ticks"></div>
+      <div class="numerals" id="numerals"></div>
+      <div class="hand hour-hand" id="hour"></div>
+      <div class="hand min-hand" id="min"></div>
+      <div class="hand sec-hand" id="sec"></div>
+      <div class="cap"></div>
+    </div>
+  </section>
+
+  <div class="readout" aria-live="polite">
+    <div class="digits" id="digits">00<span class="sep">:</span>00<span class="sep">:</span>00</div>
+    <div class="date" id="date">— · —</div>
+  </div>
+</main>
+
+<div class="footnote">Synchronized to your local time</div>
+
+<script>
+  // ---- Build tick marks ----
+  const ticks = document.getElementById('ticks');
+  const numerals = document.getElementById('numerals');
+  const clock = document.getElementById('clock');
+
+  // Roman numerals for the four cardinal positions for character
+  const cardinal = ['XII','III','VI','IX'];
+
+  for (let i = 0; i < 60; i++){
+    const tick = document.createElement('div');
+    tick.className = 'tick';
+    if (i % 5 === 0) tick.classList.add('major');
+    if (i % 15 === 0) tick.classList.add('quarter');
+    // Position around the circle. Tick origin = center; rotate then translate outward.
+    const angle = i * 6; // degrees
+    tick.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(0)`;
+    // Use a wrapper approach: we set transform-origin to center of clock
+    tick.style.transformOrigin = '50% 50%';
+    tick.style.top = '50%';
+    tick.style.left = '50%';
+    // Compute position via rotation
+    const rad = (angle - 90) * Math.PI / 180;
+    const R = 47; // % from center to tick
+    const x = 50 + R * Math.cos(rad);
+    const y = 50 + R * Math.sin(rad);
+    tick.style.left = x + '%';
+    tick.style.top = y + '%';
+    tick.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
+    ticks.appendChild(tick);
+  }
+
+  // Numerals at the 12, 3, 6, 9 positions — Roman, for distinction
+  const numPositions = [
+    {x:50, y:14, label:'XII'},
+    {x:86, y:50, label:'III'},
+    {x:50, y:86, label:'VI'},
+    {x:14, y:50, label:'IX'}
+  ];
+  numPositions.forEach(p => {
+    const n = document.createElement('div');
+    n.className = 'num roman';
+    n.textContent = p.label;
+    n.style.left = p.x + '%';
+    n.style.top = p.y + '%';
+    numerals.appendChild(n);
+  });
+
+  // ---- Build floating embers ----
+  const ambient = document.getElementById('ambient');
+  const EMBER_COUNT = 28;
+  for (let i = 0; i < EMBER_COUNT; i++){
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const dur = 8 + Math.random() * 12;
+    const delay = -Math.random() * dur;
+    const size = 2 + Math.random() * 3;
+    e.style.left = (Math.random() * 100) + '%';
+    e.style.width = size + 'px';
+    e.style.height = size + 'px';
+    e.style.animationDuration = dur + 's';
+    e.style.animationDelay = delay + 's';
+    ambient.appendChild(e);
+  }
+
+  // ---- Clock mechanics ----
+  const hourHand = document.getElementById('hour');
+  const minHand  = document.getElementById('min');
+  const secHand  = document.getElementById('sec');
+  const digits   = document.getElementById('digits');
+  const dateEl   = document.getElementById('date');
+
+  const pad = n => String(n).padStart(2,'0');
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function tick(){
+    const now = new Date();
+    const ms = now.getMilliseconds();
+    const s  = now.getSeconds() + ms/1000;
+    const m  = now.getMinutes() + s/60;
+    const h  = (now.getHours() % 12) + m/60;
+
+    const secDeg = s * 6;          // 360/60
+    const minDeg = m * 6;
+    const hrDeg  = h * 30;         // 360/12
+
+    hourHand.style.transform = `translate(-50%,-100%) rotate(${hrDeg}deg)`;
+    minHand.style.transform  = `translate(-50%,-100%) rotate(${minDeg}deg)`;
+    secHand.style.transform  = `translate(-50%,-100%) rotate(${secDeg}deg)`;
+
+    // Digital readout
+    const hh = pad(now.getHours());
+    const mm = pad(now.getMinutes());
+    const ss = pad(now.getSeconds());
+    digits.innerHTML = `${hh}<span class="sep">:</span>${mm}<span class="sep">:</span>${ss}`;
+
+    dateEl.innerHTML = `${DAYS[now.getDay()]} · <span>${now.getDate()} ${MONTHS[now.getMonth()]}</span> ${now.getFullYear()}`;
+
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+
+  // Subtle parallax on pointer move
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - .5) * 8;
+    const y = (e.clientY / window.innerHeight - .5) * 8;
+    clock.style.transform = `perspective(900px) rotateY(${x}deg) rotateX(${-y}deg)`;
+  });
+</script>
+</body>
+</html>
