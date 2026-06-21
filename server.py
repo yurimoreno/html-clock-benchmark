@@ -73,7 +73,7 @@ def run_single_benchmark():
 
     try:
         log("Generating clock...")
-        html_content = generate_clock(model)
+        html_content, latency_s, usage = generate_clock(model)
 
         if not html_content:
             log("ERROR: Clock generation failed")
@@ -125,7 +125,9 @@ CODE TO AUDIT:
             "file": file_path,
             "score": final_score,
             "breakdown": breakdown,
-            "audit": audit_data
+            "audit": audit_data,
+            "latency_s": latency_s,
+            "token_usage": usage,
         }
 
         summary_path = os.path.join(run_dir, "summary.json")
