@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center-dot {
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            transform-origin: bottom center;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 80px;
+            top: calc(50% - 80px); /* Adjust to make it center from its base */
+            left: calc(50% - 4px);
+            background-color: #555;
+            z-index: 5;
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 110px;
+            top: calc(50% - 110px);
+            left: calc(50% - 3px);
+            background-color: #333;
+            z-index: 6;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            top: calc(50% - 120px);
+            left: calc(50% - 1px);
+            background-color: #f00;
+            z-index: 7;
+        }
+
+        /* Number markings */
+        .number {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            --rot: 0deg; /* Custom property for rotation */
+            transform: rotateZ(var(--rot)) translateY(-130px) rotateZ(calc(-1 * var(--rot)));
+        }
+
+        /* 12, 3, 6, 9 are slightly larger */
+        .number.large {
+            font-size: 1.5em;
+        }
+
+        .number-12 { --rot: 0deg; }
+        .number-1 { --rot: 30deg; }
+        .number-2 { --rot: 60deg; }
+        .number-3 { --rot: 90deg; }
+        .number-4 { --rot: 120deg; }
+        .number-5 { --rot: 150deg; }
+        .number-6 { --rot: 180deg; }
+        .number-7 { --rot: 210deg; }
+        .number-8 { --rot: 240deg; }
+        .number-9 { --rot: 270deg; }
+        .number-10 { --rot: 300deg; }
+        .number-11 { --rot: 330deg; }
+
+        /* Tick marks */
+        .tick {
+            position: absolute;
+            background-color: #ccc;
+            width: 2px;
+            height: 10px;
+            transform-origin: bottom center;
+            --tick-rot: 0deg;
+            transform: rotateZ(var(--tick-rot)) translateY(-145px); /* Position the tick at the edge */
+        }
+
+        .major-tick {
+            background-color: #aaa;
+            width: 3px;
+            height: 15px;
+        }
+
+        /* Generate tick marks dynamically if more granularity is needed or hardcode */
+        /* For simplicity, we'll place major ticks and numbers */
+    </style>
+</head>
+<body>
+
+    <div class="clock-container">
+        <div class="center-dot"></div>
+
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+
+        <div class="number number-12 large">12</div>
+        <div class="number number-1">1</div>
+        <div class="number number-2">2</div>
+        <div class="number number-3 large">3</div>
+        <div class="number number-4">4</div>
+        <div class="number number-5">5</div>
+        <div class="number number-6 large">6</div>
+        <div class="number number-7">7</div>
+        <div class="number number-8">8</div>
+        <div class="number number-9 large">9</div>
+        <div class="number number-10">10</div>
+        <div class="number number-11">11</div>
+
+        <!-- Add tick marks (example for every 5 minutes and major hours) -->
+        <div class="tick major-tick" style="--tick-rot: 0deg;"></div>
+        <div class="tick" style="--tick-rot: 6deg;"></div>
+        <div class="tick" style="--tick-rot: 12deg;"></div>
+        <div class="tick" style="--tick-rot: 18deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 30deg;"></div>
+        <div class="tick" style="--tick-rot: 36deg;"></div>
+        <div class="tick" style="--tick-rot: 42deg;"></div>
+        <div class="tick" style="--tick-rot: 48deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 60deg;"></div>
+        <div class="tick" style="--tick-rot: 66deg;"></div>
+        <div class="tick" style="--tick-rot: 72deg;"></div>
+        <div class="tick" style="--tick-rot: 78deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 90deg;"></div>
+        <div class="tick" style="--tick-rot: 96deg;"></div>
+        <div class="tick" style="--tick-rot: 102deg;"></div>
+        <div class="tick" style="--tick-rot: 108deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 120deg;"></div>
+        <div class="tick" style="--tick-rot: 126deg;"></div>
+        <div class="tick" style="--tick-rot: 132deg;"></div>
+        <div class="tick" style="--tick-rot: 138deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 150deg;"></div>
+        <div class="tick" style="--tick-rot: 156deg;"></div>
+        <div class="tick" style="--tick-rot: 162deg;"></div>
+        <div class="tick" style="--tick-rot: 168deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 180deg;"></div>
+        <div class="tick" style="--tick-rot: 186deg;"></div>
+        <div class="tick" style="--tick-rot: 192deg;"></div>
+        <div class="tick" style="--tick-rot: 198deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 210deg;"></div>
+        <div class="tick" style="--tick-rot: 216deg;"></div>
+        <div class="tick" style="--tick-rot: 222deg;"></div>
+        <div class="tick" style="--tick-rot: 228deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 240deg;"></div>
+        <div class="tick" style="--tick-rot: 246deg;"></div>
+        <div class="tick" style="--tick-rot: 252deg;"></div>
+        <div class="tick" style="--tick-rot: 258deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 270deg;"></div>
+        <div class="tick" style="--tick-rot: 276deg;"></div>
+        <div class="tick" style="--tick-rot: 282deg;"></div>
+        <div class="tick" style="--tick-rot: 288deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 300deg;"></div>
+        <div class="tick" style="--tick-rot: 306deg;"></div>
+        <div class="tick" style="--tick-rot: 312deg;"></div>
+        <div class="tick" style="--tick-rot: 318deg;"></div>
+        <div class="tick major-tick" style="--tick-rot: 330deg;"></div>
+        <div class="tick" style="--tick-rot: 336deg;"></div>
+        <div class="tick" style="--tick-rot: 342deg;"></div>
+        <div class="tick" style="--tick-rot: 348deg;"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Calculate rotation for each hand
+            // Second hand: 360 degrees in 60 seconds (6 degrees per second)
+            const secondDegrees = (seconds / 60) * 360;
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+
+            // Minute hand: 360 degrees in 60 minutes (6 degrees per minute)
+            // Plus an additional rotation based on seconds for smooth movement
+            const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+
+            // Hour hand: 360 degrees in 12 hours (30 degrees per hour)
+            // Plus additional rotation based on minutes and seconds for smooth movement
+            // Convert 24-hour format to 12-hour format for calculation
+            const actualHours = hours % 12;
+            const hourDegrees = ((actualHours / 12) * 360) + ((minutes / 60) * 30) + ((seconds / 3600) * 30);
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+        // Set initial clock position immediately
+        updateClock();
+    </script>
+
+</body>
+</html>

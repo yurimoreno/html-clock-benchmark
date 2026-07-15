@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Analog Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 500px;
+            max-height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f5f5f5 0%, #e0e0e0 50%, #c0c0c0 100%);
+            border: 12px solid #2c3e50;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.15),
+                0 0 0 6px rgba(255, 255, 255, 0.1);
+        }
+
+        .clock-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .tick {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: #7f8c8d;
+            left: 50%;
+            top: 0;
+            transform-origin: center 50%;
+            transform: translateX(-50%);
+        }
+
+        .tick.major {
+            width: 5px;
+            height: 18px;
+            background: #2c3e50;
+        }
+
+        .number {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            left: 50%;
+            top: 50%;
+            margin-left: -20px;
+            margin-top: -20px;
+        }
+
+        .brand {
+            position: absolute;
+            top: 28%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #7f8c8d;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg);
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 25%;
+            background: linear-gradient(to top, #2c3e50, #34495e);
+        }
+
+        .minute-hand {
+            width: 5px;
+            height: 38%;
+            background: linear-gradient(to top, #34495e, #5d6d7e);
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 45%;
+            background: linear-gradient(to top, #e74c3c, #c0392b);
+            z-index: 11;
+            box-shadow: 0 1px 4px rgba(231, 76, 60, 0.5);
+        }
+
+        .center-dot {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 30% 30%, #e74c3c, #922b21);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .center-dot::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #2c3e50;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .date-display {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c3e50;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: 1px solid #bdc3c7;
+        }
+
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock">
+            <div class="clock-face" id="clockFace">
+                <!-- Ticks and numbers generated by JavaScript -->
+            </div>
+            <div class="brand">Precision</div>
+            <div class="glow"></div>
+            
+            <div class="hand hour-hand" id="hourHand"></div>
+            <div class="hand minute-hand" id="minuteHand"></div>
+            <div class="hand second-hand" id="secondHand"></div>
+            
+            <div class="center-dot"></div>
+            <div class="date-display" id="dateDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const clockFace = document.getElementById('clockFace');
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const secondHand = document.getElementById('secondHand');
+            const dateDisplay = document.getElementById('dateDisplay');
+
+            // Generate clock ticks and numbers
+            function buildClockFace() {
+                for (let i = 0; i < 60; i++) {
+                    const tick = document.createElement('div');
+                    tick.className = i % 5 === 0 ? 'tick major' : 'tick';
+                    tick.style.transform = `translateX(-50%) rotate(${i * 6}deg)`;
+                    clockFace.appendChild(tick);
+                }
+
+                const radius = 37; // percentage from center
+                for (let i = 1; i <= 12; i++) {
+                    const number = document.createElement('div');
+                    number.className = 'number';
+                    number.textContent = i;
+                    const angle = (i * 30 - 90) * (Math.PI / 180);
+                    const x = 50 + radius * Math.cos(angle);
+                    const y = 50 + radius * Math.sin(angle);
+                    number.style.left = `${x}%`;
+                    number.style.top = `${y}%`;
+                    clockFace.appendChild(number);
+                }
+            }
+
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                const seconds = now.getSeconds();
+                const milliseconds = now.getMilliseconds();
+
+                // Calculate angles with smooth transitions
+                const secondAngle = (seconds + milliseconds / 1000) * 6;
+                const minuteAngle = (minutes + seconds / 60 + milliseconds / 60000) * 6;
+                const hourAngle = ((hours % 12) + minutes / 60 + seconds / 3600) * 30;
+
+                secondHand.style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
+                minuteHand.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+                hourHand.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+
+                // Update date display
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                dateDisplay.textContent = now.toLocaleDateString('en-US', options);
+
+                requestAnimationFrame(updateClock);
+            }
+
+            buildClockFace();
+            updateClock();
+        })();
+    </script>
+</body>
+</html>

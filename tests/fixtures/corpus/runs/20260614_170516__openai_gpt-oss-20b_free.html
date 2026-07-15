@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Analog Clock</title>
+<style>
+  html, body {
+    height:100%;
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f0f0f0;
+    font-family:sans-serif;
+  }
+  #clock {
+    width:350px;
+    height:350px;
+    border:10px solid #333;
+    border-radius:50%;
+    position:relative;
+    background: radial-gradient(circle at 50% 50%, #fff 60%, #ccc 60%);
+    box-shadow:0 0 15px rgba(0,0,0,0.4);
+  }
+  .hand {
+    position:absolute;
+    width:50%;
+    height:2px;
+    background:#333;
+    top:50%;
+    left:50%;
+    transform-origin:100%;
+    transform:rotate(0deg);
+  }
+  .hour { width:39%; background:#222; height:3px; }
+  .minute { width:45%; background:#222; height:2.5px; }
+  .second { width:48%; background:red; height:1px; }
+
+  /* Center of clock */
+  #center {
+    position:absolute;
+    top:50%; left:50%;
+    width:15px; height:15px;
+    background:#333;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    z-index:10;
+  }
+
+  /* Hour markers */
+  .marker {
+    position:absolute;
+    width:4px; height:4px;
+    background:#333;
+    border-radius:50%;
+  }
+</style>
+</head>
+<body>
+<div id="clock">
+  <div id="center"></div>
+  <div class="hand hour" id="hourHand"></div>
+  <div class="hand minute" id="minuteHand"></div>
+  <div class="hand second" id="secondHand"></div>
+</div>
+
+<script>
+  // Create hour markers
+  const clock = document.getElementById('clock');
+  for(let i=0;i<12;i++){
+    const m = document.createElement('div');
+    m.className='marker';
+    const angle = i * 30; // 360/12
+    m.style.transform = `rotate(${angle}deg) translateY(-155px)`;
+    clock.appendChild(m);
+  }
+
+  function updateClock(){
+    const now = new Date();
+    const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+    const min = now.getMinutes() + sec / 60;
+    const hr  = now.getHours() % 12 + min / 60;
+
+    document.getElementById('secondHand').style.transform = `rotate(${sec * 6}deg)`;
+    document.getElementById('minuteHand').style.transform = `rotate(${min * 6}deg)`;
+    document.getElementById('hourHand').style.transform   = `rotate(${hr * 30}deg)`;
+  }
+
+  setInterval(updateClock, 50); // Update 20 times per second for smoothness
+  updateClock(); // Initial call
+</script>
+</body>
+</html>

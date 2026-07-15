@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center; /* Pivot point at the base of the hand */
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 70px;
+            margin-left: -4px; /* Center the hand */
+            margin-top: -60px; /* Adjust to move the pivot to the bottom center */
+            background-color: #555;
+            z-index: 7;
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 100px;
+            margin-left: -3px;
+            margin-top: -90px;
+            background-color: #444;
+            z-index: 8;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            margin-left: -1.5px; /* Adjust for thinner hand */
+            margin-top: -110px;
+            background-color: #f00;
+            z-index: 9;
+        }
+
+        /* Hour marks (optional, for better visual representation) */
+        .hour-mark {
+            position: absolute;
+            width: 4px;
+            height: 15px;
+            background-color: #666;
+            transform-origin: center 140px; /* Pivot around the center of the clock */
+            left: calc(50% - 2px); /* Center the mark horizontally */
+            top: calc(50% - 140px); /* Position 140px from the top (radius - half height of mark) */
+        }
+
+        .hour-mark:nth-child(1) { transform: rotate(0deg) translateY(130px); }
+        .hour-mark:nth-child(2) { transform: rotate(30deg) translateY(130px); }
+        .hour-mark:nth-child(3) { transform: rotate(60deg) translateY(130px); }
+        .hour-mark:nth-child(4) { transform: rotate(90deg) translateY(130px); }
+        .hour-mark:nth-child(5) { transform: rotate(120deg) translateY(130px); }
+        .hour-mark:nth-child(6) { transform: rotate(150deg) translateY(130px); }
+        .hour-mark:nth-child(7) { transform: rotate(180deg) translateY(130px); }
+        .hour-mark:nth-child(8) { transform: rotate(210deg) translateY(130px); }
+        .hour-mark:nth-child(9) { transform: rotate(240deg) translateY(130px); }
+        .hour-mark:nth-child(10) { transform: rotate(270deg) translateY(130px); }
+        .hour-mark:nth-child(11) { transform: rotate(300deg) translateY(130px); }
+        .hour-mark:nth-child(12) { transform: rotate(330deg) translateY(130px); }
+
+        /* Make quarter hour marks slightly larger */
+        .hour-mark-strong {
+            width: 6px;
+            height: 20px;
+        }
+
+        .hour-mark:nth-child(1), /* 12 */
+        .hour-mark:nth-child(4), /* 3 */
+        .hour-mark:nth-child(7), /* 6 */
+        .hour-mark:nth-child(10) /* 9 */ {
+            width: 6px;
+            height: 20px;
+            margin-left: -3px; /* Adjust for wider mark */
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="center-dot"></div>
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+
+        <!-- Hour marks -->
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+        <div class="hour-mark"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function setAnalogClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate rotation degrees
+            // Each second is 6 degrees (360 / 60)
+            const secondDegrees = (seconds * 6);
+
+            // Each minute is 6 degrees (360 / 60), plus fractional degrees for seconds
+            const minuteDegrees = (minutes * 6) + (seconds / 10); // 0.1 degrees per second
+
+            // Each hour is 30 degrees (360 / 12), plus fractional degrees for minutes
+            const hourDegrees = (hours % 12 * 30) + (minutes / 2); // 0.5 degrees per minute
+
+            secondHand.style.transform = `translate(-50%, -50%) rotate(${secondDegrees}deg)`;
+            minuteHand.style.transform = `translate(-50%, -50%) rotate(${minuteDegrees}deg)`;
+            hourHand.style.transform = `translate(-50%, -50%) rotate(${hourDegrees}deg)`;
+        }
+
+        // Set the clock immediately and then update every second
+        setAnalogClock();
+        setInterval(setAnalogClock, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .clock-container {
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .center-dot {
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg);
+            border-radius: 5px;
+            background-color: #333;
+        }
+
+        .hour-hand {
+            width: 6px;
+            height: 80px;
+            background-color: #333; /* Darker for hour hand */
+            transform: translateX(-50%) rotate(0deg); /* Initial state */
+        }
+
+        .minute-hand {
+            width: 4px;
+            height: 120px;
+            background-color: #555; /* Medium for minute hand */
+            transform: translateX(-50%) rotate(0deg); /* Initial state */
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 140px;
+            background-color: #f00; /* Red for second hand */
+            border-radius: 0; /* Make it pointy */
+            transform: translateX(-50%) rotate(0deg); /* Initial state */
+        }
+
+        /* Marker for hours */
+        .marker {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform-origin: top center;
+            height: 100%;
+            width: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .marker::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 10px;
+            background-color: #333;
+            position: absolute;
+            top: 0;
+            transform: translateX(-50%);
+        }
+
+        .marker:nth-child(even)::before {
+            height: 15px; /* Make 3, 6, 9, 12 markers longer */
+        }
+
+        .marker:nth-child(1) { transform: translateX(-50%) rotate(30deg); }
+        .marker:nth-child(2) { transform: translateX(-50%) rotate(60deg); }
+        .marker:nth-child(3) { transform: translateX(-50%) rotate(90deg); }
+        .marker:nth-child(4) { transform: translateX(-50%) rotate(120deg); }
+        .marker:nth-child(5) { transform: translateX(-50%) rotate(150deg); }
+        .marker:nth-child(6) { transform: translateX(-50%) rotate(180deg); }
+        .marker:nth-child(7) { transform: translateX(-50%) rotate(210deg); }
+        .marker:nth-child(8) { transform: translateX(-50%) rotate(240deg); }
+        .marker:nth-child(9) { transform: translateX(-50%) rotate(270deg); }
+        .marker:nth-child(10) { transform: translateX(-50%) rotate(300deg); }
+        .marker:nth-child(11) { transform: translateX(-50%) rotate(330deg); }
+        .marker:nth-child(12) { transform: translateX(-50%) rotate(0deg); }
+
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="center-dot"></div>
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+
+        <!-- Hour markers -->
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function setClock() {
+            const now = new Date(); // Get current date and time
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate degrees for each hand
+            // Second hand: 360 degrees / 60 seconds = 6 degrees per second
+            // Add 90deg offset because CSS transform starts at 0deg (top/12 o'clock)
+            const secondsDegrees = (seconds / 60) * 360 + 90;
+            
+            // Minute hand: 360 degrees / 60 minutes = 6 degrees per minute
+            // Also consider second hand movement for smoother minute hand
+            const minutesDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6) + 90;
+
+            // Hour hand: 360 degrees / 12 hours = 30 degrees per hour
+            // Convert to 12-hour format: (hours % 12)
+            // Also consider minute hand movement for smoother hour hand
+            const hoursDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30) + 90;
+
+            // Apply rotations
+            secondHand.style.transform = `translateX(-50%) rotate(${secondsDegrees}deg)`;
+            minuteHand.style.transform = `translateX(-50%) rotate(${minutesDegrees}deg)`;
+            hourHand.style.transform = `translateX(-50%) rotate(${hoursDegrees}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(setClock, 1000);
+
+        // Set the clock immediately when the page loads
+        setClock(); 
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Analog Clock</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    font-family: 'Arial', sans-serif;
+  }
+
+  .clock-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 
+      0 0 30px rgba(0, 0, 0, 0.3),
+      inset 0 0 30px rgba(0, 0, 0, 0.1),
+      0 15px 40px rgba(0, 0, 0, 0.3);
+    border: 8px solid #333;
+  }
+
+  .number {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 15px;
+  }
+
+  .number span {
+    display: inline-block;
+  }
+
+  .hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 10px 10px 0 0;
+    z-index: 10;
+  }
+
+  .hour {
+    width: 8px;
+    height: 28%;
+    background: #333;
+    margin-left: -4px;
+  }
+
+  .minute {
+    width: 6px;
+    height: 38%;
+    background: #555;
+    margin-left: -3px;
+  }
+
+  .second {
+    width: 2px;
+    height: 42%;
+    background: #e74c3c;
+    margin-left: -1px;
+  }
+
+  .center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    background: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  }
+
+  .center-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: #e74c3c;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .brand {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #888;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    color: white;
+    margin-bottom: 30px;
+    font-size: 32px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .digital {
+    color: white;
+    margin-top: 30px;
+    font-size: 24px;
+    background: rgba(0,0,0,0.3);
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+  <h1>Analog Clock</h1>
+  <div class="clock-container" id="clock">
+    <div class="brand">QUARTZ</div>
+    <div class="hand hour" id="hourHand"></div>
+    <div class="hand minute" id="minuteHand"></div>
+    <div class="hand second" id="secondHand"></div>
+    <div class="center-dot"></div>
+  </div>
+  <div class="digital" id="digital">00:00:00</div>
+
+<script>
+  // Create hour numbers
+  const clock = document.getElementById('clock');
+  for (let i = 1; i <= 12; i++) {
+    const num = document.createElement('div');
+    num.className = 'number';
+    num.style.transform = `rotate(${i * 30}deg)`;
+    const span = document.createElement('span');
+    span.textContent = i;
+    span.style.transform = `rotate(-${i * 30}deg)`;
+    span.style.display = 'inline-block';
+    num.appendChild(span);
+    clock.appendChild(num);
+  }
+
+  // Create minute markers
+  for (let i = 0; i < 60; i++) {
+    if (i % 5 !== 0) {
+      const marker = document.createElement('div');
+      marker.style.position = 'absolute';
+      marker.style.width = '2px';
+      marker.style.height = '6px';
+      marker.style.background = '#999';
+      marker.style.top = '10px';
+      marker.style.left = '50%';
+      marker.style.transformOrigin = '50% 190px';
+      marker.style.transform = `translateX(-50%) rotate(${i * 6}deg)`;
+      clock.appendChild(marker);
+    }
+  }
+
+  const hourHand = document.getElementById('hourHand');
+  const minuteHand = document.getElementById('minuteHand');
+  const secondHand = document.getElementById('secondHand');
+  const digital = document.getElementById('digital');
+
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const milliseconds = now.getMilliseconds();
+
+    // Smooth second hand rotation
+    const secondDeg = (seconds + milliseconds / 1000) * 6;
+    const minuteDeg = (minutes + seconds / 60) * 6;
+    const hourDeg = (hours + minutes / 60) * 30;
+
+    secondHand.style.transform = `rotate(${secondDeg}deg)`;
+    minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+    hourHand.style.transform = `rotate(${hourDeg}deg)`;
+
+    // Update digital display
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(minutes).padStart(2, '0');
+    const s = String(seconds).padStart(2, '0');
+    digital.textContent = `${h}:${m}:${s}`;
+  }
+
+  // Update immediately and then every 50ms for smooth second hand movement
+  updateClock();
+  setInterval(updateClock, 50);
+</script>
+</body>
+</html>

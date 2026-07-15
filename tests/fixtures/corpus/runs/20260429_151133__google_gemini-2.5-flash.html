@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center-dot {
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .markings {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .marking {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background-color: #555;
+            transform-origin: bottom center;
+            top: 0;
+            left: calc(50% - 1px);
+        }
+
+        .marking.hour {
+            height: 15px;
+            width: 3px;
+            background-color: #333;
+        }
+        
+        /* Generate markings dynamically or manually for a few key ones */
+        .marking:nth-child(1) { transform: rotate(30deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(2) { transform: rotate(60deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(3) { transform: rotate(90deg) translateY(calc(50% - 150px)); height: 15px; width: 3px; background-color: #333;}
+        .marking:nth-child(4) { transform: rotate(120deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(5) { transform: rotate(150deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(6) { transform: rotate(180deg) translateY(calc(50% - 150px)); height: 15px; width: 3px; background-color: #333;}
+        .marking:nth-child(7) { transform: rotate(210deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(8) { transform: rotate(240deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(9) { transform: rotate(270deg) translateY(calc(50% - 150px)); height: 15px; width: 3px; background-color: #333;}
+        .marking:nth-child(10) { transform: rotate(300deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(11) { transform: rotate(330deg) translateY(calc(50% - 150px)); }
+        .marking:nth-child(12) { transform: rotate(0deg) translateY(calc(50% - 150px)); height: 15px; width: 3px; background-color: #333;} 
+
+
+        .hand {
+            position: absolute;
+            background-color: #333;
+            transform-origin: bottom center;
+            border-radius: 5px;
+            z-index: 5;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 70px;
+            background-color: #333;
+            top: calc(50% - 70px);
+            left: calc(50% - 4px);
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 100px;
+            background-color: #555;
+            top: calc(50% - 100px);
+            left: calc(50% - 3px);
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            background-color: red;
+            top: calc(50% - 120px);
+            left: calc(50% - 1px);
+            z-index: 6; /* Make second hand slightly above other hands */
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="center-dot"></div>
+        <div class="markings">
+            <!-- Hour markings (can be generated with JS for more precision, or manually for 12 positions) -->
+            <!-- We'll manually specify 12 markings for simplicity -->
+            <div class="marking hour"></div> <!-- 12 -->
+            <div class="marking"></div> <!-- 1 -->
+            <div class="marking"></div> <!-- 2 -->
+            <div class="marking hour"></div> <!-- 3 -->
+            <div class="marking"></div> <!-- 4 -->
+            <div class="marking"></div> <!-- 5 -->
+            <div class="marking hour"></div> <!-- 6 -->
+            <div class="marking"></div> <!-- 7 -->
+            <div class="marking"></div> <!-- 8 -->
+            <div class="marking hour"></div> <!-- 9 -->
+            <div class="marking"></div> <!-- 10 -->
+            <div class="marking"></div> <!-- 11 -->
+        </div>
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Calculate degrees for each hand
+            // 360 degrees / 12 hours = 30 degrees per hour
+            // Add minute contribution: minutes / 60 * 30 degrees
+            const hourDegrees = (hours % 12) * 30 + (minutes / 60) * 30;
+
+            // 360 degrees / 60 minutes = 6 degrees per minute
+            // Add second contribution: seconds / 60 * 6 degrees
+            const minuteDegrees = (minutes * 6) + (seconds / 60) * 6;
+
+            // 360 degrees / 60 seconds = 6 degrees per second
+            const secondDegrees = seconds * 6;
+
+            // Apply rotations
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+        // Initial call to set the clock immediately on load
+        updateClock();
+    </script>
+</body>
+</html>

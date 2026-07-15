@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrono-Luxe Analog Clock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        /* Clock Face Texture */
+        .clock-face {
+            background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 60%, #dee2e6 100%);
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.1),
+                0 20px 50px rgba(0,0,0,0.5),
+                0 0 0 8px #343a40,
+                0 0 0 10px #212529;
+        }
+
+        /* Ticks and Numbers */
+        .tick {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center;
+            background-color: #343a40;
+            border-radius: 2px;
+        }
+        .tick.major {
+            width: 4px;
+            height: 18px;
+            margin-left: -2px;
+            margin-top: -9px;
+        }
+        .tick.minor {
+            width: 2px;
+            height: 10px;
+            margin-left: -1px;
+            margin-top: -5px;
+        }
+
+        .number {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #212529;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Hands */
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 999px;
+            z-index: 10;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .hand::after {
+            content: '';
+            position: absolute;
+            bottom: -15px; /* Tail length */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 15px;
+            background: inherit;
+            border-radius: 999px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 25%;
+            background: linear-gradient(to top, #212529, #495057);
+            margin-left: -4px;
+        }
+
+        .minute-hand {
+            width: 5px;
+            height: 38%;
+            background: linear-gradient(to top, #343a40, #6c757d);
+            margin-left: -2.5px;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 45%;
+            background: #dc3545; /* Lux Red */
+            margin-left: -1px;
+            box-shadow: 0 0 4px rgba(220, 53, 69, 0.6);
+            transition: transform 0.05s cubic-bezier(0.4, 2.08, 0.55, 0.44); /* Slight overshoot */
+        }
+        
+        .second-hand::after {
+            bottom: -20px;
+            height: 20px;
+        }
+
+        .center-cap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, #e9ecef, #343a40);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        /* Date Window */
+        .date-window {
+            position: absolute;
+            top: 68%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 2px solid #adb5bd;
+            border-radius: 4px;
+            width: 38px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #212529;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+
+        .brand-text {
+            position: absolute;
+            top: 32%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #495057;
+            text-transform: uppercase;
+            z-index: 5;
+        }
+
+        /* Gears / Ornate details */
+        .bezel-notch {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            width: 2px;
+            height: 8px;
+            background: #adb5bd;
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center text-white">
+
+    <div class="relative">
+        <!-- Outer decorative ring -->
+        <div class="absolute inset-0 rounded-full border-4 border-gray-700 shadow-2xl transform scale-105 opacity-50"></div>
+        
+        <!-- Main Clock Body -->
+        <div class="clock-face relative w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] rounded-full">
+            
+            <!-- Brand -->
+            <div class="brand-text">Chrono-Luxe</div>
+
+            <!-- Ticks Container (populated by JS) -->
+            <div id="ticks-container" class="absolute inset-0"></div>
+
+            <!-- Numbers Container (populated by JS) -->
+            <div id="numbers-container" class="absolute inset-0"></div>
+
+            <!-- Date Window -->
+            <div class="date-window" id="date-display">--</div>
+
+            <!-- Hands -->
+            <div class="hand hour-hand" id="hour-hand"></div>
+            <div class="hand minute-hand" id="minute-hand"></div>
+            <div class="hand second-hand" id="second-hand"></div>
+
+            <!-- Center Cap -->
+            <div class="center-cap"></div>
+        </div>
+
+        <!-- Digital Readout below clock -->
+        <div class="mt-8 text-center opacity-80">
+            <div id="digital-time" class="text-2xl sm:text-3xl font-light tracking-widest font-mono">00:00:00</div>
+            <div id="digital-date" class="text-sm sm:text-base text-gray-400 mt-1 uppercase tracking-wider">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ticksContainer = document.getElementById('ticks-container');
+            const numbersContainer = document.getElementById('numbers-container');
+            const hourHand = document.getElementById('hour-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const secondHand = document.getElementById('second-hand');
+            const dateDisplay = document.getElementById('date-display');
+            const digitalTime = document.getElementById('digital-time');
+            const digitalDate = document.getElementById('digital-date');
+
+            // Generate clock ticks and numbers
+            for (let i = 0; i < 60; i++) {
+                const angle = i * 6;
+                const tick = document.createElement('div');
+                tick.className = i % 5 === 0 ? 'tick major' : 'tick minor';
+                // Position tick by rotating container then offsetting from center
+                // We use transform directly with translateY to push to edge
+                const radiusOffset = -48; // percentage offset from center
+                tick.style.transform = `rotate(${angle}deg) translateY(${radiusOffset}%)`;
+                ticksContainer.appendChild(tick);
+
+                if (i % 5 === 0) {
+                    const num = i === 0 ? 12 : i / 5;
+                    const numberEl = document.createElement('div');
+                    numberEl.className = 'number';
+                    numberEl.textContent = num;
+                    
+                    // Calculate position for numbers (slightly inside edge)
+                    // Use radius percentage relative to clock radius
+                    const radius = 38; 
+                    const rad = (angle - 90) * (Math.PI / 180);
+                    const x = 50 + radius * Math.cos(rad);
+                    const y = 50 + radius * Math.sin(rad);
+                    
+                    numberEl.style.left = `${x}%`;
+                    numberEl.style.top = `${y}%`;
+                    numbersContainer.appendChild(numberEl);
+                }
+            }
+
+            function updateClock() {
+                const now = new Date();
+                
+                const seconds = now.getSeconds();
+                const minutes = now.getMinutes();
+                const hours = now.getHours();
+                const milliseconds = now.getMilliseconds();
+
+                // Calculate angles
+                // Smooth second hand: seconds * 6 + ms * (6/1000)
+                const secondDeg = (seconds * 6) + (milliseconds * 0.006);
+                const minuteDeg = (minutes * 6) + (seconds * 0.1);
+                const hourDeg = ((hours % 12) * 30) + (minutes * 0.5);
+
+                secondHand.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+                minuteHand.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+                hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+
+                // Date window
+                dateDisplay.textContent = String(now.getDate()).padStart(2, '0');
+
+                // Digital display
+                const pad = (n) => String(n).padStart(2, '0');
+                digitalTime.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                digitalDate.textContent = now.toLocaleDateString(undefined, options);
+
+                requestAnimationFrame(updateClock);
+            }
+
+            requestAnimationFrame(updateClock);
+        });
+    </script>
+</body>
+</html>

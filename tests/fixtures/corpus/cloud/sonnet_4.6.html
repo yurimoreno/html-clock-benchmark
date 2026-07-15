@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: sans-serif;
+    }
+
+    .clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <canvas id="clock" width="300" height="300"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('clock');
+    const ctx = canvas.getContext('2d');
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const radius = 130;
+
+    function drawClock() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Face
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = '#16213e';
+      ctx.fill();
+      ctx.strokeStyle = '#e2e2e2';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Hour markers
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * Math.PI) / 6;
+        const isQuarter = i % 3 === 0;
+        const innerR = isQuarter ? radius - 18 : radius - 12;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.sin(angle) * innerR, cy - Math.cos(angle) * innerR);
+        ctx.lineTo(cx + Math.sin(angle) * (radius - 4), cy - Math.cos(angle) * (radius - 4));
+        ctx.strokeStyle = isQuarter ? '#e2e2e2' : '#888';
+        ctx.lineWidth = isQuarter ? 3 : 1.5;
+        ctx.stroke();
+      }
+
+      // Minute markers
+      for (let i = 0; i < 60; i++) {
+        if (i % 5 === 0) continue; // skip where hour markers are
+        const angle = (i * Math.PI) / 30;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.sin(angle) * (radius - 8), cy - Math.cos(angle) * (radius - 8));
+        ctx.lineTo(cx + Math.sin(angle) * (radius - 4), cy - Math.cos(angle) * (radius - 4));
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      const now = new Date();
+      const sec  = now.getSeconds() + now.getMilliseconds() / 1000;
+      const min  = now.getMinutes() + sec / 60;
+      const hour = (now.getHours() % 12) + min / 60;
+
+      // Hour hand
+      drawHand((hour * Math.PI) / 6, radius * 0.55, 6, '#e2e2e2');
+
+      // Minute hand
+      drawHand((min * Math.PI) / 30, radius * 0.78, 4, '#c8c8c8');
+
+      // Second hand
+      drawHand((sec * Math.PI) / 30, radius * 0.85, 1.5, '#e74c3c');
+
+      // Center dot
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    }
+
+    function drawHand(angle, length, width, color) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.sin(angle) * length, cy - Math.cos(angle) * length);
+      // Small tail
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx - Math.sin(angle) * length * 0.15, cy + Math.cos(angle) * length * 0.15);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    function tick() {
+      drawClock();
+      requestAnimationFrame(tick);
+    }
+
+    tick();
+  </script>
+</body>
+</html>

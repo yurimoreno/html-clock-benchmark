@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="clock" width="300" height="300"></canvas>
+
+<script>
+    const canvas = document.getElementById('clock');
+    const ctx = canvas.getContext('2d');
+
+    function drawClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+
+        // Convert hours to a 0-12 hour format
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the clock face
+        ctx.beginPath();
+        ctx.arc(150, 150, 140, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw the hour ticks
+        for (let i = 0; i < 12; i++) {
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(i * Math.PI / 6);
+            ctx.beginPath();
+            ctx.moveTo(0, -120);
+            ctx.lineTo(0, -140);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Draw the minute ticks
+        for (let i = 0; i < 60; i++) {
+            if (i % 5 === 0) continue;
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(i * Math.PI / 30);
+            ctx.beginPath();
+            ctx.moveTo(0, -130);
+            ctx.lineTo(0, -135);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Draw the hour hand
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate((Math.PI / 6) * hours + (Math.PI / 360) * minutes);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -100);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw the minute hand
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate((Math.PI / 30) * minutes + (Math.PI / 1800) * seconds);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -120);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw the second hand
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate((Math.PI / 30) * seconds);
+        ctx.beginPath();
+        ctx.moveTo(0, 10);
+        ctx.lineTo(0, -140);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    setInterval(drawClock, 1000);
+    drawClock(); // Initial call to draw the clock immediately
+</script>
+
+</body>
+</html>

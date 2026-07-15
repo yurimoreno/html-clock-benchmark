@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .clock {
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .hour, .minute, .second {
+            position: absolute;
+            background-color: #333;
+            transform-origin: bottom center;
+            border-radius: 5px;
+            z-index: 1; /* Default for all hands */
+        }
+
+        .hour {
+            width: 8px;
+            height: 80px;
+            top: calc(50% - 80px); /* Center point is 50%, subtract hand height */
+            left: calc(50% - 4px); /* Center point is 50%, subtract half hand width */
+            background-color: #555;
+            z-index: 3; /* Hour hand on top of minute */
+        }
+
+        .minute {
+            width: 6px;
+            height: 110px;
+            top: calc(50% - 110px);
+            left: calc(50% - 3px);
+            background-color: #666;
+            z-index: 2; /* Minute hand on top of second */
+        }
+
+        .second {
+            width: 2px;
+            height: 120px;
+            top: calc(50% - 120px);
+            left: calc(50% - 1px);
+            background-color: #ff0000;
+            z-index: 4; /* Second hand on top of everything for visibility */
+        }
+
+        /* Number markings for the clock */
+        .number {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+            transform: translate(-50%, -50%); /* Adjust to center the text */
+        }
+
+        .number.n12 { top: 15%; left: 50%; }
+        .number.n1 { top: 22%; left: 75%; }
+        .number.n2 { top: 40%; left: 88%; }
+        .number.n3 { top: 50%; left: 90%; }
+        .number.n4 { top: 60%; left: 88%; }
+        .number.n5 { top: 78%; left: 75%; }
+        .number.n6 { top: 85%; left: 50%; }
+        .number.n7 { top: 78%; left: 25%; }
+        .number.n8 { top: 60%; left: 12%; }
+        .number.n9 { top: 50%; left: 10%; }
+        .number.n10 { top: 40%; left: 12%; }
+        .number.n11 { top: 22%; left: 25%; }
+
+        /* Small tick marks for minutes */
+         .tick {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background-color: #ccc;
+            transform-origin: bottom center;
+            top: 0;
+            left: calc(50% - 1px);
+        }
+
+        /* Larger ticks for hours */
+        .tick.hour-tick {
+            width: 4px;
+            height: 15px;
+            background-color: #aaa;
+            z-index: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="clock">
+        <div class="number n12">12</div>
+        <div class="number n3">3</div>
+        <div class="number n6">6</div>
+        <div class="number n9">9</div>
+
+        <!-- Dynamic tick marks (optional, but good for realism) -->
+        <script>
+            const clockEl = document.querySelector('.clock');
+            for (let i = 0; i < 60; i++) {
+                if (i % 5 !== 0) { // Only minute ticks, not hour ticks as we have numbers
+                    const tick = document.createElement('div');
+                    tick.classList.add('tick');
+                    tick.style.transform = `rotate(${i * 6}deg) translateY(-140px)`;
+                    clockEl.appendChild(tick);
+                }
+            }
+        </script>
+
+        <div class="hour" id="hourHand"></div>
+        <div class="minute" id="minuteHand"></div>
+        <div class="second" id="secondHand"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+
+        function setClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate degrees for each hand
+            // 360 degrees / 60 seconds = 6 degrees per second
+            // The +90 is because CSS transform: rotate(0deg) points right, but our hands start pointing up (12 o'clock).
+            // So, we effectively rotate from the 12 o'clock position.
+            // For example, 12 o'clock is 0 degrees, 3 o'clock is 90 degrees.
+            const secondDegrees = (seconds * 6); // Each second is 6 degrees
+            const minuteDegrees = (minutes * 6) + (seconds / 60) * 6; // Each minute is 6 degrees, plus a small increment based on seconds
+            // Each hour is 30 degrees (360/12). Each minute moves the hour hand 0.5 degrees (30/60).
+            const hourDegrees = (hours % 12 * 30) + (minutes / 60) * 30;
+
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(setClock, 1000);
+
+        // Set the clock immediately on load to prevent a blank display
+        setClock();
+
+    </script>
+</body>
+</html>

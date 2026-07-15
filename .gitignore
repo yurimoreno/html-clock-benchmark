@@ -8,7 +8,8 @@ __pycache__/
 
 # Generated outputs
 log.txt
-runs/
+# Only the live run directory at repo root (not tests/fixtures/corpus/runs/)
+/runs/
 
 # macOS
 .DS_Store

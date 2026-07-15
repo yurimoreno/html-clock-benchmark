@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #333;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="clockCanvas" width="300" height="300"></canvas>
+
+    <script>
+        const canvas = document.getElementById('clockCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawClock() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Draw clock outer circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 120, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw inner circle at center
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#333';
+            ctx.fill();
+
+            // Draw hour markers (12 long lines)
+            for (let i = 0; i < 12; i++) {
+                const hourAngle = (i * 30) * Math.PI / 180;
+                
+                // Start point of hour marker (inner circle)
+                const startHourX = centerX + (110 - 5) * Math.cos(hourAngle);
+                const startHourY = centerY + (110 - 5) * Math.sin(hourAngle);
+                
+                // End point of hour marker
+                const endHourX = centerX + (120 - 5) * Math.cos(hourAngle);
+                const endHourY = centerY + (120 - 5) * Math.sin(hourAngle);
+
+                // Draw hour marker
+                ctx.beginPath();
+                ctx.moveTo(startHourX, startHourY);
+                ctx.lineTo(endHourX, endHourY);
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw minute markers (smaller lines)
+            for (let i = 0; i < 12; i++) {
+                // Each hour segment has 5 minute markers
+                for (let j = 1; j < 60 / 5; j++) {
+                    const minuteAngle = ((i * 5 + j) / 60) * 360 * Math.PI / 180;
+                    
+                    // Start point of minute marker (inner circle)
+                    const startMinuteX = centerX + (110 - 5) * Math.cos(minuteAngle);
+                    const startMinuteY = centerY + (110 - 5) * Math.sin(minuteAngle);
+                    
+                    // End point of minute marker
+                    const endMinuteX = centerX + (115 - 5) * Math.cos(minuteAngle);
+                    const endMinuteY = centerY + (115 - 5) * Math.sin(minuteAngle);
+
+                    // Draw minute marker
+                    ctx.beginPath();
+                    ctx.moveTo(startMinuteX, startMinuteY);
+                    ctx.lineTo(endMinuteX, endMinuteY);
+                    ctx.strokeStyle = '#666';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            // Calculate hand angles
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Second hand angle
+            const secondAngle = (seconds / 60) * 360;
+            
+            // Minute hand angle (includes seconds)
+            const minuteAngle = ((minutes / 60) * 360 + (seconds / 60) * 6);
+            
+            // Hour hand angle (includes minutes)
+            const hourAngle = ((hours % 12) / 12 * 360 + (minutes / 60) * 30);
+
+            // Draw second hand
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + 80 * Math.cos(secondAngle * Math.PI / 180),
+                centerY + 80 * Math.sin(secondAngle * Math.PI / 180)
+            );
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw minute hand
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + 70 * Math.cos(minuteAngle * Math.PI / 180),
+                centerY + 70 * Math.sin(minuteAngle * Math.PI / 180)
+            );
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw hour hand
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + 50 * Math.cos(hourAngle * Math.PI / 180),
+                centerY + 50 * Math.sin(hourAngle * Math.PI / 180)
+            );
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // Update clock
+            requestAnimationFrame(drawClock);
+        }
+
+        window.onload = function() {
+            drawClock();
+        };
+    </script>
+</body>
+</html>

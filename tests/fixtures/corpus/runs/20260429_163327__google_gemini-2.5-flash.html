@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analog Clock</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .clock {
+    width: 300px;
+    height: 300px;
+    border: 10px solid #333;
+    border-radius: 50%;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .clock::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 50%;
+    z-index: 10; /* Ensure center dot is above hands */
+  }
+
+  .hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%; /* Rotate around the central pivot */
+    background-color: #333;
+    border-radius: 5px;
+  }
+
+  .hour {
+    width: 80px;
+    height: 5px;
+    margin-top: -2.5px; /* Center vertically on the pivot */
+    transform: rotate(0deg); /* Initial rotation */
+  }
+
+  .minute {
+    width: 110px;
+    height: 3px;
+    margin-top: -1.5px;
+    transform: rotate(0deg);
+  }
+
+  .second {
+    width: 130px;
+    height: 1px;
+    margin-top: -0.5px;
+    background-color: #f00; /* Red for the second hand */
+    transform: rotate(0deg);
+  }
+
+  /* Clock face markings (optional but makes it look better) */
+  .markings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .marking {
+    position: absolute;
+    width: 2px;
+    height: 10px;
+    background-color: #666;
+    transform-origin: bottom center;
+    top: 0;
+    left: 50%;
+    margin-left: -1px;
+  }
+
+  .marking:nth-child(1) { transform: translateY(-50%) rotate(0deg) translateY(calc(50% - 140px)); height: 15px; width: 3px; background-color: #333; }
+  .marking:nth-child(2) { transform: translateY(-50%) rotate(30deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(3) { transform: translateY(-50%) rotate(60deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(4) { transform: translateY(-50%) rotate(90deg) translateY(calc(50% - 140px)); height: 15px; width: 3px; background-color: #333; }
+  .marking:nth-child(5) { transform: translateY(-50%) rotate(120deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(6) { transform: translateY(-50%) rotate(150deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(7) { transform: translateY(-50%) rotate(180deg) translateY(calc(50% - 140px)); height: 15px; width: 3px; background-color: #333; }
+  .marking:nth-child(8) { transform: translateY(-50%) rotate(210deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(9) { transform: translateY(-50%) rotate(240deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(10) { transform: translateY(-50%) rotate(270deg) translateY(calc(50% - 140px)); height: 15px; width: 3px; background-color: #333; }
+  .marking:nth-child(11) { transform: translateY(-50%) rotate(300deg) translateY(calc(50% - 140px)); }
+  .marking:nth-child(12) { transform: translateY(-50%) rotate(330deg) translateY(calc(50% - 140px)); }
+
+</style>
+</head>
+<body>
+
+  <div class="clock">
+    <div class="markings">
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+      <div class="marking"></div>
+    </div>
+    <div class="hand hour" id="hourHand"></div>
+    <div class="hand minute" id="minuteHand"></div>
+    <div class="hand second" id="secondHand"></div>
+  </div>
+
+  <script>
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+
+    function updateClock() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+
+      // Calculate degrees for each hand
+      // Second hand moves 360 degrees in 60 seconds (6 degrees per second)
+      const secondDegrees = (seconds / 60) * 360;
+
+      // Minute hand moves 360 degrees in 60 minutes (6 degrees per minute)
+      // It also moves slightly with the seconds (0.1 degrees per second)
+      const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+
+      // Hour hand moves 360 degrees in 12 hours (30 degrees per hour)
+      // It also moves with minutes and seconds
+      // (hours % 12) for 12-hour format
+      const hourDegrees = (((hours % 12) / 12) * 360) + ((minutes / 60) * 30) + ((seconds / 3600) * 30);
+
+      // Apply rotations
+      secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+      minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+      hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+    }
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+
+    // Initial call to set the clock immediately
+    updateClock();
+  </script>
+
+</body>
+</html>

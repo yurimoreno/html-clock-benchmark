@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .clock {
+            width: 300px;
+            height: 300px;
+            border: 15px solid #333;
+            border-radius: 50%;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 
+                0 0 20px rgba(0, 0, 0, 0.3), /* Outer glow */
+                inset 0 0 15px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+        }
+
+        /* Center point styling (where hands connect) */
+        .clock::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+            border-radius: 50%;
+            z-index: 10; /* Ensure it's above the hands */
+        }
+
+        /* Hand styling */
+        .hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: bottom center; /* Rotation point is the bottom center of the hand element */
+            border-radius: 3px;
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transition for movement */
+        }
+
+        /* Hour Hand (Shortest and thickest) */
+        #hour-hand {
+            width: 8px;
+            height: 75px;
+            background-color: #333;
+            margin-left: -4px; /* Center the width on the element */
+            z-index: 20;
+        }
+
+        /* Minute Hand (Medium length) */
+        #minute-hand {
+            width: 6px;
+            height: 100px;
+            background-color: #555;
+            margin-left: -3px;
+            z-index: 30;
+        }
+
+        /* Second Hand (Longest and thinnest) */
+        #second-hand {
+            width: 2px;
+            height: 120px;
+            background-color: #e74c3c; /* Red color for visibility */
+            margin-left: -1px;
+            z-index: 40;
+        }
+
+        /* Optional: Clock Markers (for better visual appeal) */
+        .marker {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 2px;
+        }
+
+        /* Positioning the markers (example for every hour) */
+        .marker:nth-child(1) { transform: translate(-50%, -10px) rotate(0deg); }
+        .marker:nth-child(2) { transform: translate(-50%, -10px) rotate(30deg); }
+        .marker:nth-child(3) { transform: translate(-50%, -10px) rotate(60deg); }
+        /* ... and so on, up to 12 */
+        .marker:nth-child(12) { transform: translate(-50%, -10px) rotate(345deg); }
+
+    </style>
+</head>
+<body>
+
+    <div class="clock">
+        <!-- Clock Markers (We'll use 12 markers for simplicity) -->
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+        <div class="marker"></div>
+
+        <!-- The Hands -->
+        <div id="hour-hand" class="hand"></div>
+        <div id="minute-hand" class="hand"></div>
+        <div id="second-hand" class="hand"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hour-hand');
+        const minuteHand = document.getElementById('minute-hand');
+        const secondHand = document.getElementById('second-hand');
+
+        function updateClock() {
+            const now = new Date();
+            
+            // Get time components
+            const hours = now.getHours(); // 0-23
+            const minutes = now.getMinutes(); // 0-59
+            const seconds = now.getSeconds(); // 0-59
+
+            /* --- Calculations for Rotation (in degrees) --- */
+
+            // 1. Seconds Hand: 6 degrees per second (360 / 60)
+            // We add a small offset based on minutes to make it look smoother
+            const secondsDegrees = ((seconds * 6) + (minutes * 0.1)) % 360;
+
+            // 2. Minute Hand: 6 degrees per minute (360 / 60)
+            // We add a small offset based on seconds to make it look smoother
+            const minutesDegrees = ((minutes * 6) + (seconds * 0.1)) % 360;
+
+            // 3. Hour Hand: 30 degrees per hour (360 / 12)
+            // We add offsets for minutes and seconds to make it move continuously
+            const hoursDegrees = ((hours % 12) * 30 + (minutes * 0.5) + (seconds * 0.083)) % 360;
+
+            /* --- Applying Transformations --- */
+            
+            // Apply the calculated rotation to each hand element
+            secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+            minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+            hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+        }
+
+        // 1. Run the function immediately to set the time on page load
+        updateClock();
+
+        // 2. Set up an interval to run the function every 1000 milliseconds (1 second)
+        setInterval(updateClock, 1000);
+    </script>
+
+</body>
+</html>

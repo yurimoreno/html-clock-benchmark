@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .clock {
+            background-color: #fff;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .hour {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+        }
+        .minute {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: right center;
+        }
+        .second {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="hour" id="hourHand"></div>
+        <div class="minute" id="minuteHand"></div>
+        <div class="second" id="secondHand"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            const hourAngle = (hours * 30) + (minutes * 0.5) + (seconds * (1/60));
+            const minuteAngle = minutes * 6;
+            const secondAngle = seconds * 6;
+
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const secondHand = document.getElementById('secondHand');
+
+            hourHand.style.transform = `rotate(${hourAngle}deg)`;
+            minuteHand.style.transform = `rotate(${minuteAngle}deg)`;
+            secondHand.style.transform = `rotate(${secondAngle}deg)`;
+
+            // Adjust for the fact that the hour hand moves slower
+            hourHand.style.width = `${hours * 30}px`;
+            minuteHand.style.width = `${minutes * 5}px`;
+            secondHand.style.width = `${seconds * 0.5}px`;
+        }
+
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

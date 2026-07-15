@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analog Clock</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-family: sans-serif;
+  }
+
+  .clock {
+    width: 300px;
+    height: 300px;
+    border: 10px solid #333;
+    border-radius: 50%;
+    position: relative;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .clock::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    background-color: #333;
+    border-radius: 50%;
+    z-index: 10;
+  }
+
+  .hand {
+    position: absolute;
+    width: 50%;
+    height: 6px; /* Base width for hands */
+    background-color: black;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 50%; /* Pivot point at the center of the clock */
+    transform: rotate(90deg); /* Initial rotation to point up */
+    border-radius: 3px;
+  }
+
+  .hour {
+    width: 30%;
+    height: 8px; /* Thicker for hour hand */
+    background-color: #333;
+    transform: rotate(0deg);
+    top: 50%; /* Adjusted for center pivot */
+    left: 50%; /* Adjusted for center pivot */
+    margin-left: -30%; /* Shift left by its half length to center pivot */
+    margin-top: -4px; /* Shift up by half its height to center pivot */
+    border-radius: 4px;
+    z-index: 3;
+  }
+
+  .minute {
+    width: 40%;
+    height: 6px;
+    background-color: #555;
+    transform: rotate(0deg);
+    top: 50%;
+    left: 50%;
+    margin-left: -40%;
+    margin-top: -3px;
+    border-radius: 3px;
+    z-index: 2;
+  }
+
+  .second {
+    width: 45%;
+    height: 2px;
+    background-color: red;
+    transform: rotate(0deg);
+    top: 50%;
+    left: 50%;
+    margin-left: -45%;
+    margin-top: -1px;
+    border-radius: 1px;
+    z-index: 4;
+  }
+
+  /* Markings for clock face */
+  .clock::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Hour marks (for simplicity, only 12, 3, 6, 9) */
+  .mark {
+    position: absolute;
+    width: 5px;
+    height: 15px;
+    background-color: #777;
+    transform-origin: bottom center;
+    left: calc(50% - 2.5px);
+    top: 5px; /* Adjust to be within the border */
+  }
+
+  .mark:nth-child(1) { transform: rotate(0deg) translateY(calc(150px - 15px - 5px)); } /* 12 o'clock */
+  .mark:nth-child(2) { transform: rotate(30deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(3) { transform: rotate(60deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(4) { transform: rotate(90deg) translateY(calc(150px - 15px - 5px)); } /* 3 o'clock */
+  .mark:nth-child(5) { transform: rotate(120deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(6) { transform: rotate(150deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(7) { transform: rotate(180deg) translateY(calc(150px - 15px - 5px)); } /* 6 o'clock */
+  .mark:nth-child(8) { transform: rotate(210deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(9) { transform: rotate(240deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(10) { transform: rotate(270deg) translateY(calc(150px - 15px - 5px)); } /* 9 o'clock */
+  .mark:nth-child(11) { transform: rotate(300deg) translateY(calc(150px - 15px - 5px)); }
+  .mark:nth-child(12) { transform: rotate(330deg) translateY(calc(150px - 15px - 5px)); }
+
+  /* Thicker marks for 12, 3, 6, 9 */
+  .mark.bold {
+    height: 20px;
+    width: 7px;
+    background-color: #333;
+  }
+  .mark:nth-child(1) { top: 0; } /* Adjust position for 12 o'clock */
+
+
+  /* Numbers for clock face */
+  .number {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #444;
+  }
+  /* For simplicity, manually position relevant numbers */
+  .number12 { top: 20px; left: calc(50% - 15px); }
+  .number3 { top: calc(50% - 15px); right: 20px; }
+  .number6 { bottom: 20px; left: calc(50% - 15px); }
+  .number9 { top: calc(50% - 15px); left: 20px; }
+
+
+</style>
+</head>
+<body>
+
+  <div class="clock">
+    <div class="hand hour" id="hourHand"></div>
+    <div class="hand minute" id="minuteHand"></div>
+    <div class="hand second" id="secondHand"></div>
+
+    <div class="mark bold" style="transform: rotate(0deg) translateY(5px);"></div>
+    <div class="mark" style="transform: rotate(30deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark" style="transform: rotate(60deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark bold" style="transform: rotate(90deg) translateY(5px);"></div>
+    <div class="mark" style="transform: rotate(120deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark" style="transform: rotate(150deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark bold" style="transform: rotate(180deg) translateY(5px);"></div>
+    <div class="mark" style="transform: rotate(210deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark" style="transform: rotate(240deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark bold" style="transform: rotate(270deg) translateY(5px);"></div>
+    <div class="mark" style="transform: rotate(300deg) translateY(calc(150px - 15px - 5px));"></div>
+    <div class="mark" style="transform: rotate(330deg) translateY(calc(150px - 15px - 5px));"></div>
+
+    <div class="number number12">12</div>
+    <div class="number number3">3</div>
+    <div class="number number6">6</div>
+    <div class="number number9">9</div>
+  </div>
+
+  <script>
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+
+    function setClock() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      let hours = now.getHours();
+
+      // Convert to 12-hour format if needed for display
+      hours = hours % 12 || 12;
+
+      // Calculate degrees for each hand
+      // Seconds move 6 degrees per second (360/60)
+      const secondDegrees = (seconds / 60) * 360;
+      // Minutes move 6 degrees per minute (360/60) + 0.1 degrees per second (6/60) to be smooth
+      const minuteDegrees = ((minutes + seconds / 60) / 60) * 360;
+      // Hours move 30 degrees per hour (360/12) + 0.5 degrees per minute (30/60) to be smooth
+      const hourDegrees = ((hours + minutes / 60 + seconds / 3600) / 12) * 360;
+
+      secondHand.style.transform = `translate(-50%, -50%) rotate(${secondDegrees}deg)`;
+      minuteHand.style.transform = `translate(-50%, -50%) rotate(${minuteDegrees}deg)`;
+      hourHand.style.transform = `translate(-50%, -50%) rotate(${hourDegrees}deg)`;
+    }
+
+    // Update the clock every second
+    setInterval(setClock, 1000);
+
+    // Set the clock immediately on load
+    setClock();
+  </script>
+
+</body>
+</html>

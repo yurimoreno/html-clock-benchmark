@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analog Clock</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a2e; }
+canvas { border-radius: 50%; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+<canvas id="clock" width="400" height="400"></canvas>
+<script>
+const canvas = document.getElementById('clock');
+const ctx = canvas.getContext('2d');
+const size = 400;
+const center = size / 2;
+const radius = size / 2 - 10;
+
+function drawClock() {
+  ctx.clearRect(0, 0, size, size);
+  const now = new Date();
+  const hours = now.getHours() % 12;
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const millis = now.getMilliseconds();
+
+  ctx.save();
+  ctx.translate(center, center);
+
+  // Face
+  const grad = ctx.createRadialGradient(0, 0, radius * 0.1, 0, 0, radius);
+  grad.addColorStop(0, '#f0e6d3');
+  grad.addColorStop(1, '#d4c4a8');
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#2c2c54';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+
+  // Hour markers
+  for (let i = 0; i < 12; i++) {
+    const angle = (i * Math.PI) / 6;
+    ctx.save();
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -radius + 18);
+    ctx.lineTo(0, -radius + 38);
+    ctx.strokeStyle = '#2c2c54';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Minute markers
+  for (let i = 0; i < 60; i++) {
+    if (i % 5 !== 0) {
+      const angle = (i * Math.PI) / 30;
+      ctx.save();
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, -radius + 18);
+      ctx.lineTo(0, -radius + 26);
+      ctx.strokeStyle = '#5c5c8a';
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // Hour numbers
+  ctx.fillStyle = '#2c2c54';
+  ctx.font = 'bold 28px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let i = 1; i <= 12; i++) {
+    const angle = (i * Math.PI) / 6;
+    const x = Math.sin(angle) * (radius - 52);
+    const y = -Math.cos(angle) * (radius - 52);
+    ctx.fillText(i.toString(), x, y);
+  }
+
+  // Hour hand
+  const hourAngle = ((hours + minutes / 60) * Math.PI) / 6;
+  ctx.save();
+  ctx.rotate(hourAngle);
+  ctx.beginPath();
+  ctx.moveTo(-6, 12);
+  ctx.lineTo(0, -radius * 0.5);
+  ctx.lineTo(6, 12);
+  ctx.closePath();
+  ctx.fillStyle = '#2c2c54';
+  ctx.fill();
+  ctx.restore();
+
+  // Minute hand
+  const minuteAngle = ((minutes + seconds / 60) * Math.PI) / 30;
+  ctx.save();
+  ctx.rotate(minuteAngle);
+  ctx.beginPath();
+  ctx.moveTo(-4, 12);
+  ctx.lineTo(0, -radius * 0.72);
+  ctx.lineTo(4, 12);
+  ctx.closePath();
+  ctx.fillStyle = '#3d3d6b';
+  ctx.fill();
+  ctx.restore();
+
+  // Second hand
+  const secondAngle = ((seconds + millis / 1000) * Math.PI) / 30;
+  ctx.save();
+  ctx.rotate(secondAngle);
+  ctx.beginPath();
+  ctx.moveTo(0, 24);
+  ctx.lineTo(0, -radius * 0.82);
+  ctx.strokeStyle = '#e74c3c';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  // Counterweight
+  ctx.beginPath();
+  ctx.arc(0, 18, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#e74c3c';
+  ctx.fill();
+  ctx.restore();
+
+  // Center cap
+  ctx.beginPath();
+  ctx.arc(0, 0, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#2c2c54';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(0, 0, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#e74c3c';
+  ctx.fill();
+
+  ctx.restore();
+  requestAnimationFrame(drawClock);
+}
+
+drawClock();
+</script>
+</body>
+</html>

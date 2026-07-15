@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .clock {
+            width: 300px;
+            height: 300px;
+            background-color: #ecf0f1;
+            border: 10px solid #34495e;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* The center dot */
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #2c3e50;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 10px;
+            transform: translateX(-50%) rotate(0deg);
+        }
+
+        .hour {
+            width: 8px;
+            height: 70px;
+            background-color: #2c3e50;
+            z-index: 3;
+        }
+
+        .minute {
+            width: 6px;
+            height: 100px;
+            background-color: #34495e;
+            z-index: 4;
+        }
+
+        .second {
+            width: 2px;
+            height: 120px;
+            background-color: #e74c3c;
+            z-index: 5;
+            /* Precise transition for smooth movement */
+            transition: transform 0.1s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+        }
+
+        /* Number markings */
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .n1 { transform: rotate(30deg); }
+        .n2 { transform: rotate(60deg); }
+        .n3 { transform: rotate(90deg); }
+        .n4 { transform: rotate(120deg); }
+        .n5 { transform: rotate(150deg); }
+        .n6 { transform: rotate(180deg); }
+        .n7 { transform: rotate(210deg); }
+        .n8 { transform: rotate(240deg); }
+        .n9 { transform: rotate(270deg); }
+        .n10 { transform: rotate(300deg); }
+        .n11 { transform: rotate(330deg); }
+        .n12 { transform: rotate(0deg); }
+
+        /* Rotate numbers back upright */
+        .number span {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock">
+        <div class="number n12"><span>12</span></div>
+        <div class="number n1"><span>1</span></div>
+        <div class="number n2"><span>2</span></div>
+        <div class="number n3"><span>3</span></div>
+        <div class="number n4"><span>4</span></div>
+        <div class="number n5"><span>5</span></div>
+        <div class="number n6"><span>6</span></div>
+        <div class="number n7"><span>7</span></div>
+        <div class="number n8"><span>8</span></div>
+        <div class="number n9"><span>9</span></div>
+        <div class="number n10"><span>10</span></div>
+        <div class="number n11"><span>11</span></div>
+
+        <div class="hand hour" id="hour-hand"></div>
+        <div class="hand minute" id="minute-hand"></div>
+        <div class="hand second" id="second-hand"></div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hour-hand');
+        const minuteHand = document.getElementById('minute-hand');
+        const secondHand = document.getElementById('second-hand');
+
+        function setClock() {
+            const now = new Date();
+
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate rotation degrees
+            const secondsDegrees = (seconds / 60) * 360;
+            const minutesDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+            const hoursDegrees = ((hours / 12) * 360) + ((minutes / 60) * 30);
+
+            // Apply rotations
+            secondHand.style.transform = `translateX(-50%) rotate(${secondsDegrees}deg)`;
+            minuteHand.style.transform = `translateX(-50%) rotate(${minutesDegrees}deg)`;
+            hourHand.style.transform = `translateX(-50%) rotate(${hoursDegrees}deg)`;
+        }
+
+        // Run clock every second
+        setInterval(setClock, 1000);
+
+        // Run immediately on load
+        setClock();
+
+        // Fix the upright position of the numbers
+        document.querySelectorAll('.number').forEach((num, index) => {
+            const angle = (index + 1) * 30;
+            const span = num.querySelector('span');
+            // Counter-rotate the text so it stays vertical
+            span.style.transform = `rotate(-${angle}deg)`;
+        });
+        // Special case for 12 which is index 11 in this specific loop or index 0 depending on DOM
+        document.querySelector('.n12 span').style.transform = 'rotate(0deg)';
+    </script>
+</body>
+</html>

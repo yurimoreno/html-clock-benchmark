@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c3e50;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .clock {
+            width: 300px;
+            height: 300px;
+            border: 15px solid #ecf0f1;
+            border-radius: 50%;
+            position: relative;
+            padding: 2rem;
+            box-shadow:
+                0 0 0 4px rgba(0,0,0,0.1),
+                inset 0 0 0 3px #EFEFEF,
+                inset 0 0 10px black,
+                0 0 20px rgba(0,0,0,0.4);
+            background-color: #ffffff;
+        }
+        .clock-face {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform: translateY(-3px); /* account for the height of the clock hands */
+        }
+        .hand {
+            width: 50%;
+            height: 6px;
+            background: #2c3e50;
+            position: absolute;
+            top: 50%;
+            transform-origin: 100%;
+            transform: rotate(90deg);
+            transition: all 0.05s;
+            transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+            border-radius: 6px;
+            z-index: 5;
+        }
+        .hour-hand {
+            width: 35%;
+            left: 15%;
+            height: 8px;
+        }
+        .min-hand {
+            width: 45%;
+            left: 5%;
+            height: 5px;
+        }
+        .second-hand {
+            background: #e74c3c;
+            height: 3px;
+            z-index: 6;
+        }
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 18px;
+            height: 18px;
+            background: #e74c3c;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        
+        /* Optional: Adding clock numbers/ticks for better visuals */
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .num1 { transform: rotate(30deg); }
+        .num2 { transform: rotate(60deg); }
+        .num3 { transform: rotate(90deg); }
+        .num4 { transform: rotate(120deg); }
+        .num5 { transform: rotate(150deg); }
+        .num6 { transform: rotate(180deg); }
+        .num7 { transform: rotate(210deg); }
+        .num8 { transform: rotate(240deg); }
+        .num9 { transform: rotate(270deg); }
+        .num10 { transform: rotate(300deg); }
+        .num11 { transform: rotate(330deg); }
+        
+        .number div {
+            display: inline-block;
+        }
+        
+        .num1 div { transform: rotate(-30deg); }
+        .num2 div { transform: rotate(-60deg); }
+        .num3 div { transform: rotate(-90deg); }
+        .num4 div { transform: rotate(-120deg); }
+        .num5 div { transform: rotate(-150deg); }
+        .num6 div { transform: rotate(-180deg); }
+        .num7 div { transform: rotate(-210deg); }
+        .num8 div { transform: rotate(-240deg); }
+        .num9 div { transform: rotate(-270deg); }
+        .num10 div { transform: rotate(-300deg); }
+        .num11 div { transform: rotate(-330deg); }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="clock-face">
+            <div class="number num1"><div>1</div></div>
+            <div class="number num2"><div>2</div></div>
+            <div class="number num3"><div>3</div></div>
+            <div class="number num4"><div>4</div></div>
+            <div class="number num5"><div>5</div></div>
+            <div class="number num6"><div>6</div></div>
+            <div class="number num7"><div>7</div></div>
+            <div class="number num8"><div>8</div></div>
+            <div class="number num9"><div>9</div></div>
+            <div class="number num10"><div>10</div></div>
+            <div class="number num11"><div>11</div></div>
+            <div class="number num12"><div>12</div></div>
+
+            <div class="hand hour-hand"></div>
+            <div class="hand min-hand"></div>
+            <div class="hand second-hand"></div>
+            <div class="center-dot"></div>
+        </div>
+    </div>
+
+    <script>
+        const secondHand = document.querySelector('.second-hand');
+        const minsHand = document.querySelector('.min-hand');
+        const hourHand = document.querySelector('.hour-hand');
+
+        function setDate() {
+            const now = new Date();
+
+            const seconds = now.getSeconds();
+            const secondsDegrees = ((seconds / 60) * 360) + 90;
+            secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+
+            // Fix for the 360 to 90 degrees snapping glitch
+            if (seconds === 0) {
+                secondHand.style.transitionDuration = '0s';
+                minsHand.style.transitionDuration = '0s';
+                hourHand.style.transitionDuration = '0s';
+            } else {
+                secondHand.style.transitionDuration = '0.05s';
+                minsHand.style.transitionDuration = '0.05s';
+                hourHand.style.transitionDuration = '0.05s';
+            }
+
+            const mins = now.getMinutes();
+            const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 90;
+            minsHand.style.transform = `rotate(${minsDegrees}deg)`;
+
+            const hour = now.getHours();
+            const hourDegrees = ((hour / 12) * 360) + ((mins/60)*30) + 90;
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        }
+
+        setInterval(setDate, 1000);
+        setDate(); // Set initially to avoid flash
+    </script>
+</body>
+</html>

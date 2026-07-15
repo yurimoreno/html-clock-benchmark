@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analog Clock</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1a1a2e;
+    font-family: 'Georgia', serif;
+}
+
+.clock-container {
+    position: relative;
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.5));
+}
+
+canvas {
+    display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="clock-container">
+    <canvas id="clock" width="500" height="500"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById('clock');
+const ctx = canvas.getContext('2d');
+const radius = canvas.width / 2;
+const center = canvas.width / 2;
+
+// Scale for responsiveness
+function scale() {
+    const dpr = window.devicePixelRatio || 1;
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.85;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return size / 2;
+}
+
+let r = radius;
+
+function drawClock() {
+    const currentSize = Math.min(window.innerWidth, window.innerHeight) * 0.85;
+    r = currentSize / 2;
+
+    ctx.clearRect(0, 0, currentSize, currentSize);
+    ctx.translate(center, center);
+
+    drawFace();
+    drawNumbers();
+    drawTicks();
+    drawHands();
+    drawCenterCap();
+
+    ctx.translate(-center, -center);
+    requestAnimationFrame(drawClock);
+}
+
+function drawFace() {
+    // Outer ring gradient
+    const outerGrad = ctx.createRadialGradient(0, 0, r * 0.88, 0, 0, r);
+    outerGrad.addColorStop(0, '#2a2a3e');
+    outerGrad.addColorStop(1, '#16162a');
+
+    // Face
+    ctx.beginPath();
+    ctx.arc(0, 0, r - 2, 0, Math.PI * 2);
+    ctx.fillStyle = '#16213e';
+    ctx.fill();
+
+    // Inner gradient
+    const faceGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r - 2);
+    faceGrad.addColorStop(0, '#1a2744');
+    faceGrad.addColorStop(0.85, '#16213e');
+    faceGrad.addColorStop(1, '#0f1829');
+
+    ctx.beginPath();
+    ctx.arc(0, 0, r - 2, 0, Math.PI * 2);
+    ctx.fillStyle = faceGrad;
+    ctx.fill();
+
+    // Outer bezel
+    ctx.beginPath();
+    ctx.arc(0, 0, r - 1, 0, Math.PI * 2);
+    ctx.lineWidth = 3;
+    const bezelGrad = ctx.createLinearGradient(-r, -r, r, r);
+    bezelGrad.addColorStop(0, '#4a4a6a');
+    bezelGrad.addColorStop(0.3, '#8a8aaa');
+    bezelGrad.addColorStop(0.5, '#b0b0cc');
+    bezelGrad.addColorStop(0.7, '#8a8aaa');
+    bezelGrad.addColorStop(1, '#4a4a6a');
+    ctx.strokeStyle = bezelGrad;
+    ctx.stroke();
+
+    // Inner ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(100, 120, 180, 0.15)';
+    ctx.stroke();
+}
+
+function drawNumbers() {
+    ctx.fillStyle = '#c8d0e0';
+    ctx.font = `bold ${r * 0.13}px Georgia`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let num = 1; num <= 12; num++) {
+        const angle = (num * Math.PI / 6) - Math.PI / 2;
+        const x = Math.cos(angle) * r * 0.77;
+        const y = Math.sin(angle) * r * 0.77;
+        ctx.fillText(num.toString(), x, y);
+    }
+}
+
+function drawTicks() {
+    for (let i = 0; i < 60; i++) {
+        const angle = (i * Math.PI / 30) - Math.PI / 2;
+        const isHour = i % 5 === 0;
+
+        const outerR = r * 0.9;
+        const innerR = isHour ? r * 0.82 : r * 0.87;
+
+        const x1 = Math.cos(angle) * innerR;
+        const y1 = Math.sin(angle) * innerR;
+        const x2 = Math.cos(angle) * outerR;
+        const y2 = Math.sin(angle) * outerR;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+
+        if (isHour) {
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#e0e4f0';
+            ctx.shadowColor = 'rgba(200, 210, 255, 0.3)';
+            ctx.shadowBlur = 4;
+        } else {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(140, 160, 200, 0.5)';
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+    }
+}
+
+function drawHands() {
+    const now = new Date();
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const millis = now.getMilliseconds();
+
+    const smoothSeconds = seconds + millis / 1000;
+    const smoothMinutes = minutes + smoothSeconds / 60;
+    const smoothHours = hours + smoothMinutes / 60;
+
+    // Hour hand
+    const hourAngle = (smoothHours * Math.PI / 6) - Math.PI / 2;
+    drawHand(hourAngle, r * 0.5, 7, '#e8e8f0', true);
+
+    // Minute hand
+    const minuteAngle = (smoothMinutes * Math.PI / 30) - Math.PI / 2;
+    drawHand(minuteAngle, r * 0.72, 4, '#d0d4e8', true);
+
+    // Second hand
+    const secondAngle = (smoothSeconds * Math.PI / 30) - Math.PI / 2;
+    drawSecondHand(secondAngle, r * 0.8, r * 0.18);
+}
+
+function drawHand(angle, length, width, color, hasShadow) {
+    ctx.save();
+    ctx.rotate(angle);
+
+    // Shadow
+    if (hasShadow) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 3;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(-width * 0.6, 0);
+    ctx.lineTo(length, 0);
+    ctx.lineTo(width * 0.3, -width * 0.4);
+    ctx.lineTo(length - 3, 0);
+    ctx.lineTo(width * 0.3, width * 0.4);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(0, 0, length, 0);
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, hasShadow ? '#b0b8d0' : color);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function drawSecondHand(angle, length, tailLength) {
+    ctx.save();
+    ctx.rotate(angle);
+
+    // Glow effect
+    ctx.shadowColor = 'rgba(255, 70, 70, 0.6)';
+    ctx.shadowBlur = 8;
+
+    // Tail
+    ctx.beginPath();
+    ctx.moveTo(-tailLength, 0);
+    ctx.lineTo(4, -1.5);
+    ctx.lineTo(4, 1.5);
+    ctx.closePath();
+    ctx.fillStyle = '#ff4646';
+    ctx.fill();
+
+    // Main hand
+    ctx.beginPath();
+    ctx.moveTo(4, -1.5);
+    ctx.lineTo(length, 0);
+    ctx.lineTo(4, 1.5);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(4, 0, length, 0);
+    grad.addColorStop(0, '#ff6b6b');
+    grad.addColorStop(1, '#ff4646');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.restore();
+    ctx.shadowBlur = 0;
+}
+
+function drawCenterCap() {
+    // Outer ring of center cap
+    ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    const capGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 8);
+    capGrad.addColorStop(0, '#ff8a8a');
+    capGrad.addColorStop(1, '#cc3333');
+    ctx.fillStyle = capGrad;
+    ctx.fill();
+    ctx.strokeStyle = '#aa2222';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(0, 0, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+}
+
+drawClock();
+</script>
+
+</body>
+</html>

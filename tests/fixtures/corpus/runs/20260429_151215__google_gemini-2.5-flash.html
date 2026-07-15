@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #333;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock-container::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            background-color: #333;
+            transform-origin: bottom;
+            border-radius: 5px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 80px;
+            background-color: #555;
+            z-index: 3;
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 110px;
+            background-color: #777;
+            z-index: 2;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 130px;
+            background-color: #e74c3c;
+            z-index: 1;
+        }
+
+        /* Number markings */
+        .number {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        .number-12 { top: 20px; }
+        .number-1 { top: 48px; right: 48px; transform: rotate(30deg); }
+        .number-2 { top: 90px; right: 25px; transform: rotate(60deg); }
+        .number-3 { top: 50%; right: 20px; transform: translateY(-50%); }
+        .number-4 { bottom: 90px; right: 25px; transform: rotate(-60deg); }
+        .number-5 { bottom: 48px; right: 48px; transform: rotate(-30deg); }
+        .number-6 { bottom: 20px; }
+        .number-7 { bottom: 48px; left: 48px; transform: rotate(30deg); }
+        .number-8 { bottom: 90px; left: 25px; transform: rotate(60deg); }
+        .number-9 { top: 50%; left: 20px; transform: translateY(-50%); }
+        .number-10 { top: 90px; left: 25px; transform: rotate(-60deg); }
+        .number-11 { top: 48px; left: 48px; transform: rotate(-30deg); }
+
+        /* Small tick marks for minutes/seconds */
+        .tick {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background-color: #ccc;
+            transform-origin: bottom;
+        }
+
+        /* Generate ticks dynamically with JS or more CSS if desired.
+           For simplicity, we'll just demonstrate numbers.
+           A full tick system would involve more elements or canvas. */
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="hand hour-hand" id="hour"></div>
+        <div class="hand minute-hand" id="minute"></div>
+        <div class="hand second-hand" id="second"></div>
+
+        <div class="number number-12">12</div>
+        <div class="number number-1">1</div>
+        <div class="number number-2">2</div>
+        <div class="number number-3">3</div>
+        <div class="number number-4">4</div>
+        <div class="number number-5">5</div>
+        <div class="number number-6">6</div>
+        <div class="number number-7">7</div>
+        <div class="number number-8">8</div>
+        <div class="number number-9">9</div>
+        <div class="number number-10">10</div>
+        <div class="number number-11">11</div>
+    </div>
+
+    <script>
+        const hourHand = document.getElementById('hour');
+        const minuteHand = document.getElementById('minute');
+        const secondHand = document.getElementById('second');
+
+        function setClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            // Calculate degrees for each hand
+            // Second hand moves 6 degrees per second (360 / 60)
+            const secondDegrees = (seconds / 60) * 360;
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+
+            // Minute hand moves 6 degrees per minute, plus a little for the seconds movement
+            // (minutes + seconds/60) / 60 * 360
+            const minuteDegrees = ((minutes + seconds / 60) / 60) * 360;
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+
+            // Hour hand moves 30 degrees per hour (360 / 12), plus a little for minutes/seconds
+            // (hours + minutes/60 + seconds/3600) / 12 * 360
+            // We use hours % 12 to handle 24-hour format correctly for a 12-hour clock face
+            const hourDegrees = ((hours % 12 + minutes / 60 + seconds / 3600) / 12) * 360;
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        }
+
+        // Update the clock every second
+        setInterval(setClock, 1000);
+
+        // Set the clock immediately when the page loads to avoid a delay
+        setClock();
+    </script>
+</body>
+</html>

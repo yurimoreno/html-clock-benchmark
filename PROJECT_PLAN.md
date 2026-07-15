@@ -87,6 +87,10 @@ Total: **~19–27 focused days**, realistically 8–10 calendar weeks part-time.
 
 ## 4. Phase 0 — Groundwork & Decisions (0.5 days)
 
+> **Status (2026-07-15): COMPLETE.** Tag `v1-final` cut; golden corpus at
+> `tests/fixtures/corpus/` (see `MANIFEST.md`); D1–D3 locked in
+> [`docs/PHASE0_DECISIONS.md`](docs/PHASE0_DECISIONS.md). Proceed to Phase 1.
+
 ### Description
 Lock the decisions that everything downstream depends on, and snapshot current state so migration is
 verifiable.

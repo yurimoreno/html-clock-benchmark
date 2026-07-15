@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock • Live</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap');
+
+        :root {
+            --clock-size: 420px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e2937);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .clock-container {
+            position: relative;
+            width: var(--clock-size);
+            height: var(--clock-size);
+        }
+
+        .clock {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #f8fafc;
+            border-radius: 50%;
+            border: 24px solid #1e2937;
+            box-shadow: 
+                0 25px 50px -12px rgb(0 0 0 / 0.4),
+                inset 0 10px 20px rgba(255,255,255,0.9),
+                inset 0 -10px 20px rgba(15,23,42,0.3);
+            overflow: hidden;
+        }
+
+        /* Numbers */
+        .number {
+            position: absolute;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+        }
+
+        /* Hands container */
+        .hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            border-radius: 9999px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            transition: transform 0.05s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hour-hand {
+            width: 110px;
+            height: 12px;
+            background: linear-gradient(to right, #1e2937, #334155);
+            z-index: 3;
+        }
+
+        .minute-hand {
+            width: 155px;
+            height: 8px;
+            background: linear-gradient(to right, #1e2937, #475569);
+            z-index: 4;
+        }
+
+        .second-hand {
+            width: 170px;
+            height: 4px;
+            background: #ef4444;
+            z-index: 5;
+            box-shadow: 0 0 12px #ef4444;
+        }
+
+        /* Center pin */
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 28px;
+            height: 28px;
+            background: #1e2937;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 
+                0 0 0 8px #f8fafc,
+                0 0 0 12px #1e2937;
+        }
+
+        .center-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Subtle tick marks */
+        .tick {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #64748b;
+            transform-origin: 0% 50%;
+            border-radius: 2px;
+        }
+
+        .label {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #64748b;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .second-hand {
+            animation: pulse 1s infinite linear;
+        }
+    </style>
+</head>
+<body>
+    <h1>Analog Clock</h1>
+    
+    <div class="clock-container">
+        <div class="clock" id="clock">
+            <!-- Numbers and ticks will be injected by JavaScript -->
+            
+            <!-- Hour hand -->
+            <div class="hand hour-hand" id="hour-hand"></div>
+            
+            <!-- Minute hand -->
+            <div class="hand minute-hand" id="minute-hand"></div>
+            
+            <!-- Second hand -->
+            <div class="hand second-hand" id="second-hand"></div>
+            
+            <!-- Center pin -->
+            <div class="center">
+                <div class="center-inner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="label">LIVE • CURRENT TIME</div>
+
+    <script>
+        /**
+         * Single-file working analog clock
+         * Updates every 100ms for smooth second hand movement
+         * Fully self-contained HTML file
+         */
+        
+        function createClockElements() {
+            const clock = document.getElementById('clock');
+            const centerX = 210;
+            const centerY = 210;
+            const radius = 165;
+            
+            // Create 12 hour numbers
+            for (let i = 1; i <= 12; i++) {
+                const number = document.createElement('div');
+                number.className = 'number';
+                
+                // Clock angle (0° at 12 o'clock)
+                const angleDeg = i * 30;
+                const rad = (angleDeg - 90) * Math.PI / 180;
+                
+                // Position
+                const x = centerX + radius * Math.cos(rad);
+                const y = centerY + radius * Math.sin(rad);
+                
+                number.style.left = `${x}px`;
+                number.style.top = `${y}px`;
+                number.style.transform = 'translate(-50%, -50%)';
+                number.textContent = i;
+                
+                clock.appendChild(number);
+            }
+            
+            // Create 60 small tick marks
+            for (let i = 0; i < 60; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'tick';
+                
+                const angleDeg = i * 6;
+                const rad = (angleDeg - 90) * Math.PI / 180;
+                
+                // Position just inside the numbers
+                const tickRadius = 178;
+                const x = centerX + tickRadius * Math.cos(rad);
+                const y = centerY + tickRadius * Math.sin(rad);
+                
+                tick.style.left = `${x}px`;
+                tick.style.top = `${y}px`;
+                tick.style.transform = `translate(-50%, -50%) rotate(${angleDeg}deg)`;
+                
+                // Make every 5th tick thicker and longer (hour marks)
+                if (i % 5 === 0) {
+                    tick.style.width = '14px';
+                    tick.style.height = '14px';
+                    tick.style.background = '#1e2937';
+                } else {
+                    tick.style.width = '4px';
+                    tick.style.height = '4px';
+                    tick.style.background = '#94a3b8';
+                }
+                
+                clock.appendChild(tick);
+            }
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const milliseconds = now.getMilliseconds();
+            
+            // Precise angles (including milliseconds for smooth second hand)
+            const secondAngle = (seconds + milliseconds / 1000) * 6;        // 6° per second
+            const minuteAngle = minutes * 6 + seconds * 0.1;                // 6° per minute + 0.1° per second
+            const hourAngle = hours * 30 + minutes * 0.5 + seconds * (0.5 / 60); // 30° per hour + 0.5° per minute
+            
+            // Apply rotations (CSS rotate(0deg) points right → we subtract 90° to make 0° = 12 o'clock)
+            document.getElementById('second-hand').style.transform = `rotate(${secondAngle - 90}deg)`;
+            document.getElementById('minute-hand').style.transform = `rotate(${minuteAngle - 90}deg)`;
+            document.getElementById('hour-hand').style.transform = `rotate(${hourAngle - 90}deg)`;
+        }
+        
+        // Initialize everything
+        function init() {
+            createClockElements();
+            
+            // Initial render
+            updateClock();
+            
+            // Update ~10 times per second for buttery-smooth second hand
+            setInterval(updateClock, 100);
+            
+            // Console message (for fun)
+            console.log('%c✅ Analog clock ready • Live time from your device', 'color:#ef4444; font-family:monospace; font-size:12px');
+        }
+        
+        // Start the clock
+        window.onload = init;
+    </script>
+</body>
+</html>

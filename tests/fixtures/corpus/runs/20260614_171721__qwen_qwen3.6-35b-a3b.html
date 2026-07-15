@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analog Clock</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
+    font-family: 'Georgia', serif;
+    overflow: hidden;
+}
+
+.clock-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+canvas {
+    filter: drop-shadow(0 0 30px rgba(100, 140, 255, 0.15));
+}
+
+.digital-time {
+    color: #8899bb;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px rgba(100, 140, 255, 0.3);
+}
+</style>
+</head>
+<body>
+<div class="clock-container">
+    <canvas id="clock"></canvas>
+    <div class="digital-time" id="digital"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('clock');
+const ctx = canvas.getContext('2d');
+const digital = document.getElementById('digital');
+
+const size = Math.min(window.innerWidth, window.innerHeight) * 0.7;
+const dpr = window.devicePixelRatio || 1;
+canvas.width = size * dpr;
+canvas.height = size * dpr;
+canvas.style.width = size + 'px';
+canvas.style.height = size + 'px';
+ctx.scale(dpr, dpr);
+
+const center = size / 2;
+const radius = size / 2 - 20;
+
+function drawClock() {
+    const now = new Date();
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const millis = now.getMilliseconds();
+
+    const smoothSeconds = seconds + millis / 1000;
+    const smoothMinutes = minutes + smoothSeconds / 60;
+    const smoothHours = hours + smoothMinutes / 60;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // Outer ring glow
+    const glowGrad = ctx.createRadialGradient(center, center, radius - 5, center, center, radius + 15);
+    glowGrad.addColorStop(0, 'rgba(100, 160, 255, 0.08)');
+    glowGrad.addColorStop(1, 'rgba(100, 160, 255, 0)');
+    ctx.beginPath();
+    ctx.arc(center, center, radius + 15, 0, Math.PI * 2);
+    ctx.fillStyle = glowGrad;
+    ctx.fill();
+
+    // Clock face
+    const faceGrad = ctx.createRadialGradient(center - radius * 0.2, center - radius * 0.2, radius * 0.1, center, center, radius);
+    faceGrad.addColorStop(0, '#2a2a4a');
+    faceGrad.addColorStop(0.7, '#1e1e3a');
+    faceGrad.addColorStop(1, '#151530');
+    ctx.beginPath();
+    ctx.arc(center, center, radius, 0, Math.PI * 2);
+    ctx.fillStyle = faceGrad;
+    ctx.fill();
+
+    // Outer bezel
+    const bezelGrad = ctx.createLinearGradient(center - radius, center - radius, center + radius, center + radius);
+    bezelGrad.addColorStop(0, '#4a5580');
+    bezelGrad.addColorStop(0.3, '#6a7baa');
+    bezelGrad.addColorStop(0.5, '#8a9bcc');
+    bezelGrad.addColorStop(0.7, '#6a7baa');
+    bezelGrad.addColorStop(1, '#4a5580');
+    ctx.beginPath();
+    ctx.arc(center, center, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = bezelGrad;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Inner edge shadow
+    ctx.beginPath();
+    ctx.arc(center, center, radius - 6, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Tick marks and numbers
+    for (let i = 0; i < 60; i++) {
+        const angle = (i * 6 - 90) * (Math.PI / 180);
+        const isHour = i % 5 === 0;
+        const outerR = radius - 14;
+        const innerR = isHour ? radius - 34 : radius - 22;
+
+        const x1 = center + outerR * Math.cos(angle);
+        const y1 = center + outerR * Math.sin(angle);
+        const x2 = center + innerR * Math.cos(angle);
+        const y2 = center + innerR * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+
+        if (isHour) {
+            ctx.strokeStyle = '#c0ccdd';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+        } else {
+            ctx.strokeStyle = 'rgba(140, 160, 200, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.lineCap = 'round';
+        }
+        ctx.stroke();
+
+        // Hour numbers
+        if (isHour) {
+            const num = i / 5 || 12;
+            const numR = radius - 52;
+            const nx = center + numR * Math.cos(angle);
+            const ny = center + numR * Math.sin(angle);
+
+            ctx.fillStyle = '#a0b0cc';
+            ctx.font = `bold ${radius * 0.16}px Georgia`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(num.toString(), nx, ny);
+        }
+    }
+
+    // Subtle inner circle decoration
+    ctx.beginPath();
+    ctx.arc(center, center, radius - 62, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(100, 140, 200, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Hour hand
+    const hourAngle = (smoothHours * 30 - 90) * (Math.PI / 180);
+    const hourLen = radius * 0.5;
+    const hourWidth = 7;
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(hourAngle);
+    ctx.beginPath();
+    ctx.moveTo(-hourWidth * 0.4, 15);
+    ctx.lineTo(-2, -hourLen * 0.3);
+    ctx.lineTo(0, -hourLen);
+    ctx.lineTo(2, -hourLen * 0.3);
+    ctx.lineTo(hourWidth * 0.4, 15);
+    ctx.closePath();
+
+    const hGrad = ctx.createLinearGradient(0, 0, 0, -hourLen);
+    hGrad.addColorStop(0, '#8899bb');
+    hGrad.addColorStop(1, '#dde4f0');
+    ctx.fillStyle = hGrad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.restore();
+
+    // Minute hand
+    const minAngle = (smoothMinutes * 6 - 90) * (Math.PI / 180);
+    const minLen = radius * 0.72;
+    const minWidth = 4.5;
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(minAngle);
+    ctx.beginPath();
+    ctx.moveTo(-minWidth * 0.4, 18);
+    ctx.lineTo(-1.5, -minLen * 0.2);
+    ctx.lineTo(0, -minLen);
+    ctx.lineTo(1.5, -minLen * 0.2);
+    ctx.lineTo(minWidth * 0.4, 18);
+    ctx.closePath();
+
+    const mGrad = ctx.createLinearGradient(0, 0, 0, -minLen);
+    mGrad.addColorStop(0, '#99aacc');
+    mGrad.addColorStop(1, '#eef2ff');
+    ctx.fillStyle = mGrad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.restore();
+
+    // Second hand
+    const secAngle = (smoothSeconds * 6 - 90) * (Math.PI / 180);
+    const secLen = radius * 0.82;
+    const secTail = 25;
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(secAngle);
+
+    // Tail
+    ctx.beginPath();
+    ctx.moveTo(0, secTail);
+    ctx.lineTo(0, -secLen);
+    ctx.strokeStyle = '#ff4466';
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Counterweight circle
+    ctx.beginPath();
+    ctx.arc(0, secTail * 0.5, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff4466';
+    ctx.fill();
+
+    // Center dot on tail
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff4466';
+    ctx.fill();
+    ctx.restore();
+
+    // Center cap
+    const capGrad = ctx.createRadialGradient(center - 1, center - 1, 0, center, center, 10);
+    capGrad.addColorStop(0, '#ff6680');
+    capGrad.addColorStop(0.5, '#ff4466');
+    capGrad.addColorStop(1, '#cc2244');
+    ctx.beginPath();
+    ctx.arc(center, center, 8, 0, Math.PI * 2);
+    ctx.fillStyle = capGrad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Second hand glow
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 68, 102, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(center, center, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff4466';
+    ctx.fill();
+    ctx.restore();
+
+    // Digital time
+    const pad = n => n.toString().padStart(2, '0');
+    digital.textContent = `${pad(now.getHours())}:${pad(minutes)}:${pad(seconds)}`;
+
+    requestAnimationFrame(drawClock);
+}
+
+drawClock();
+
+window.addEventListener('resize', () => {
+    // Could reload page on resize, but for now let it be
+});
+</script>
+</body>
+</html>
