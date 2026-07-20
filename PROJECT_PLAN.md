@@ -179,7 +179,7 @@ lookup (`add_model.py:76`) is a network call with mutable results; freeze names 
 
 - Split the current `index.html` into a **Jinja2 template** (`site/templates/index.html.j2`): keep
   all existing CSS/JS/tabs verbatim; replace only the cloud tbody and cloud card grid with
-  `{% for %}` loops. The `local ` tab's content becomes a literal `{% include %}` block edited by
+  Jinja for-loops. The `local ` tab's content becomes a literal Jinja include block edited by
   hand, exactly as today (per CLAUDE.md, only the cloud tab is programmatic).
 - Move row/card formatting logic (`_make_table_row`, `_make_card`, `score_to_grade`,
   `_cost_eff_class`, `_fmt_price`, `_fmt_run_date`) into a `site/render.py` module — the existing

@@ -13,3 +13,6 @@ log.txt
 
 # macOS
 .DS_Store
+
+# Agent / local tooling
+.claude/
