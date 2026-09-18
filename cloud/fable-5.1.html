@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock</title>
+  <style>
+    :root {
+      --face: #fdfdfb;
+      --rim: #1f2933;
+      --tick: #1f2933;
+      --hand: #1f2933;
+      --second: #d64545;
+      --bg: #e8ecf1;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 40%, #f4f6f9 0%, var(--bg) 70%);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .clock {
+      width: min(80vmin, 420px);
+      height: min(80vmin, 420px);
+      display: block;
+      filter: drop-shadow(0 12px 28px rgba(15, 23, 42, 0.25));
+    }
+
+    .face {
+      fill: var(--face);
+      stroke: var(--rim);
+      stroke-width: 4;
+    }
+
+    .tick-minor {
+      stroke: var(--tick);
+      stroke-width: 1;
+      opacity: 0.55;
+    }
+
+    .tick-major {
+      stroke: var(--tick);
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+
+    .numeral {
+      fill: var(--tick);
+      font-size: 13px;
+      font-weight: 600;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .hand {
+      stroke: var(--hand);
+      stroke-linecap: round;
+    }
+
+    .hour { stroke-width: 6; }
+    .minute { stroke-width: 4; }
+
+    .second {
+      stroke: var(--second);
+      stroke-width: 1.5;
+    }
+
+    .center-cap {
+      fill: var(--hand);
+    }
+
+    .center-cap-inner {
+      fill: var(--second);
+    }
+
+    .digital {
+      margin-top: 1.25rem;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      color: #334155;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <svg class="clock" viewBox="0 0 200 200" role="img" aria-labelledby="clock-title">
+      <title id="clock-title">Analog clock showing the current time</title>
+
+      <circle class="face" cx="100" cy="100" r="96"></circle>
+
+      <g id="ticks"></g>
+      <g id="numerals"></g>
+
+      <line id="hour-hand" class="hand hour" x1="100" y1="100" x2="100" y2="50"></line>
+      <line id="minute-hand" class="hand minute" x1="100" y1="100" x2="100" y2="30"></line>
+      <line id="second-hand" class="hand second" x1="100" y1="115" x2="100" y2="22"></line>
+
+      <circle class="center-cap" cx="100" cy="100" r="5"></circle>
+      <circle class="center-cap-inner" cx="100" cy="100" r="2"></circle>
+    </svg>
+    <div class="digital" id="digital" aria-live="off">--:--:--</div>
+  </div>
+
+  <script>
+    (function () {
+      const CENTER = 100;
+      const ticksGroup = document.getElementById('ticks');
+      const numeralsGroup = document.getElementById('numerals');
+      const hourHand = document.getElementById('hour-hand');
+      const minuteHand = document.getElementById('minute-hand');
+      const secondHand = document.getElementById('second-hand');
+      const digital = document.getElementById('digital');
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+
+      // Build 60 tick marks (major every 5).
+      for (let i = 0; i < 60; i++) {
+        const angle = (i * 6) * Math.PI / 180;
+        const isMajor = i % 5 === 0;
+        const outer = 92;
+        const inner = isMajor ? 82 : 87;
+        const line = document.createElementNS(SVG_NS, 'line');
+        line.setAttribute('x1', (CENTER + inner * Math.sin(angle)).toFixed(3));
+        line.setAttribute('y1', (CENTER - inner * Math.cos(angle)).toFixed(3));
+        line.setAttribute('x2', (CENTER + outer * Math.sin(angle)).toFixed(3));
+        line.setAttribute('y2', (CENTER - outer * Math.cos(angle)).toFixed(3));
+        line.setAttribute('class', isMajor ? 'tick-major' : 'tick-minor');
+        ticksGroup.appendChild(line);
+      }
+
+      // Build numerals 1-12.
+      for (let n = 1; n <= 12; n++) {
+        const angle = (n * 30) * Math.PI / 180;
+        const radius = 70;
+        const text = document.createElementNS(SVG_NS, 'text');
+        text.setAttribute('x', (CENTER + radius * Math.sin(angle)).toFixed(3));
+        text.setAttribute('y', (CENTER - radius * Math.cos(angle)).toFixed(3));
+        text.setAttribute('class', 'numeral');
+        text.textContent = String(n);
+        numeralsGroup.appendChild(text);
+      }
+
+      function setRotation(el, degrees) {
+        el.setAttribute('transform', 'rotate(' + degrees.toFixed(3) + ' ' + CENTER + ' ' + CENTER + ')');
+      }
+
+      function pad(n) {
+        return n < 10 ? '0' + n : String(n);
+      }
+
+      function update() {
+        const now = new Date();
+        const ms = now.getMilliseconds();
+        const s = now.getSeconds() + ms / 1000;
+        const m = now.getMinutes() + s / 60;
+        const h = (now.getHours() % 12) + m / 60;
+
+        setRotation(secondHand, s * 6);
+        setRotation(minuteHand, m * 6);
+        setRotation(hourHand, h * 30);
+
+        digital.textContent =
+          pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+        requestAnimationFrame(update);
+      }
+
+      update();
+    })();
+  </script>
+</body>
+</html>

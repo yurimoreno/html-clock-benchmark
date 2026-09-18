@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analog Clock</title>
+<style>
+  :root {
+    --bg-1: #0f1117;
+    --bg-2: #1b1f2b;
+    --face-1: #f7f5ef;
+    --face-2: #ded9cd;
+    --rim-1: #3a3f4c;
+    --rim-2: #10131a;
+    --ink: #1a1d24;
+    --ink-soft: #5c6270;
+    --accent: #d0342c;
+    --shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 3vmin, 28px);
+    background: radial-gradient(circle at 50% 35%, var(--bg-2) 0%, var(--bg-1) 70%);
+    font-family: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    color: #8d94a5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .clock {
+    width: min(84vw, 84vh, 460px);
+    aspect-ratio: 1 / 1;
+    filter: drop-shadow(0 18px 34px var(--shadow));
+  }
+
+  .readout {
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(13px, 2.4vmin, 17px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Hands still track time; motion is inherent to a clock. */
+  }
+</style>
+</head>
+<body>
+
+<svg class="clock" viewBox="0 0 400 400" role="img" aria-label="Analog clock">
+  <title id="clock-title">Analog clock</title>
+  <defs>
+    <radialGradient id="faceGrad" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="var(--face-1)"/>
+      <stop offset="100%" stop-color="var(--face-2)"/>
+    </radialGradient>
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#575d6d"/>
+      <stop offset="50%" stop-color="var(--rim-1)"/>
+      <stop offset="100%" stop-color="var(--rim-2)"/>
+    </linearGradient>
+    <filter id="handShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2.2" stdDeviation="2.2" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <!-- Case -->
+  <circle cx="200" cy="200" r="196" fill="url(#rimGrad)"/>
+  <circle cx="200" cy="200" r="182" fill="url(#faceGrad)"/>
+  <circle cx="200" cy="200" r="182" fill="none" stroke="#000" stroke-opacity="0.12" stroke-width="1"/>
+
+  <!-- Ticks and numerals injected by script -->
+  <g id="ticks"></g>
+  <g id="numerals" fill="var(--ink)" font-size="30" font-weight="600"
+     text-anchor="middle" dominant-baseline="central"></g>
+
+  <text x="200" y="128" text-anchor="middle" font-size="11"
+        letter-spacing="3.4" fill="var(--ink-soft)">QUARTZ</text>
+
+  <!-- Hands: drawn pointing up from the center, rotated via transform -->
+  <g filter="url(#handShadow)">
+    <g id="hourHand">
+      <line x1="200" y1="216" x2="200" y2="112"
+            stroke="var(--ink)" stroke-width="10" stroke-linecap="round"/>
+    </g>
+    <g id="minuteHand">
+      <line x1="200" y1="222" x2="200" y2="66"
+            stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round"/>
+    </g>
+    <g id="secondHand">
+      <line x1="200" y1="238" x2="200" y2="50"
+            stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="200" cy="88" r="7" fill="none" stroke="var(--accent)" stroke-width="2.2"/>
+    </g>
+  </g>
+
+  <circle cx="200" cy="200" r="7.5" fill="var(--ink)"/>
+  <circle cx="200" cy="200" r="3" fill="var(--accent)"/>
+</svg>
+
+<div class="readout" id="readout" role="status" aria-live="off">--:--:--</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var CX = 200, CY = 200;
+
+  var ticks = document.getElementById("ticks");
+  var numerals = document.getElementById("numerals");
+  var hourHand = document.getElementById("hourHand");
+  var minuteHand = document.getElementById("minuteHand");
+  var secondHand = document.getElementById("secondHand");
+  var readout = document.getElementById("readout");
+
+  // --- Build the dial: 60 minute ticks, every 5th emphasized ---
+  for (var i = 0; i < 60; i++) {
+    var isHour = i % 5 === 0;
+    var angle = (i * 6) * Math.PI / 180;
+    var outer = 168;
+    var inner = isHour ? 150 : 161;
+    var sin = Math.sin(angle), cos = Math.cos(angle);
+
+    var line = document.createElementNS(SVG_NS, "line");
+    line.setAttribute("x1", (CX + outer * sin).toFixed(2));
+    line.setAttribute("y1", (CY - outer * cos).toFixed(2));
+    line.setAttribute("x2", (CX + inner * sin).toFixed(2));
+    line.setAttribute("y2", (CY - inner * cos).toFixed(2));
+    line.setAttribute("stroke", "var(--ink)");
+    line.setAttribute("stroke-opacity", isHour ? "0.95" : "0.42");
+    line.setAttribute("stroke-width", isHour ? "4" : "1.6");
+    line.setAttribute("stroke-linecap", "round");
+    ticks.appendChild(line);
+  }
+
+  // --- Numerals 1..12 ---
+  for (var h = 1; h <= 12; h++) {
+    var a = (h * 30) * Math.PI / 180;
+    var r = 124;
+    var t = document.createElementNS(SVG_NS, "text");
+    t.setAttribute("x", (CX + r * Math.sin(a)).toFixed(2));
+    t.setAttribute("y", (CY - r * Math.cos(a)).toFixed(2));
+    t.textContent = String(h);
+    numerals.appendChild(t);
+  }
+
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+  function render() {
+    var now = new Date();
+    var ms = now.getMilliseconds();
+    var s = now.getSeconds() + ms / 1000;
+    var m = now.getMinutes() + s / 60;
+    var hr = (now.getHours() % 12) + m / 60;
+
+    // Continuous sweep — smooth, and each hand carries its subdivisions.
+    var secDeg = s * 6;
+    var minDeg = m * 6;
+    var hourDeg = hr * 30;
+
+    secondHand.setAttribute("transform", "rotate(" + secDeg.toFixed(3) + " " + CX + " " + CY + ")");
+    minuteHand.setAttribute("transform", "rotate(" + minDeg.toFixed(3) + " " + CX + " " + CY + ")");
+    hourHand.setAttribute("transform", "rotate(" + hourDeg.toFixed(3) + " " + CX + " " + CY + ")");
+
+    var text = pad(now.getHours()) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds());
+    if (readout.textContent !== text) readout.textContent = text;
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+})();
+</script>
+
+</body>
+</html>

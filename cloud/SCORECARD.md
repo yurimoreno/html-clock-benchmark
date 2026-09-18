@@ -3,26 +3,45 @@
 Evaluated 2026-04-28. Same rubric as the local-models scorecard:
 Time Accuracy ×3, Visuals ×2, Markers/Numbers ×1.5, Code Quality ×1.5, Smoothness ×1.
 
+**2026-09-01 addition:** three more entries below (Opus 5, Fable 5.1, Sonnet 5) were generated the same way as everything else here — one-shot, blind to this rubric — but via Claude subscription/subagents instead of an OpenRouter API call (no per-token pricing exists for them, hence "—" in Input/Output), and scored against the current `JUDGE_V1.md` rubric, which adds a One-Shot Bonus term the original 12 rows below didn't have. The two rubric versions agree closely on identical inputs (verified: an all-10s clock scores 10.0 under both), so scores are comparable, but treat the bonus term as the one methodological difference.
+
 | Rank | File | Time | Visuals | Markers | Code | Smooth | **Overall /10** | **Input** | **Output** |
 |------|------|------|---------|---------|------|--------|------------------|-----------|------------|
-| 1 | glm-5.1.html | 10 | 9 | 10 | 9 | 9 | **9.5** | $1.05/M | $3.50/M |
-| 2 | deepseek-v4-pro.html | 10 | 8 | 10 | 10 | 9 | **9.4** | $0.44/M | $0.87/M |
-| 3 | opus 4.7.html | 10 | 9 | 9 | 9 | 9 | **9.3** | $5/M | $25/M |
-| 4 | kimi k2.5.html | 10 | 9 | 9 | 7 | 9 | **9.0** | $0.44/M | $2/M |
-| 5 | sonnet 4.6.html | 10 | 8 | 8 | 9 | 9 | **8.9** | $3/M | $15/M |
-| 6 | kimi k2.6.html | 10 | 8 | 9 | 9 | 6 | **8.8** | $0.74/M | $4.66/M |
-| 7 | gemini-3.1-pro.html | 10 | 8 | 7 | 7 | 6 | **8.1** | $2/M | $12/M |
-| 8 | chatgpt-free.html | 9 | 7 | 8 | 7 | 5 | **7.6** | $1.75/M | $14/M |
-| 9 | mimo-2.5-pro.html | 9 | 6 | 7 | 6 | 9 | **7.5** | $1/M | $3/M |
-| 10 | qwen-3.6-plus.html | 9 | 6 | 7 | 6 | 5 | **7.1** | $0.325/M | $1.95/M |
-| 11 | grok 4.2 expert.html | 8 | 4 | 8 | 7 | 8 | **6.9** | — | — |
-| 12 | minimax-m2.7.html | 8 | 7 | 5 | 6 | 5 | **6.6** | $0.30/M | $1.20/M |
+| 1 | opus-5.html | 10 | 10 | 10 | 10 | 10 | **10.0** | — | — |
+| 2 | fable-5.1.html | 10 | 8 | 10 | 10 | 10 | **9.6** | — | — |
+| 3 | glm-5.1.html | 10 | 9 | 10 | 9 | 9 | **9.5** | $1.05/M | $3.50/M |
+| 4 | deepseek-v4-pro.html | 10 | 8 | 10 | 10 | 9 | **9.4** | $0.44/M | $0.87/M |
+| 5 | opus 4.7.html | 10 | 9 | 9 | 9 | 9 | **9.3** | $5/M | $25/M |
+| 6 | kimi k2.5.html | 10 | 9 | 9 | 7 | 9 | **9.0** | $0.44/M | $2/M |
+| 7 | sonnet 4.6.html | 10 | 8 | 8 | 9 | 9 | **8.9** | $3/M | $15/M |
+| 8 | sonnet-5.html | 10 | 10 | 10 | 2 | 10 | **8.8** | — | — |
+| 9 | kimi k2.6.html | 10 | 8 | 9 | 9 | 6 | **8.8** | $0.74/M | $4.66/M |
+| 10 | gemini-3.1-pro.html | 10 | 8 | 7 | 7 | 6 | **8.1** | $2/M | $12/M |
+| 11 | chatgpt-free.html | 9 | 7 | 8 | 7 | 5 | **7.6** | $1.75/M | $14/M |
+| 12 | mimo-2.5-pro.html | 9 | 6 | 7 | 6 | 9 | **7.5** | $1/M | $3/M |
+| 13 | qwen-3.6-plus.html | 9 | 6 | 7 | 6 | 5 | **7.1** | $0.325/M | $1.95/M |
+| 14 | grok 4.2 expert.html | 8 | 4 | 8 | 7 | 8 | **6.9** | — | — |
+| 15 | minimax-m2.7.html | 8 | 7 | 5 | 6 | 5 | **6.6** | $0.30/M | $1.20/M |
 
-For context, the best local model (qwen2.5-coder-14b) scored **7.8** on the same rubric — still ahead of the bottom four cloud entries but behind the top seven.
+For context, the best local model (qwen2.5-coder-14b) scored **7.8** on the same rubric — still ahead of the bottom four cloud entries but behind the top ten.
 
 ---
 
-## 1. glm-5.1.html — **9.5/10 (winner of the cloud set)**
+## 0a. opus-5.html — **10.0/10**
+
+Added 2026-09-01, via Claude subscription (subagent), blind one-shot — not shown this rubric. SVG clock. Genuine two-circle bezel (a separate rim circle drawn behind the face circle, not just a stroke), `radialGradient`/`linearGradient` applied directly to the face and rim, all three hands (hour, minute, second) extend past the pivot as real counterweights, drop-shadow via both a CSS `filter` and an SVG `feDropShadow`. Script is fully IIFE-scoped (zero global leaks), sized with `min(84vw, 84vh, 460px)` (responsive), uses a `pad()` helper, `requestAnimationFrame` loop. Manually traced the rotation math at 12:00 and 3:00 — correct. No bugs found; this is a clean sweep of every rubric criterion, not a rounding artifact.
+
+## 0b. fable-5.1.html — **9.6/10**
+
+Added 2026-09-01, via Claude subscription (subagent), blind one-shot. SVG clock, fully IIFE-scoped, responsive `min(80vmin, 420px)` sizing, dedicated `setRotation()` and `pad()` helper functions, correct continuous hour/minute/ms-precision math. Only real weakness: the "bezel" is a 4px `stroke` on the *same* face circle rather than a distinct rim layer — visually it's just an outline, not a raised/beveled ring — so it doesn't clear the bezel criterion. Hand tails present only on the second hand (small counterweight below the pivot), not on hour/minute.
+
+## 0c. sonnet-5.html — **8.8/10**
+
+Added 2026-09-01, via Claude subscription (subagent), blind one-shot. CSS `transform`-based clock, correct continuous time math (hour includes minutes/60, minute includes seconds/60, second includes ms), box-shadow rings standing in for a bezel, `requestAnimationFrame` loop with an accurate first frame. Tail/counterweight present only on the second hand (a `::after` circle), not hour/minute.
+
+What tanks the Code score: the entire script runs at the top level of a `<script>` tag with no wrapping function — `hourMarkersContainer`, `minuteMarkersContainer`, `numbersContainer`, `radius`, `numberRadius`, all three hand references, `digitalTime`, and `updateClock` are all top-level bindings, roughly ten of them, none namespaced. On top of that `.clock { width: 320px; height: 320px }` is a hardcoded pixel size, not relative to viewport — fails the responsiveness check outright. Ticks and numerals are also generated with bare `for` loops rather than a named helper function. Three of the four Code Architecture checks fail; only "zero external dependencies" passes.
+
+## 1. glm-5.1.html — **9.5/10 (winner of the original 2026-04-28 cloud set)**
 
 What works
 - Canvas, 400×400, full `requestAnimationFrame` loop. Smooth seconds.
@@ -173,19 +192,22 @@ What's broken
 
 ## Final cloud ranking
 
-1. **glm-5.1** — best face, best detail (9.5)
-2. **deepseek-v4-pro** — only SVG entry; correctness-by-construction, minimal styling (9.4)
-3. **opus 4.7** — most polished CSS implementation (9.3)
-4. **kimi k2.5** — feature-rich, slightly bloated source (9.0)
-5. **sonnet 4.6** — cleanest correct canvas code (8.9)
-6. **kimi k2.6** — k2.5 refactored cleaner but with a regression to 1 Hz seconds (8.8)
-7. **gemini-3.1-pro** — classic JS30 look with bouncy seconds; correct but no tick marks and 1 Hz refresh (8.1)
-8. **chatgpt-free** — correct but visually plain and the second hand jumps (7.6)
-9. **mimo-2.5-pro** — dial drawn for 320 px face inside a 304 px box; ticks and numbers off-center from hands (7.5)
-10. **qwen-3.6-plus** — same border-box offset bug as mimo, plus a jumpy 1 Hz second hand (7.1)
-11. **grok 4.2 expert** — clock breaks out of its container; off-center pivots; pulsing seconds (6.9, revised from 7.6)
-12. **minimax-m2.7** — compounded transform bug shifts hands off-center (6.6)
+1. **opus-5** — via subscription, blind one-shot; clean sweep of every rubric criterion (10.0, added 2026-09-01)
+2. **fable-5.1** — via subscription, blind one-shot; docked only for a stroke-only bezel (9.6, added 2026-09-01)
+3. **glm-5.1** — best face, best detail (9.5)
+4. **deepseek-v4-pro** — only SVG entry; correctness-by-construction, minimal styling (9.4)
+5. **opus 4.7** — most polished CSS implementation (9.3)
+6. **kimi k2.5** — feature-rich, slightly bloated source (9.0)
+7. **sonnet 4.6** — cleanest correct canvas code (8.9)
+8. **sonnet-5** — via subscription, blind one-shot; ~10 leaked globals and a hardcoded 320px size tank the Code score (8.8, added 2026-09-01)
+9. **kimi k2.6** — k2.5 refactored cleaner but with a regression to 1 Hz seconds (8.8)
+10. **gemini-3.1-pro** — classic JS30 look with bouncy seconds; correct but no tick marks and 1 Hz refresh (8.1)
+11. **chatgpt-free** — correct but visually plain and the second hand jumps (7.6)
+12. **mimo-2.5-pro** — dial drawn for 320 px face inside a 304 px box; ticks and numbers off-center from hands (7.5)
+13. **qwen-3.6-plus** — same border-box offset bug as mimo, plus a jumpy 1 Hz second hand (7.1)
+14. **grok 4.2 expert** — clock breaks out of its container; off-center pivots; pulsing seconds (6.9, revised from 7.6)
+15. **minimax-m2.7** — compounded transform bug shifts hands off-center (6.6)
 
-Cross-set note: the strongest local entry (qwen2.5-coder-14b, 7.8) would slot between #7 (gemini) and #8 (chatgpt) here.
+Cross-set note: the strongest local entry (qwen2.5-coder-14b, 7.8) would slot between #10 (gemini) and #11 (chatgpt) here.
 
 *Pricing from openrouter.ai as of 2026-04-28. "—" indicates model not found on OpenRouter at lookup time. grok-4.2-expert was not in the registry under the name used in this benchmark; its cost may differ from the model-family prices shown.*

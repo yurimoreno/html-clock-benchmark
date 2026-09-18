@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Analog Clock</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #1e1e2f 0%, #0c0c14 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  .clock {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: #f5f5f0;
+    box-shadow:
+      0 0 0 8px #2b2b3a,
+      0 0 0 12px #444459,
+      0 20px 40px rgba(0,0,0,0.6),
+      inset 0 0 20px rgba(0,0,0,0.2);
+  }
+
+  .marking {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  .hour-marker {
+    position: absolute;
+    width: 4px;
+    height: 18px;
+    background: #222;
+    left: 50%;
+    top: 6px;
+    transform-origin: 2px 154px;
+    border-radius: 2px;
+  }
+
+  .minute-marker {
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: #888;
+    left: 50%;
+    top: 6px;
+    transform-origin: 1px 154px;
+  }
+
+  .number {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+    left: 50%;
+    top: 50%;
+  }
+
+  .hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: bottom center;
+    border-radius: 6px;
+    background: #222;
+  }
+
+  .hour-hand {
+    width: 8px;
+    height: 80px;
+    margin-left: -4px;
+    background: #222;
+    z-index: 10;
+  }
+
+  .minute-hand {
+    width: 5px;
+    height: 115px;
+    margin-left: -2.5px;
+    background: #333;
+    z-index: 20;
+  }
+
+  .second-hand {
+    width: 2px;
+    height: 130px;
+    margin-left: -1px;
+    background: #d1382f;
+    z-index: 30;
+  }
+
+  .second-hand::after {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: -6px;
+    width: 14px;
+    height: 14px;
+    background: #d1382f;
+    border-radius: 50%;
+  }
+
+  .center-cap {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #111;
+    border: 3px solid #d1382f;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+  }
+
+  .digital-time {
+    position: absolute;
+    top: 68%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="clock" id="clock">
+  <div class="marking" id="hourMarkers"></div>
+  <div class="marking" id="minuteMarkers"></div>
+  <div class="marking" id="numbers"></div>
+
+  <div class="hand hour-hand" id="hourHand"></div>
+  <div class="hand minute-hand" id="minuteHand"></div>
+  <div class="hand second-hand" id="secondHand"></div>
+  <div class="center-cap"></div>
+  <div class="digital-time" id="digitalTime"></div>
+</div>
+
+<script>
+  const hourMarkersContainer = document.getElementById('hourMarkers');
+  const minuteMarkersContainer = document.getElementById('minuteMarkers');
+  const numbersContainer = document.getElementById('numbers');
+  const radius = 160;
+  const numberRadius = 118;
+
+  // Hour markers (12 total)
+  for (let i = 0; i < 12; i++) {
+    const angle = i * 30;
+    const marker = document.createElement('div');
+    marker.className = 'hour-marker';
+    marker.style.transform = `rotate(${angle}deg)`;
+    hourMarkersContainer.appendChild(marker);
+  }
+
+  // Minute markers (60 total, skip where hour markers are)
+  for (let i = 0; i < 60; i++) {
+    if (i % 5 !== 0) {
+      const angle = i * 6;
+      const marker = document.createElement('div');
+      marker.className = 'minute-marker';
+      marker.style.transform = `rotate(${angle}deg)`;
+      minuteMarkersContainer.appendChild(marker);
+    }
+  }
+
+  // Numbers 1-12
+  for (let i = 1; i <= 12; i++) {
+    const angle = (i * 30 - 90) * (Math.PI / 180);
+    const x = radius + numberRadius * Math.cos(angle) - 15;
+    const y = radius + numberRadius * Math.sin(angle) - 15;
+    const num = document.createElement('div');
+    num.className = 'number';
+    num.style.left = x + 'px';
+    num.style.top = y + 'px';
+    num.textContent = i;
+    numbersContainer.appendChild(num);
+  }
+
+  const hourHand = document.getElementById('hourHand');
+  const minuteHand = document.getElementById('minuteHand');
+  const secondHand = document.getElementById('secondHand');
+  const digitalTime = document.getElementById('digitalTime');
+
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const ms = now.getMilliseconds();
+
+    const secondsAngle = (seconds + ms / 1000) * 6;
+    const minutesAngle = minutes * 6 + seconds * 0.1;
+    const hoursAngle = (hours % 12) * 30 + minutes * 0.5;
+
+    hourHand.style.transform = `rotate(${hoursAngle}deg)`;
+    minuteHand.style.transform = `rotate(${minutesAngle}deg)`;
+    secondHand.style.transform = `rotate(${secondsAngle}deg)`;
+
+    const h = hours.toString().padStart(2, '0');
+    const m = minutes.toString().padStart(2, '0');
+    const s = seconds.toString().padStart(2, '0');
+    digitalTime.textContent = `${h}:${m}:${s}`;
+
+    requestAnimationFrame(updateClock);
+  }
+
+  updateClock();
+</script>
+
+</body>
+</html>
