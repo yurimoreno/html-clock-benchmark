@@ -165,10 +165,12 @@ def main():
     new_grid = "\n" + "\n".join("    " + c["html"] for c in cards) + "\n  "
     content = content[:grid.start(2)] + new_grid + content[grid.end(2):]
     content = re.sub(
-        r"<strong>[^<]*</strong> acted as judge[^<]*",
+        r"<strong>[^<]*</strong> acted as judge.*?(?=\s*</div>)",
         "<strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion "
-        "over each clock's source, scored by <code>rejudge_index.py</code>.",
-        content, count=1,
+        f"over each clock's source, scored by <code>rejudge_index.py</code> on {datetime.date.today()}. "
+        "Card commentary is from each entry's original review and may describe the earlier score; "
+        f"see <code>docs/rejudge-{datetime.date.today()}.md</code> for the per-dimension before and after.",
+        content, count=1, flags=re.S,
     )
     open(INDEX, "w").write(content)
 
