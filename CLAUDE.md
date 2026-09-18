@@ -10,12 +10,12 @@ A benchmark that gives frontier LLMs one identical one-shot prompt — "Generate
 
 Dependencies: `pip install -r benchmark_system/requirements.txt` (requests, python-dotenv, inquirer). Flask is required for `server.py` but not listed there.
 
-Requires `OPENROUTER_API_KEY` in `.env` at repo root — every model call (generation and judging) goes through OpenRouter.
+Requires `OPENROUTER_API_KEY` in `.env` at repo root — clock generation goes through OpenRouter. Judging defaults to TypeSafe's Jev (`typesafe/jev`), which needs `TYPESAFE_API_KEY` in the same `.env`; pass `--judge <openrouter-model-id>` to use a generative LLM judge instead.
 
 ```bash
 # Add one model to the leaderboard (generate + judge + insert into index.html)
 python add_model.py google/gemini-2.5-flash
-python add_model.py openai/gpt-4o --judge anthropic/claude-3.7-sonnet
+python add_model.py openai/gpt-4o --judge anthropic/claude-3.7-sonnet   # generative judge instead of Jev
 python add_model.py <model> --no-index      # skip index.html update
 python add_model.py <model> --judge-runs 5  # default is 3
 
@@ -37,6 +37,7 @@ There is no test suite, linter, or build step. Validation is manual: open `index
 - `generate_clock(model)` → `(html, latency_s, usage)`. Strips ```` ```html ```` fences from the response.
 - `evaluate_clock(judge, html)` / `evaluate_clock_reliable(judge, html, n_runs)` → audit JSON. The "reliable" variant runs the judge N times and aggregates via `_aggregate_audits` (majority vote for booleans, median for ints, mode for strings) to reduce LLM variance.
 - `calculate_score(audit)` → `(score, breakdown)`. Applies the weighted rubric.
+- `benchmark_system/typesafe_judge.py` is the default judge: one TypeSafe Jev call per clock with one Noul (yes/no) question per rubric criterion, assembled into the same Audit JSON. Count fields are threshold questions (Jev is weak at counting) and emit 12/60/0/99 sentinels that satisfy `calculate_score` thresholds. `benchmark_system/compare_judges.py` re-judges every stored run and writes `docs/typesafe-judge-comparison.md`.
 - `static_precheck(html)` deterministically overrides three judge fields that regex can decide reliably: motion `method` (rAF / high_freq / low_freq), `zero_dependencies`, and `second_ms_precision` (only upgraded to True, never down). This is intentional — don't let the LLM override these.
 
 **The rubric lives in two places that must stay in sync:** `benchmark_system/JUDGE_V1.md` (human-readable spec + the Audit JSON schema, injected verbatim into the judge prompt) and the hardcoded weights/thresholds in `calculate_score` (`runner.py:253`). Editing scoring means editing both. Final score formula: `time×0.3 + visual×0.2 + dial×0.15 + code×0.15 + motion×0.1 + bonus×1.0`.

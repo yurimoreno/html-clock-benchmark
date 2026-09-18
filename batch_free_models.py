@@ -54,8 +54,8 @@ def save_progress(progress):
 
 def main():
     parser = argparse.ArgumentParser(description="Batch benchmark all free OpenRouter models")
-    parser.add_argument("--judge", default="anthropic/claude-3.7-sonnet",
-                        help="Judge model (default: anthropic/claude-3.7-sonnet)")
+    parser.add_argument("--judge", default="typesafe/jev",
+                        help="Judge model (default: typesafe/jev; any OpenRouter model id also works)")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from saved progress")
     parser.add_argument("--delay", type=float, default=3.5,

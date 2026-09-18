@@ -327,8 +327,8 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
 def main():
     parser = argparse.ArgumentParser(description="Add a model to the HTML Clock Benchmark")
     parser.add_argument("model", help="Model ID to benchmark (e.g. google/gemini-2.5-flash)")
-    parser.add_argument("--judge", default="anthropic/claude-3.7-sonnet",
-                        help="Judge model ID (default: anthropic/claude-3.7-sonnet)")
+    parser.add_argument("--judge", default="typesafe/jev",
+                        help="Judge model ID (default: typesafe/jev; any OpenRouter model id also works)")
     parser.add_argument("--no-index", action="store_true",
                         help="Skip updating index.html after benchmark")
     parser.add_argument("--judge-runs", type=int, default=3,

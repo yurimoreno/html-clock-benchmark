@@ -154,6 +154,9 @@ def generate_clock(model):
 def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
         return None
+    if judge_model == "typesafe/jev":
+        from typesafe_judge import evaluate_clock_typesafe
+        return evaluate_clock_typesafe(clock_code)
     print(f"Evaluating clock with judge {judge_model}...")
 
     precheck = static_precheck(clock_code)
@@ -235,6 +238,10 @@ def _aggregate_audits(audits):
 
 def evaluate_clock_reliable(judge_model, clock_code, n_runs=3, max_tokens=30000):
     """Run judge n_runs times, return (aggregated_audit, runs_completed)."""
+    if judge_model == "typesafe/jev":
+        # Jev is deterministic per call: one pass is enough.
+        audit = evaluate_clock(judge_model, clock_code, max_tokens)
+        return audit, (1 if audit else 0)
     results = []
     for i in range(n_runs):
         print(f"  Judge run {i + 1}/{n_runs}...")
