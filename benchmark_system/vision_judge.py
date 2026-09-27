@@ -10,8 +10,9 @@ tick is drawn under another, so it stays with Jev.
 When Jev and this judge disagree, tiebreak() asks the same local model a third
 time, reading the source instead of the picture.
 
-Default model: the local qwen3.8-flash-next on gx10 :8888 (free, has vision).
-Override with VISION_JUDGE_URL / VISION_JUDGE_MODEL.
+Point it at any OpenAI-compatible endpoint serving a vision model, via
+VISION_JUDGE_URL and VISION_JUDGE_MODEL in .env. If it's unset or
+unreachable, the judge skips itself and the first judge's answers stand.
 """
 
 import base64
@@ -22,8 +23,11 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-URL = os.getenv("VISION_JUDGE_URL", "http://localhost:8888/v1/chat/completions")
-MODEL = os.getenv("VISION_JUDGE_MODEL", "qwen3.8-flash-next")
+from dotenv import load_dotenv
+
+load_dotenv()
+URL = os.getenv("VISION_JUDGE_URL", "")
+MODEL = os.getenv("VISION_JUDGE_MODEL", "")
 
 # field -> question. Counts are asked as yes/no thresholds, matching calculate_score.
 QUESTIONS = {
@@ -74,6 +78,8 @@ def _screenshots(html):
 
 
 def judge_screenshot(images):
+    if not URL or not MODEL:
+        raise RuntimeError("VISION_JUDGE_URL / VISION_JUDGE_MODEL not set")
     content = [{"type": "text", "text": _PROMPT}]
     for img in images:
         content.append({"type": "image_url",
@@ -130,6 +136,8 @@ def tiebreak(html, fields, repeats=2):
 
 
 def _tiebreak_once(html, fields):
+    if not URL or not MODEL:
+        return None
     schema = {"type": "object", "properties": {k: {"type": "boolean"} for k in fields},
               "required": list(fields), "additionalProperties": False}
     prompt = _TIEBREAK_PROMPT.format(questions="\n".join(f"- {k}: {QUESTIONS[k]}" for k in fields),
