@@ -2,20 +2,24 @@
 
 Evaluated 2026-04-28; qwen3.8-flash-next added 2026-09-26 (TypeSafe Jev judge + vision second judge + browser render check). Rubric: each clock scored 0–10 across five dimensions, with a weighted overall.
 
+Scores re-judged 2026-09-26 with the same pipeline as the cloud tab (`rejudge_local.py`: TypeSafe Jev, vision second judge, browser render check). The per-clock notes below are the original reviews and keep their original scores.
+
 Machines: the 2026-04 entries ran in LM Studio on the Mac Mini M2 Pro (quantizations in the index.html Machine column). qwen3.8-flash-next ran on the GX10 under vLLM 0.30 with the bilikaz/qwen38-flash-next-recipe; its exact server build is in `qwen3.8-flash-next.build.json`. claude-sonnet-5 was written in a Claude Code session, not by a local model.
 
 | Rank | File | Time Accuracy (×3) | Visuals (×2) | Markers/Face (×1.5) | Code Quality (×1.5) | Smoothness (×1) | **Overall /10** |
 |------|------|---------------------|--------------|----------------------|---------------------|-----------------|------------------|
 | 1 | claude-sonnet-5.html | 10 | 10 | 10 | 10 | 10 | **10.0** |
 | 2 | qwen3.8-flash-next.html | 10 | 10 | 8 | 4 | 10 | **8.8** |
-| 3 | qwen2.5-coder-14b.html | 10 | 5 | 9 | 8 | 5 | **7.8** |
-| 4 | gemma-4-e4b-uncensored-hauhaucs-aggressive.html | 9 | 6 | 2 | 6 | 7 | **6.5** |
-| 5 | gemma-4-e4b.html | 5 | 6 | 1 | 7 | 9 | **5.4** |
-| 6 | glm-4.6v-flash.html | 2 | 6 | 8 | 7 | 9 | **5.1** |
-| 7 | qwen3.5-9b.html | 3 | 7 | 2 | 6 | 7 | **4.6** |
-| 8 | lfm2.5-1.2b.html | 0 | 1 | 0 | 2 | 1 | **0.7** |
+| 3 | gemma-4-e4b.html | 7.5 | 6 | 0 | 8 | 7 | **6.35** |
+| 4 | glm-4.6v-flash.html | 5 | 4 | 8 | 2 | 10 | **5.8** |
+| 5 | qwen3.5-9b.html | 10 | 6 | 0 | 2 | 2 | **5.7** |
+| 6 | gemma-4-e4b-uncensored-hauhaucs-aggressive.html | 7.5 | 6 | 2 | 2 | 2 | **5.25** |
+| 7 | qwen2.5-coder-14b.html | 7.5 | 0 | 8 | 2 | 2 | **4.95** |
+| 8 | lfm2.5-1.2b.html | 2.5 | 2 | 0 | 5 | 2 | **2.1** |
 
 ---
+
+## Original reviews
 
 ## 1. claude-sonnet-5.html — **10.0/10 — not a fair comparison, see caveat**
 
@@ -74,10 +78,10 @@ Non-functional. Hands have no defined size; JS sets `width` from the time value 
 ## Final ranking
 
 1. **claude-sonnet-5** — reference entry, generated with the rubric in-context; not a blind comparison.
-2. **qwen3.8-flash-next** — best blind entry; plain, correct, verified by the render check, loses only on code quality.
-3. **qwen2.5-coder-14b** — first to render a fully correct clock face *and* hands.
-4. **gemma-4-e4b-uncensored-hauhaucs-aggressive** — correct time, broken markers.
-5. **gemma-4-e4b** — clean code, off-center pivot.
-6. **glm-4.6v-flash** — complete face, rotated 90°.
-7. **qwen3.5-9b** — pretty, broken hour math.
+2. **qwen3.8-flash-next** — best blind entry; correct and verified in the browser, loses on code quality.
+3. **gemma-4-e4b** — correct continuous time, clean code; no dial markers.
+4. **glm-4.6v-flash** — complete face and smooth motion; hands measured wrong in the browser.
+5. **qwen3.5-9b** — judged correct on time, but the browser check couldn't find its hour hand and the original review found broken hour math.
+6. **gemma-4-e4b-uncensored-hauhaucs-aggressive** — correct time, broken markers, ticking second hand.
+7. **qwen2.5-coder-14b** — correct time verified in the browser; plain visuals, ticking second hand, fixed size.
 8. **lfm2.5-1.2b** — does not function as a clock.
