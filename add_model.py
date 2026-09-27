@@ -253,7 +253,7 @@ def why_html(audit):
 
 def make_verdict(breakdown, audit=None, model_id=None, run_date=None, latency=None,
                  actual_cost=None, judge_runs=None, judge_runs_attempted=None, original=None,
-                 source=None):
+                 source=None, cost_estimated=False):
     meta = []
     if model_id:
         meta.append(f'<span class="model-id">{model_id}</span>')
@@ -264,7 +264,8 @@ def make_verdict(breakdown, audit=None, model_id=None, run_date=None, latency=No
     if latency is not None:
         meta.append(f"<span>Latency {latency}s</span>")
     if actual_cost is not None:
-        meta.append(f"<span>Cost ${actual_cost:.4f}</span>")
+        meta.append(f'<span title="{EST_NOTE}">Cost {fmt_cost(actual_cost, True)}</span>' if cost_estimated
+                    else f"<span>Cost {fmt_cost(actual_cost)}</span>")
     if judge_runs is not None:
         meta.append(f"<span>Judge runs {judge_runs}/{judge_runs_attempted or judge_runs}</span>")
     out = ['      <div class="verdict">', f"        {dims_html(breakdown)}"]
@@ -278,9 +279,34 @@ def make_verdict(breakdown, audit=None, model_id=None, run_date=None, latency=No
     return "\n".join(out)
 
 
+# Cost floor for runs without billed usage (subscription runs, or runs whose
+# usage wasn't captured): a model must at least emit the clock's HTML, so
+# HTML tokens (~3.3 chars/token for these files) at the listed output price is
+# a true lower bound. Hidden reasoning is billed on top and varies wildly: 1.1-
+# 1.5x the HTML on older runs, 3-6x for heavy reasoners, and the seven models
+# added 2026-09-26 billed ~10x their floor combined. So only the floor is shown.
+EST_CHARS_PER_TOKEN = 3.3
+EST_PROMPT_TOKENS = 30
+EST_NOTE = ("Lower bound: the clock's HTML as output tokens at the listed API price. "
+            "Reasoning tokens are billed on top and often cost several times more.")
+
+
+def estimate_cost(html, pricing):
+    if not pricing or pricing.get("input_per_m") is None:
+        return None
+    out_tokens = len(html) / EST_CHARS_PER_TOKEN
+    return round((EST_PROMPT_TOKENS * pricing["input_per_m"] + out_tokens * pricing["output_per_m"]) / 1e6, 4)
+
+
+def fmt_cost(cost, estimated=False):
+    if cost is None:
+        return "—"
+    return f"≥${cost:.4f}" if estimated else f"${cost:.4f}"
+
+
 def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
                     actual_cost=None, model_id=None, run_date=None,
-                    judge_runs=None, judge_runs_attempted=None, display_name=None):
+                    judge_runs=None, judge_runs_attempted=None, display_name=None, cost_estimated=False):
     score_class, badge_class = score_to_grade(score)
     overall_color = _OVERALL_COLORS[score_class]
     latency_str = f"{latency}s" if latency is not None else "—"
@@ -288,7 +314,8 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
     runs = judge_runs if judge_runs is not None else '—'
     runs_att = judge_runs_attempted if judge_runs_attempted is not None else runs
     runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
-    cost_str = f"${actual_cost:.4f}" if actual_cost is not None else "—"
+    cost_str = fmt_cost(actual_cost, cost_estimated)
+    cost_attr = f' title="{EST_NOTE}"' if cost_estimated and actual_cost is not None else ""
     model_id_str = model_id or ""
     display = display_name or model
 
@@ -315,7 +342,7 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
         f'<td class="r">{breakdown["motion"]}</td>\n'
         f'        <td class="r runs">{runs_str}</td>\n'
         f'        <td class="r overall" style="color:{overall_color}">{score}</td>\n'
-        f'        <td class="r act-cost">{cost_str}</td>\n'
+        f'        <td class="r act-cost{" est" if cost_estimated else ""}"{cost_attr}>{cost_str}</td>\n'
         f'        {cost_td}\n'
         f'        {input_td}\n'
         f'        {output_td}\n'
@@ -326,7 +353,8 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
 
 def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None,
                model_id=None, run_date=None, actual_cost=None,
-               judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None):
+               judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None,
+                 cost_estimated=False):
     score_class, _ = score_to_grade(score)
     # Previews must live in a committed dir; runs/ is gitignored so iframes
     # pointing there 404 on GitHub Pages. Copy the generated HTML into previews/.
@@ -341,7 +369,7 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
     display = display_name or model
     verdict = make_verdict(breakdown, audit, model_id=model_id, run_date=run_date, latency=latency,
                            actual_cost=actual_cost, judge_runs=judge_runs,
-                           judge_runs_attempted=judge_runs_attempted)
+                           judge_runs_attempted=judge_runs_attempted, cost_estimated=cost_estimated)
     return (
         f'    <div class="card" id="card-{model_id or ""}">\n'
         f'      <header>\n'
@@ -356,7 +384,8 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
 
 def update_index(model, score, breakdown, file_path, timestamp, latency=None, pricing=None,
                  actual_cost=None, model_id=None, run_date=None,
-                 judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None):
+                 judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None,
+                 cost_estimated=False):
     index_path = "index.html"
     if not os.path.exists(index_path):
         print(f"Warning: {index_path} not found, skipping index update")
@@ -383,7 +412,7 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
                                                    actual_cost=actual_cost, model_id=model_id,
                                                    run_date=run_date, judge_runs=judge_runs,
                                                    judge_runs_attempted=judge_runs_attempted,
-                                                   display_name=display_name)])
+                                                   display_name=display_name, cost_estimated=cost_estimated)])
         scored_rows.sort(key=lambda x: x[0], reverse=True)
 
         # Renumber all ranks
@@ -428,7 +457,8 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
         scored_cards.append([score, _make_card(model, 0, score, breakdown, file_path, timestamp, latency,
                                                model_id=model_id, run_date=run_date, actual_cost=actual_cost,
                                                judge_runs=judge_runs, judge_runs_attempted=judge_runs_attempted,
-                                               display_name=display_name, audit=audit)])
+                                               display_name=display_name, audit=audit,
+                                               cost_estimated=cost_estimated)])
         scored_cards.sort(key=lambda x: x[0], reverse=True)
 
         # Renumber ranks in cards
@@ -489,6 +519,10 @@ def main():
         inp = usage.get('prompt_tokens', 0) * pricing['input_per_m'] / 1_000_000
         out = usage.get('completion_tokens', 0) * pricing.get('output_per_m', 0) / 1_000_000
         actual_cost = round(inp + out, 6)
+    cost_estimated = False
+    if actual_cost is None:
+        actual_cost = estimate_cost(html, pricing)
+        cost_estimated = actual_cost is not None
 
     print(f"Evaluating with judge {judge}...")
     audit, judge_runs_completed = evaluate_clock_reliable(judge, html, n_runs=args.judge_runs)
@@ -512,6 +546,7 @@ def main():
         "latency_s": latency_s,
         "pricing": pricing,
         "actual_cost": actual_cost,
+        "cost_estimated": cost_estimated,
         "token_usage": usage,
         "judge_runs": judge_runs_completed,
         "judge_runs_attempted": args.judge_runs,
@@ -525,7 +560,7 @@ def main():
         update_index(model, score, breakdown, file_path, ts, latency=latency_s, pricing=pricing,
                      actual_cost=actual_cost, model_id=model, run_date=ts,
                      judge_runs=judge_runs_completed, judge_runs_attempted=args.judge_runs,
-                     display_name=display_name, audit=audit)
+                     display_name=display_name, audit=audit, cost_estimated=cost_estimated)
         save_audit("previews/" + os.path.basename(file_path), audit)
 
     print(f"\nDone! Score: {score}")

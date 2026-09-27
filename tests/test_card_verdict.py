@@ -52,3 +52,13 @@ def test_verdict_meta_omits_missing_fields():
     html = make_verdict(calculate_score(PERFECT)[1], PERFECT, model_id="x/a", run_date="20260101_000000")
     assert 'class="model-id">x/a<' in html and "Ran Jan 1" in html
     assert "Latency" not in html and "Cost" not in html
+
+
+def test_cost_floor_is_html_tokens_at_output_price():
+    from add_model import estimate_cost, fmt_cost
+    html = "x" * 3300  # ~1000 tokens
+    cost = estimate_cost(html, {"input_per_m": 0.0, "output_per_m": 10.0})
+    assert cost == 0.01
+    assert fmt_cost(cost, estimated=True) == "≥$0.0100"
+    assert fmt_cost(cost) == "$0.0100"
+    assert estimate_cost(html, None) is None

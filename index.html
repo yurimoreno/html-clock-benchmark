@@ -318,6 +318,7 @@
   .model-link:hover { text-decoration: underline; color: var(--link-hover); }
   .runs { font-family: ui-monospace, monospace; font-size: 11px; color: var(--good); white-space: nowrap; }
   .act-cost { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-4); white-space: nowrap; }
+  .act-cost.est { font-style: italic; opacity: .75; cursor: help; }
   .run-date { font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted-4); white-space: nowrap; }
   [data-tab] { display:none; }
   [data-tab].active { display:block; }
@@ -426,10 +427,10 @@
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">10.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#d6f5d6">9.7</td>
-        <td class="r act-cost">—</td>
-        <td class="cost-eff">—</td>
-        <td class="price">—</td>
-        <td class="price">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0806</td>
+        <td class="cost-eff red">$6.19</td>
+        <td class="price">$10/M</td>
+        <td class="price">$50/M</td>
         <td class="r latency">—</td>
       </tr>
       <tr>
@@ -439,10 +440,10 @@
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#d6f5d6">9.4</td>
-        <td class="r act-cost">—</td>
-        <td class="cost-eff">—</td>
-        <td class="price">—</td>
-        <td class="price">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0466</td>
+        <td class="cost-eff red">$3.19</td>
+        <td class="price">$5/M</td>
+        <td class="price">$25/M</td>
         <td class="r latency">—</td>
       </tr>
       <tr>
@@ -452,7 +453,7 @@
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">6.0</td><td class="r">10.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#d6f5d6">9.4</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0004</td>
         <td class="cost-eff green">$0.03</td>
         <td class="price">$0.035/M</td>
         <td class="price">$0.29/M</td>
@@ -491,7 +492,7 @@
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#d6f5d6">9.1</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0048</td>
         <td class="cost-eff green">$0.11</td>
         <td class="price">$0.238/M</td>
         <td class="price">$0.748/M</td>
@@ -517,7 +518,7 @@
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#dff5c6">8.8</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0039</td>
         <td class="cost-eff yellow">$0.48</td>
         <td class="price">$1.05/M</td>
         <td class="price">$3.50/M</td>
@@ -543,7 +544,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#dff5c6">8.55</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0035</td>
         <td class="cost-eff green">$0.39</td>
         <td class="price">$0.834/M</td>
         <td class="price">$2.501/M</td>
@@ -556,7 +557,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#dff5c6">8.55</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0006</td>
         <td class="cost-eff green">$0.05</td>
         <td class="price">$0.14/M</td>
         <td class="price">$0.28/M</td>
@@ -569,10 +570,10 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5edd6">8.4</td>
-        <td class="r act-cost">—</td>
-        <td class="cost-eff">—</td>
-        <td class="price">—</td>
-        <td class="price">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0160</td>
+        <td class="cost-eff red">$1.43</td>
+        <td class="price">$2/M</td>
+        <td class="price">$10/M</td>
         <td class="r latency">—</td>
       </tr>
       <tr>
@@ -582,7 +583,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">7</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#f5edd6">8.25</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost">$0.0000</td>
         <td class="cost-eff green">$0.0</td>
         <td class="price">$0/M</td>
         <td class="price">$0/M</td>
@@ -608,7 +609,7 @@
         <td class="r">10.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">4.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5edd6">8.0</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0158</td>
         <td class="cost-eff red">$2.02</td>
         <td class="price">$3/M</td>
         <td class="price">$15/M</td>
@@ -621,7 +622,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">6.0</td><td class="r">5.0</td><td class="r">7</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5dcc6">7.95</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0073</td>
         <td class="cost-eff green">$0.27</td>
         <td class="price">$0.44/M</td>
         <td class="price">$2/M</td>
@@ -647,7 +648,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">4.0</td><td class="r">5.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#f5dcc6">7.95</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0015</td>
         <td class="cost-eff green">$0.18</td>
         <td class="price">$0.2/M</td>
         <td class="price">$1.2/M</td>
@@ -660,7 +661,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">7</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5dcc6">7.8</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0318</td>
         <td class="cost-eff red">$3.23</td>
         <td class="price">$5/M</td>
         <td class="price">$25/M</td>
@@ -686,7 +687,7 @@
         <td class="r">10.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5dcc6">7.7</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0033</td>
         <td class="cost-eff yellow">$0.53</td>
         <td class="price">$1/M</td>
         <td class="price">$3/M</td>
@@ -712,7 +713,7 @@
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5dcc6">7.3</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0171</td>
         <td class="cost-eff red">$1.16</td>
         <td class="price">$2/M</td>
         <td class="price">$6/M</td>
@@ -725,7 +726,7 @@
         <td class="r">7.5</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5c6c6">6.55</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0054</td>
         <td class="cost-eff yellow">$0.61</td>
         <td class="price">$0.74/M</td>
         <td class="price">$4.66/M</td>
@@ -738,7 +739,7 @@
         <td class="r">7.5</td><td class="r">8.0</td><td class="r">6.0</td><td class="r">2.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5c6c6">6.25</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0231</td>
         <td class="cost-eff red">$2.07</td>
         <td class="price">$1.75/M</td>
         <td class="price">$14/M</td>
@@ -751,7 +752,7 @@
         <td class="r">7.5</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5c6c6">6.15</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0018</td>
         <td class="cost-eff green">$0.32</td>
         <td class="price">$0.325/M</td>
         <td class="price">$1.95/M</td>
@@ -777,7 +778,7 @@
         <td class="r">7.5</td><td class="r">4.0</td><td class="r">4.0</td><td class="r">5.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5c6c6">5.6</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0010</td>
         <td class="cost-eff green">$0.23</td>
         <td class="price">$0.30/M</td>
         <td class="price">$1.20/M</td>
@@ -790,7 +791,7 @@
         <td class="r">0</td><td class="r">6.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
         <td class="r runs">1/3</td>
         <td class="r overall" style="color:#f5c6c6">5.3</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0029</td>
         <td class="cost-eff green">$0.09</td>
         <td class="price">$0.04/M</td>
         <td class="price">$0.5/M</td>
@@ -803,7 +804,7 @@
         <td class="r">7.5</td><td class="r">6.0</td><td class="r">2.0</td><td class="r">2.0</td><td class="r">2</td>
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#f5c6c6">5.25</td>
-        <td class="r act-cost">—</td>
+        <td class="r act-cost est" title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">≥$0.0217</td>
         <td class="cost-eff red">$1.73</td>
         <td class="price">$2/M</td>
         <td class="price">$12/M</td>
@@ -823,7 +824,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim good"><span>Code</span><b>10</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks, numerals and loop-generated markers; clean code (scoped, responsive, helpers, no dependencies); a smooth rAF sweep that is right from the first frame. <b>Lost 0.3:</b> Minute ticks overlap hour ticks (−0.3).</p>
-        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span>Judge runs 1/1</span></div>
+        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0806</span><span>Judge runs 1/1</span></div>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Blind one-shot via subscription, not OpenRouter.</b> SVG clock, fully IIFE-scoped (zero global leaks), responsive <code>min(80vmin,420px)</code> sizing, dedicated <code>setRotation()</code>/<code>pad()</code> helpers, correct continuous time math. Docked only on Visual: the rim is a 4px stroke on the same face circle rather than a genuinely separate bezel layer.</details>
       </div>
     </div>
@@ -836,7 +837,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim warn"><span>Code</span><b>8</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks, numerals and loop-generated markers; no global leaks, responsive sizing and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 0.6:</b> Minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
-        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span>Judge runs 1/1</span></div>
+        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0466</span><span>Judge runs 1/1</span></div>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Blind one-shot via subscription, not OpenRouter.</b> SVG clock: gradients applied directly to face and rim (genuine two-circle bezel, not just a background flourish), all three hands — not just the second — extend past the pivot as real counterweights, drop-shadow via both CSS filter and SVG feDropShadow, fully IIFE-scoped, <code>min(84vw,84vh,460px)</code> responsive sizing, rAF loop. No bugs found on manual trace of the hand-angle math at 12:00/3:00.</details>
       </div>
     </div>
@@ -849,7 +850,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim good"><span>Code</span><b>10</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks and loop-generated markers; clean code (scoped, responsive, helpers, no dependencies); a smooth rAF sweep that is right from the first frame. <b>Lost 0.6:</b> No numerals (−0.3), minute ticks overlap hour ticks (−0.3).</p>
-        <div class="meta"><span class="model-id">deepseek/deepseek-v4.1-flash</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">deepseek/deepseek-v4.1-flash</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0004</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card" id="card-moonshotai/kimi-k2.7-code">
@@ -885,7 +886,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim warn"><span>Code</span><b>8</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks and loop-generated markers; no global leaks, responsive sizing and helper functions; a smooth rAF sweep that is right from the first frame. <b>Lost 0.9:</b> No numerals (−0.3), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3).</p>
-        <div class="meta"><span class="model-id">z-ai/glm-5.3</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">z-ai/glm-5.3</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0048</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card" id="card-deepseek/deepseek-v4-pro">
@@ -933,7 +934,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; responsive sizing and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.45:</b> Leaks globals (−0.45), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
-        <div class="meta"><span class="model-id">tencent/hy4-preview</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">tencent/hy4-preview</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0035</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card" id="card-xiaomi/mimo-v2.5">
@@ -945,7 +946,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; minute ticks, numerals, loop-generated markers and minute ticks that skip the hours; no global leaks and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.45:</b> Fixed size (−0.45), no hand tails (−0.4), missing hour ticks (−0.3), no helper functions (−0.3).</p>
-        <div class="meta"><span class="model-id">xiaomi/mimo-v2.5</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">xiaomi/mimo-v2.5</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0006</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card">
@@ -957,7 +958,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim good"><span>Dial</span><b>10</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; a complete, loop-generated dial with numerals; no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.6:</b> Leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), no helper functions (−0.3).</p>
-        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span>Judge runs 1/1</span></div>
+        <div class="meta"><span>Via subscription, not OpenRouter</span><span>Ran Sep 1</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0160</span><span>Judge runs 1/1</span></div>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Blind one-shot via subscription, not OpenRouter.</b> CSS transform clock, correct continuous time math, box-shadow rings for the bezel, tail only on the second hand. Docked hard on Code: the script isn't wrapped in a function, so ~10 variables (containers, hand refs, radii) leak straight into global scope, and the clock is a hardcoded <code>320px</code> — not responsive.</details>
       </div>
     </div>
@@ -970,7 +971,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim warn"><span>Motion</span><b>7</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; responsive sizing and helper functions; the right time on the first frame; fast-interval motion. <b>Lost 1.75:</b> Leaks globals (−0.45), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3), fast setInterval instead of rAF (−0.3).</p>
-        <div class="meta"><span class="model-id">nvidia/nemotron-3-ultra-550b-a55b:free</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">nvidia/nemotron-3-ultra-550b-a55b:free</span><span>Ran Sep 26</span><span>Cost $0.0000</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card" id="card-deepseek/deepseek-v4-flash">
@@ -1030,7 +1031,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim bad"><span>Dial</span><b>4</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, a bezel, a center cap and hand tails; all 12 hour ticks and minute ticks; responsive sizing and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 2.05:</b> Leaks globals (−0.45), no gradients (−0.4), no numerals (−0.3), hand-placed markers (−0.3), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
-        <div class="meta"><span class="model-id">openai/gpt-5.6-luna</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">openai/gpt-5.6-luna</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0015</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card">
@@ -1162,7 +1163,7 @@
       <div class="verdict">
         <div class="dims"><div class="dim bad"><span>Time</span><b>0</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim warn"><span>Code</span><b>8</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
         <p class="why"><b>Earned:</b> Shadows, a bezel and a center cap; all 12 hour ticks, minute ticks and loop-generated markers; no global leaks, responsive sizing and helper functions; a smooth rAF sweep that is right from the first frame. <b>Lost 4.7:</b> Hour hand jumps between hours (−0.75), minute hand jumps each minute (−0.75), second hand ignores milliseconds (−0.75), hands show the wrong time when rendered (−0.75), no gradients (−0.4), no hand tails (−0.4), no numerals (−0.3), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3).</p>
-        <div class="meta"><span class="model-id">z-ai/glm-5.3-flash</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="meta"><span class="model-id">z-ai/glm-5.3-flash</span><span>Ran Sep 26</span><span title="Lower bound: the clock's HTML as output tokens at the listed API price. Reasoning tokens are billed on top and often cost several times more.">Cost ≥$0.0029</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card">
