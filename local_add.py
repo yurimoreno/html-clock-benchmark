@@ -6,14 +6,16 @@ metadata file. The judge step only reads the saved clock. Either can be
 re-run without the other, so a judge failure never costs a regeneration.
 
 Usage:
-  python local_add.py build http://localhost:8888/v1/chat/completions qwen3.8-flash-next
+  python local_add.py build http://localhost:8888/v1/chat/completions qwen3.8-flash-next ["recipe notes"]
   python local_add.py judge qwen3.8-flash-next [runs]
 """
 import json
 import os
 import re
+import socket
 import sys
 import time
+from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LOCAL = os.path.join(ROOT, "local ")
@@ -24,7 +26,27 @@ def paths(model):
     return base + ".html", base + ".build.json", base + ".judge.json"
 
 
-def build(url, model):
+def server_info(url):
+    """Which machine and server build answered, recorded next to every clock."""
+    import requests
+    host = urlparse(url).hostname
+    machine = socket.gethostname() if host in ("localhost", "127.0.0.1", "::1") else host
+    base = url.split("/v1/")[0]
+    info = {"machine": machine}
+    try:
+        info["server_version"] = requests.get(base + "/version", timeout=5).json().get("version")
+    except Exception:
+        pass
+    try:
+        m = requests.get(base + "/v1/models", timeout=5).json()["data"][0]
+        info["model_path"] = m.get("root")
+        info["max_model_len"] = m.get("max_model_len")
+    except Exception:
+        pass
+    return info
+
+
+def build(url, model, recipe=None):
     import requests
     sys.path.insert(0, os.path.join(ROOT, "benchmark_system"))
     from runner import PROMPT
@@ -52,6 +74,8 @@ def build(url, model):
     meta = {
         "model": model,
         "url": url,
+        **server_info(url),
+        "recipe": recipe,
         "built_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "latency_s": round(latency, 1),
         "finish_reason": choice.get("finish_reason"),
@@ -97,8 +121,8 @@ def judge(model, runs=1):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 4 and sys.argv[1] == "build":
-        build(sys.argv[2], sys.argv[3])
+    if len(sys.argv) in (4, 5) and sys.argv[1] == "build":
+        build(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) == 5 else None)
     elif len(sys.argv) in (3, 4) and sys.argv[1] == "judge":
         judge(sys.argv[2], int(sys.argv[3]) if len(sys.argv) == 4 else 1)
     else:

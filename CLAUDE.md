@@ -25,6 +25,11 @@ cd benchmark_system && python cli.py
 # Batch all free OpenRouter models (rate-limit aware, resumable)
 python batch_free_models.py --resume
 
+# Local tab: build and judge are separate steps. build records the machine, server
+# version and model path from the endpoint; pass recipe notes as the last argument.
+python local_add.py build http://localhost:8888/v1/chat/completions <model> "<recipe notes>"
+python local_add.py judge <model>
+
 # Optional Flask API + static server (serves index.html, cloud/, runs/)
 python server.py   # localhost:5000
 ```

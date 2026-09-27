@@ -2,6 +2,8 @@
 
 Evaluated 2026-04-28; qwen3.8-flash-next added 2026-09-26 (TypeSafe Jev judge + vision second judge + browser render check). Rubric: each clock scored 0–10 across five dimensions, with a weighted overall.
 
+Machines: the 2026-04 entries ran in LM Studio on the Mac Mini M2 Pro (quantizations in the index.html Machine column). qwen3.8-flash-next ran on the GX10 under vLLM 0.30 with the bilikaz/qwen38-flash-next-recipe; its exact server build is in `qwen3.8-flash-next.build.json`. claude-sonnet-5 was written in a Claude Code session, not by a local model.
+
 | Rank | File | Time Accuracy (×3) | Visuals (×2) | Markers/Face (×1.5) | Code Quality (×1.5) | Smoothness (×1) | **Overall /10** |
 |------|------|---------------------|--------------|----------------------|---------------------|-----------------|------------------|
 | 1 | claude-sonnet-5.html | 10 | 10 | 10 | 10 | 10 | **10.0** |

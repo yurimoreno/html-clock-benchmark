@@ -1226,6 +1226,9 @@
         <th class="r sortable" data-sort="latency" onclick="sortTable('local','latency')">Latency<span class="sort-icon">↕</span>
           <span class="tip">Server-to-server generation time in seconds — how long the API took to return the full response.</span>
         </th>
+        <th>Machine
+          <span class="tip">Where the clock was generated, and with what server, build and quantization.</span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -1237,6 +1240,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#d6f5d6">10.0</td>
         <td class="r latency">—</td>
+        <td class="machine">—<br><span style="opacity:.6;font-size:11px">Written in a Claude Code session, not by a local model</span></td>
       </tr>
       <tr>
         <td><span class="badge b-1">2</span></td>
@@ -1246,6 +1250,7 @@
         <td class="r runs">1/1</td>
         <td class="r overall" style="color:#d6f5d6">8.8</td>
         <td class="r latency">17s</td>
+        <td class="machine">GX10<br><span style="opacity:.6;font-size:11px">vLLM 0.30, bilikaz/qwen38-flash-next-recipe, hibrid48 NVFP4</span></td>
       </tr>
       <tr>
         <td><span class="badge b-2">3</span></td>
@@ -1255,6 +1260,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#d6f5d6">7.8</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, MLX 4-bit</span></td>
       </tr>
       <tr>
         <td><span class="badge b-3">4</span></td>
@@ -1264,6 +1270,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#dff5c6">6.5</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, GGUF Q4_K_M</span></td>
       </tr>
       <tr>
         <td><span class="badge b-4">5</span></td>
@@ -1273,6 +1280,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#f5edd6">5.4</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, GGUF Q4_K_M</span></td>
       </tr>
       <tr>
         <td><span class="badge b-5">6</span></td>
@@ -1282,6 +1290,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#f5dcc6">5.1</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, MLX 4-bit</span></td>
       </tr>
       <tr>
         <td><span class="badge b-5">7</span></td>
@@ -1291,6 +1300,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#f5c6c6">4.6</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, GGUF Q4_K_M</span></td>
       </tr>
       <tr>
         <td><span class="badge b-5">8</span></td>
@@ -1300,6 +1310,7 @@
         <td class="r runs">—</td>
         <td class="r overall" style="color:#f5c6c6">0.7</td>
         <td class="r latency">—</td>
+        <td class="machine">Mac Mini M2 Pro<br><span style="opacity:.6;font-size:11px">LM Studio, MLX 8-bit</span></td>
       </tr>
     </tbody>
   </table>
