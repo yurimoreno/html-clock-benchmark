@@ -1,0 +1,17 @@
+{
+ "model": "qwen3.8-flash-next",
+ "url": "http://localhost:8888/v1/chat/completions",
+ "built_at": "2026-09-26T22:37:37",
+ "latency_s": 17.2,
+ "finish_reason": "stop",
+ "usage": {
+  "prompt_tokens": 34,
+  "total_tokens": 1241,
+  "completion_tokens": 1207,
+  "prompt_tokens_details": null,
+  "completion_tokens_details": {
+   "reasoning_tokens": 37
+  }
+ },
+ "html_bytes": 2985
+}

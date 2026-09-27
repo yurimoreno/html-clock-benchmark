@@ -1,0 +1,202 @@
+{
+ "model": "qwen3.8-flash-next",
+ "judged_at": "2026-09-26T22:38:53",
+ "judge": "typesafe/jev",
+ "judge_runs": "1/3",
+ "score": 8.8,
+ "breakdown": {
+  "time": 10.0,
+  "visual": 10.0,
+  "dial": 8.0,
+  "code": 4.0,
+  "motion": 10
+ },
+ "audit": {
+  "time": {
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true,
+   "correct_12_top": true
+  },
+  "visual": {
+   "has_shadows": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_center_cap": true,
+   "has_bezel": true
+  },
+  "dial": {
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "automated_marker_generation": true,
+   "skips_minute_at_hour": false
+  },
+  "code": {
+   "globals_count": 6,
+   "is_responsive": false,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "typesafe_probs": {
+   "time.hour_continuous": 0.97,
+   "time.minute_continuous": 0.89,
+   "time.correct_12_top": 0.96,
+   "visual.has_shadows": 0.99,
+   "visual.has_gradients": 0.66,
+   "visual.has_hand_tails": 0.91,
+   "visual.has_center_cap": 0.99,
+   "visual.has_bezel": 0.85,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.99,
+   "dial.automated_marker_generation": 0.99,
+   "dial.skips_minute_at_hour": 0.03,
+   "code.globals_count": 0.15,
+   "code.is_responsive": 0.4,
+   "code.uses_helpers": 0.97,
+   "smoothness.zero_latency_init": 0.97
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_usage": {
+   "input_tokens": 3155,
+   "output_tokens": 345
+  },
+  "judge_answers": {
+   "code.zero_dependencies": true,
+   "code.globals_count": 99,
+   "visual.has_gradients": true,
+   "visual.has_shadows": true,
+   "time.second_ms_precision": true,
+   "time.minute_continuous": true,
+   "time.hour_continuous": true,
+   "smoothness.zero_latency_init": true,
+   "code.is_responsive": false,
+   "time.correct_12_top": true
+  },
+  "votes": {
+   "visual.has_hand_tails": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "visual.has_center_cap": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "visual.has_bezel": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.hour_ticks_count": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.minute_ticks_count": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.numerals_count": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   }
+  },
+  "render_check": {
+   "ok": true,
+   "hands": {
+    "second": {
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      178.8,
+      268.8
+     ],
+     "error": 1.2
+    },
+    "minute": {
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      141.2,
+      178.8,
+      303.8
+     ],
+     "error": 2.8
+    },
+    "hour": {
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      178.8,
+      303.8
+     ],
+     "error": 2.0
+    }
+   },
+   "pivot": [
+    99.0,
+    99.0
+   ]
+  },
+  "measured": {
+   "code.zero_dependencies": {
+    "value": true,
+    "evidence": "no network requests"
+   },
+   "code.globals_count": {
+    "value": 6,
+    "evidence": "6 global(s): drawClock, drawHand, canvas, center, ctx, radius"
+   },
+   "visual.has_gradients": {
+    "value": true,
+    "evidence": "gradients applied: 1 (cssGradient 1, cssShadow 1)"
+   },
+   "visual.has_shadows": {
+    "value": true,
+    "evidence": "shadows applied: 1 (cssGradient 1, cssShadow 1)"
+   },
+   "time.second_ms_precision": {
+    "value": true,
+    "evidence": "209 px changed along the second hand's path"
+   },
+   "time.minute_continuous": {
+    "value": true,
+    "evidence": "309 px changed along the minute hand's path"
+   },
+   "time.hour_continuous": {
+    "value": true,
+    "evidence": "268 px changed along the hour hand's path"
+   },
+   "smoothness.zero_latency_init": {
+    "value": true,
+    "evidence": "first frame already shows the time (0 px of noise vs 471 for a real move)"
+   },
+   "code.is_responsive": {
+    "value": false,
+    "evidence": "second-hand sweep 280px at 320w vs 288px at 900w"
+   },
+   "time.correct_12_top": {
+    "value": true,
+    "evidence": "hand angles at four frozen times"
+   }
+  }
+ }
+}

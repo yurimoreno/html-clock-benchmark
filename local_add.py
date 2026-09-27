@@ -7,7 +7,7 @@ re-run without the other, so a judge failure never costs a regeneration.
 
 Usage:
   python local_add.py build http://localhost:8888/v1/chat/completions qwen3.8-flash-next
-  python local_add.py judge qwen3.8-flash-next
+  python local_add.py judge qwen3.8-flash-next [runs]
 """
 import json
 import os
@@ -67,7 +67,7 @@ def build(url, model):
         print("WARNING: generation hit the token limit, clock is likely truncated")
 
 
-def judge(model):
+def judge(model, runs=1):
     from dotenv import load_dotenv
     load_dotenv(os.path.join(ROOT, ".env"))
     sys.path.insert(0, os.path.join(ROOT, "benchmark_system"))
@@ -77,12 +77,13 @@ def judge(model):
     with open(html_path) as f:
         html = f.read()
 
-    audit, runs = evaluate_clock_reliable("typesafe/jev", html, n_runs=1)
+    audit, runs_done = evaluate_clock_reliable("typesafe/jev", html, n_runs=runs)
     score, breakdown = calculate_score(audit)
     result = {
         "model": model,
         "judged_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "judge": "typesafe/jev",
+        "judge_runs": f"{runs_done}/{runs}",
         "score": score,
         "breakdown": breakdown,
         "audit": audit,
@@ -98,7 +99,7 @@ def judge(model):
 if __name__ == "__main__":
     if len(sys.argv) == 4 and sys.argv[1] == "build":
         build(sys.argv[2], sys.argv[3])
-    elif len(sys.argv) == 3 and sys.argv[1] == "judge":
-        judge(sys.argv[2])
+    elif len(sys.argv) in (3, 4) and sys.argv[1] == "judge":
+        judge(sys.argv[2], int(sys.argv[3]) if len(sys.argv) == 4 else 1)
     else:
         sys.exit(__doc__)

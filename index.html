@@ -1240,6 +1240,15 @@
       </tr>
       <tr>
         <td><span class="badge b-1">2</span></td>
+        <td>Qwen3.8 Flash Next</td>
+        <td class="r run-date">Sep 26</td>
+        <td class="r">10</td><td class="r">10</td><td class="r">8</td><td class="r">4</td><td class="r">10</td>
+        <td class="r runs">1/1</td>
+        <td class="r overall" style="color:#d6f5d6">8.8</td>
+        <td class="r latency">17s</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-2">3</span></td>
         <td>Qwen2.5 Coder 14B</td>
         <td class="r run-date">—</td>
         <td class="r">10</td><td class="r">5</td><td class="r">9</td><td class="r">8</td><td class="r">5</td>
@@ -1248,16 +1257,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-3">3</span></td>
-        <td>Qwen3.8 Flash Next</td>
-        <td class="r run-date">Sep 26</td>
-        <td class="r">7.5</td><td class="r">8</td><td class="r">6</td><td class="r">8</td><td class="r">10</td>
-        <td class="r runs">1/1</td>
-        <td class="r overall" style="color:#f5dcc6">7.0</td>
-        <td class="r latency">385s</td>
-      </tr>
-      <tr>
-        <td><span class="badge b-4">4</span></td>
+        <td><span class="badge b-3">4</span></td>
         <td>Gemma 4 E4B Uncensored</td>
         <td class="r run-date">—</td>
         <td class="r">9</td><td class="r">6</td><td class="r">2</td><td class="r">6</td><td class="r">7</td>
@@ -1316,19 +1316,19 @@
     </div>
     <div class="card">
       <header>
-        <span class="name">Qwen2.5 Coder 14B</span>
-        <span class="score s-1">#2 · 7.8</span>
+        <span class="name">Qwen3.8 Flash Next</span>
+        <span class="score s-1">#2 · 8.8</span>
       </header>
-      <iframe src="local%20/qwen2.5-coder-14b.html"></iframe>
-      <div class="verdict"><b>Best blind entry.</b> First clock that gets <i>everything</i> about timekeeping right — hands and ticks rotate around true center, all 12 hour ticks plus 48 minute ticks, correct hour/minute/second math. Plain style, no center dot, second hand ticks (no sweep).</div>
+      <iframe src="local%20/qwen3.8-flash-next.html"></iframe>
+      <div class="verdict"><b>Best blind entry.</b> A clean canvas clock built in 17s: 12 numerals and 60 ticks drawn in loops, millisecond-precise second hand on a rAF loop, correct time from the first frame, confirmed by the render check. Loses points on code: a fixed 400px canvas that doesn't scale, a handful of globals, and minute ticks drawn over the hour marks.</div>
     </div>
     <div class="card">
       <header>
-        <span class="name">Qwen3.8 Flash Next</span>
-        <span class="score s-4">#3 · 7.0</span>
+        <span class="name">Qwen2.5 Coder 14B</span>
+        <span class="score s-2">#3 · 7.8</span>
       </header>
-      <iframe src="local%20/qwen3.8-flash-next.html"></iframe>
-      <div class="verdict"><b>Most ambitious clock on the board.</b> A full watch-station dashboard: SVG dial with knurled bezel, 12 hour + 60 minute ticks via loops, applied-hour/minute/ms-precision math, rAF loop with three escapement modes, WebAudio tick sound, pointer-scrub. Loses points on the render check — a CSS 3D tilt on the dial wrapper plus a quartz-mode seconds transition confused the hand-angle measurement (minute hand off by ~100°), and the second hand couldn't be found at all — so time correctness stays unproven. Also pulls Google Fonts, so not dependency-free, and has no printed numerals count matching 12.</div>
+      <iframe src="local%20/qwen2.5-coder-14b.html"></iframe>
+      <div class="verdict"><b>Best timekeeping of the older models.</b> First clock that gets <i>everything</i> about timekeeping right — hands and ticks rotate around true center, all 12 hour ticks plus 48 minute ticks, correct hour/minute/second math. Plain style, no center dot, second hand ticks (no sweep).</div>
     </div>
     <div class="card">
       <header>

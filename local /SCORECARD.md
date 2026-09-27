@@ -5,8 +5,8 @@ Evaluated 2026-04-28; qwen3.8-flash-next added 2026-09-26 (TypeSafe Jev judge + 
 | Rank | File | Time Accuracy (×3) | Visuals (×2) | Markers/Face (×1.5) | Code Quality (×1.5) | Smoothness (×1) | **Overall /10** |
 |------|------|---------------------|--------------|----------------------|---------------------|-----------------|------------------|
 | 1 | claude-sonnet-5.html | 10 | 10 | 10 | 10 | 10 | **10.0** |
-| 2 | qwen2.5-coder-14b.html | 10 | 5 | 9 | 8 | 5 | **7.8** |
-| 3 | qwen3.8-flash-next.html | 7.5 | 8 | 6 | 8 | 10 | **7.0** |
+| 2 | qwen3.8-flash-next.html | 10 | 10 | 8 | 4 | 10 | **8.8** |
+| 3 | qwen2.5-coder-14b.html | 10 | 5 | 9 | 8 | 5 | **7.8** |
 | 4 | gemma-4-e4b-uncensored-hauhaucs-aggressive.html | 9 | 6 | 2 | 6 | 7 | **6.5** |
 | 5 | gemma-4-e4b.html | 5 | 6 | 1 | 7 | 9 | **5.4** |
 | 6 | glm-4.6v-flash.html | 2 | 6 | 8 | 7 | 9 | **5.1** |
@@ -19,7 +19,15 @@ Evaluated 2026-04-28; qwen3.8-flash-next added 2026-09-26 (TypeSafe Jev judge + 
 
 Added 2026-09-01. Every other entry on this page is a **blind** one-shot generation — the model never saw the grading rubric. This one didn't come from a locally-hosted model at all: the local model server (`deepseek-v4-flash-0731`) was tied up, so this file was written directly by Claude Sonnet 5 inside a Claude Code session, **with the full `JUDGE_V1.md` rubric already in context**. It legitimately satisfies every checked criterion (verified line-by-line, not rubber-stamped) — continuous hour/minute/ms-precision time math, correct 12-at-top offset, gradient bezel + face + drop shadow, hand tails, a distinct center cap, exactly 12 hour ticks + 48 minute ticks + 12 numerals via loops (no manual duplication, minute ticks skip the hour positions), zero leaked globals (IIFE), viewport-relative sizing, helper-function decomposition, zero external dependencies, and a `requestAnimationFrame` loop whose first paint already reflects the real time. Kept as a **reference/upper-bound** entry, not a leaderboard-topping result — a real head-to-head needs a model that hasn't seen the answer key.
 
-## 2. qwen2.5-coder-14b.html — **7.8/10 — best blind entry**
+## 2. qwen3.8-flash-next.html — **8.8/10 — best blind entry**
+
+Added 2026-09-26, blind one-shot against the local vLLM serve (`qwen3.8-flash-next`, hibrid48-uncensored). Built in 17s with 37 reasoning tokens: a plain 400px canvas clock with 12 numerals and 60 ticks drawn in loops, a `requestAnimationFrame` loop with `getMilliseconds()` precision, and correct time from the first frame. The browser render check confirmed the hands point right at frozen times. Zero dependencies.
+
+What it lost: code quality (4/10). The canvas is fixed at 400px and doesn't scale, it leaks a handful of globals, and the minute ticks are drawn over the hour positions.
+
+Note on the first attempt: the server's chat template was injecting a "Reasoning effort is set to xhigh" system prompt that no other entry gets. That run spent ~7,200 reasoning tokens and 6.5 minutes on a 38 KB watch-station dashboard that scored ~7.0 with unverifiable time. The template default was fixed to add nothing, and this entry is the rerun with the bare prompt.
+
+## 3. qwen2.5-coder-14b.html — **7.8/10 — best timekeeping of the older models**
 
 **The first clock in the benchmark that gets *everything* about timekeeping right.**
 
@@ -38,12 +46,6 @@ What's broken / weak
 - `setInterval(drawClock, 1000)` — the second hand ticks once per second, no smooth sweep.
 - Visually plain: white face, black ticks, black hour/minute hands, red second hand. No shadows, no numerals, no bezel.
 - Minor: line widths are set on hands but never reset before drawing the face/ticks, so the *first* frame's ticks render with whatever lineWidth happened to be at canvas init (1px). Cosmetically fine, but slightly leaky.
-
-## 3. qwen3.8-flash-next.html — **7.0/10 — most ambitious, correctness unproven**
-
-Added 2026-09-26, blind one-shot against the local vLLM serve (`qwen3.8-flash-next`, hibrid48-uncensored). This model spent ~7,200 reasoning tokens and ~6.5 minutes generating a 38 KB watch-station *dashboard*: SVG dial with a 150-line knurled bezel, guilloché engraving, 12 applied hour markers + 60 chapter ticks built in loops, day-arc panel, world-city mini dials, three escapement modes (quartz beat / 2.5 Hz spring / smooth sweep) with a WebAudio tick sound and pointer-scrub time travel. Code quality is genuinely top-tier: 0 leaked globals, helper decomposition, responsive, rAF loop with `getMilliseconds()` precision and applied hour/minute offsets.
-
-What cost it the top blind spot: the browser render check **failed** — a CSS 3D `rotateX/rotateY` tilt on the dial wrapper plus a quartz-mode `transition` on the hands confused the frame-diff angle measurement (minute hand measured ~100° off, second hand not found at all), so `correct_12_top` was overridden to false and the time/continuity measurements were skipped. Whether the hands really point right at frozen time is open, but a clock that can't be verified as telling the right time can't be scored as one. Judged as non-zero-dependency too (Google Fonts). No numerals for 3/6 (brass dots instead).
 
 ## 4. gemma-4-e4b-uncensored-hauhaucs-aggressive.html — **6.5/10**
 
@@ -70,8 +72,8 @@ Non-functional. Hands have no defined size; JS sets `width` from the time value 
 ## Final ranking
 
 1. **claude-sonnet-5** — reference entry, generated with the rubric in-context; not a blind comparison.
-2. **qwen2.5-coder-14b** — best blind entry, first to render a fully correct clock face *and* hands.
-3. **qwen3.8-flash-next** — by far the most accomplished build; the render check couldn't verify its time, and the dashboard ambition cost it dependency-free points.
+2. **qwen3.8-flash-next** — best blind entry; plain, correct, verified by the render check, loses only on code quality.
+3. **qwen2.5-coder-14b** — first to render a fully correct clock face *and* hands.
 4. **gemma-4-e4b-uncensored-hauhaucs-aggressive** — correct time, broken markers.
 5. **gemma-4-e4b** — clean code, off-center pivot.
 6. **glm-4.6v-flash** — complete face, rotated 90°.
