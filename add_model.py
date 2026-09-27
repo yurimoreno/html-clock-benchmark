@@ -184,13 +184,16 @@ def why_html(audit):
     """Plain-language account of the score, derived from the same audit fields
     calculate_score() reads, so the text can't drift from the number."""
     t, v, d, c, s = (audit.get(k, {}) for k in ("time", "visual", "dial", "code", "smoothness"))
+    rendered = (audit.get("render_check") or {}).get("ok")
     # (dimension summary when perfect, [(passed, win text, loss text, overall points)])
     checks = [
         ("correct, continuous time math", [
             (t.get("hour_continuous"), "continuous hour hand", "hour hand jumps between hours", 0.75),
             (t.get("minute_continuous"), "continuous minute hand", "minute hand jumps each minute", 0.75),
             (t.get("second_ms_precision"), "millisecond-precise second hand", "second hand ignores milliseconds", 0.75),
-            (t.get("correct_12_top"), "12 at the top", "12 is not at the top", 0.75),
+            (t.get("correct_12_top"), *(("hands verified at the right time when rendered",
+                                         "hands show the wrong time when rendered")
+                                        if rendered is not None else ("12 at the top", "12 is not at the top")), 0.75),
         ]),
         ("full visual finish (shadows, gradients, bezel, center cap, hand tails)", [
             (v.get("has_shadows"), "shadows", "no shadows", 0.4),

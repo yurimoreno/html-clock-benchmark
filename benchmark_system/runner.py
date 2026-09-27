@@ -242,8 +242,34 @@ def _aggregate_audits(audits):
     return result
 
 
+def apply_render_check(audit, clock_code):
+    """Render the clock and let a conclusive result decide time.correct_12_top.
+
+    Judges read source, so they miss clocks whose math looks right but whose
+    hands point the wrong way (e.g. the -90° offset applied twice). The render
+    check measures the hands at known frozen times; see render_check.py. Like
+    static_precheck, a deterministic answer overrides the judge, in either
+    direction. Inconclusive renders leave the judge's answer alone."""
+    if not audit:
+        return audit
+    try:
+        from render_check import check_rendered_time
+    except ImportError:
+        from benchmark_system.render_check import check_rendered_time
+    result = check_rendered_time(clock_code)
+    audit["render_check"] = result
+    if result.get("ok") is not None:
+        audit.setdefault("time", {})["correct_12_top"] = result["ok"]
+    return audit
+
+
 def evaluate_clock_reliable(judge_model, clock_code, n_runs=3, max_tokens=30000):
     """Run judge n_runs times, return (aggregated_audit, runs_completed)."""
+    audit, runs = _evaluate_clock_runs(judge_model, clock_code, n_runs, max_tokens)
+    return apply_render_check(audit, clock_code), runs
+
+
+def _evaluate_clock_runs(judge_model, clock_code, n_runs, max_tokens):
     if judge_model == "typesafe/jev":
         # Jev is deterministic per call: one pass is enough.
         audit = evaluate_clock(judge_model, clock_code, max_tokens)

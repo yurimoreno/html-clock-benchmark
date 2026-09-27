@@ -13,6 +13,52 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      138.8,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.51506288807111,
+    99.0
+   ]
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
@@ -68,6 +114,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 0.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      43.8,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.99494936611667,
+    91.0
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -125,6 +217,11 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "could not locate the pivot"
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
@@ -180,6 +277,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": true
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 0.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      178.8,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      178.8,
+      303.8
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      178.8,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.0,
+    99.55263513794915
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -237,6 +380,53 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      303.8,
+      313.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      181.2,
+      273.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.99494936611666,
+    114.5512985522207
+   ]
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
@@ -292,6 +482,11 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "could not locate the pivot"
   },
   "smoothness": {
    "method": "high_freq",
@@ -349,6 +544,11 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "could not locate the pivot"
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
@@ -404,6 +604,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      306.2,
+      316.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      311.2,
+      321.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      273.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.66019214502,
+    100.64063619608046
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -461,6 +707,48 @@
    "numerals_count": 0,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 3.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      31.2,
+      291.2,
+      301.2
+     ]
+    },
+    "minute": {
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      298.8,
+      308.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      183.8,
+      268.8
+     ]
+    }
+   },
+   "ok": null,
+   "pivot": [
+    99.75509198220102,
+    99.0
+   ]
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
@@ -516,6 +804,53 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 4.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      38.8,
+      48.8,
+      306.2,
+      316.2
+     ]
+    },
+    "minute": {
+     "error": 4.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      136.2,
+      173.8,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 6.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      56.2,
+      173.8,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    96.5626698498597,
+    99.29173378637901
+   ]
   },
   "smoothness": {
    "method": "high_freq",
@@ -573,6 +908,52 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.01264115610036,
+    93.0
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
@@ -628,6 +1009,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.60412338186445,
+    99.0
+   ]
   },
   "smoothness": {
    "method": "low_freq",
@@ -685,6 +1112,52 @@
    "numerals_count": 0,
    "skips_minute_at_hour": true
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 0.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      181.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      181.2,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      183.8,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.60562688309562,
+    99.0
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
@@ -740,6 +1213,53 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": true
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 3.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      21.2,
+      31.2,
+      303.8,
+      313.8
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      48.8,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      48.8,
+      183.8,
+      273.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    100.55139482984337,
+    100.57045787791239
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -797,12 +1317,59 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 75.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      213.8,
+      223.8,
+      308.8,
+      318.8
+     ]
+    },
+    "minute": {
+     "error": 72.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      41.2,
+      51.2,
+      213.8,
+      323.8
+     ]
+    },
+    "second": {
+     "error": 53.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      86.2,
+      176.2,
+      323.8
+     ]
+    }
+   },
+   "ok": false,
+   "pivot": [
+    98.99494936611667,
+    101.11626970967629
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
   },
   "time": {
-   "correct_12_top": true,
+   "correct_12_top": false,
    "hour_continuous": true,
    "minute_continuous": true,
    "second_ms_precision": true
@@ -853,12 +1420,59 @@
    "numerals_count": 12,
    "skips_minute_at_hour": true
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 54.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      88.8,
+      218.8,
+      228.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 52.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      46.2,
+      88.8,
+      218.8,
+      321.2
+     ]
+    },
+    "second": {
+     "error": 51.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      88.8,
+      183.8,
+      321.2
+     ]
+    }
+   },
+   "ok": false,
+   "pivot": [
+    101.70105136944034,
+    90.63199311330058
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
   },
   "time": {
-   "correct_12_top": true,
+   "correct_12_top": false,
    "hour_continuous": true,
    "minute_continuous": true,
    "second_ms_precision": true
@@ -908,6 +1522,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 0,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 4.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      38.8,
+      48.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      138.8,
+      303.8,
+      316.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    97.27508687955373,
+    99.0
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -965,12 +1625,58 @@
    "numerals_count": 12,
    "skips_minute_at_hour": true
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 89.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      123.8,
+      221.2,
+      231.2
+     ]
+    },
+    "minute": {
+     "error": 72.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      123.8,
+      133.8,
+      236.2,
+      318.8
+     ]
+    },
+    "second": {
+     "error": 56.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      86.2,
+      236.2,
+      353.8
+     ]
+    }
+   },
+   "ok": false,
+   "pivot": [
+    102.16661584661205,
+    101.48013713511367
+   ]
+  },
   "smoothness": {
    "method": "low_freq",
    "zero_latency_init": true
   },
   "time": {
-   "correct_12_top": true,
+   "correct_12_top": false,
    "hour_continuous": true,
    "minute_continuous": true,
    "second_ms_precision": false
@@ -1020,6 +1726,51 @@
    "minute_ticks_count": 0,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      306.2,
+      316.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      273.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.80059469429604,
+    100.41594514850867
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -1077,12 +1828,57 @@
    "numerals_count": 12,
    "skips_minute_at_hour": true
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      306.2,
+      316.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.95228802729117,
+    111.0
+   ]
+  },
   "smoothness": {
    "method": "high_freq",
    "zero_latency_init": true
   },
   "time": {
-   "correct_12_top": false,
+   "correct_12_top": true,
    "hour_continuous": true,
    "minute_continuous": true,
    "second_ms_precision": true
@@ -1132,6 +1928,51 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 4.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      38.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      138.8,
+      306.2,
+      316.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    97.12553615092263,
+    99.0
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -1189,6 +2030,11 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "could not locate the pivot"
+  },
   "smoothness": {
    "method": "high_freq",
    "zero_latency_init": true
@@ -1244,6 +2090,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 0,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      138.8,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.4148686356979,
+    107.0
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -1301,6 +2193,53 @@
    "numerals_count": 0,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      303.8,
+      313.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      301.2,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      61.2,
+      176.2,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.74282724815258,
+    99.0
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
@@ -1356,6 +2295,52 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      178.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      53.8,
+      141.2,
+      178.8,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      53.8,
+      178.8,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.13644281340234,
+    103.74358888837212
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -1413,6 +2398,51 @@
    "numerals_count": 12,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      301.2,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      178.8,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.0,
+    99.74297957619649
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
@@ -1468,6 +2498,53 @@
    "minute_ticks_count": 60,
    "numerals_count": 12,
    "skips_minute_at_hour": true
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      193.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      306.2,
+      316.2
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      166.2,
+      178.8,
+      268.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.0,
+    96.0
+   ]
   },
   "smoothness": {
    "method": "rAF",
@@ -1525,6 +2602,51 @@
    "numerals_count": 0,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      303.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      303.8,
+      313.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      181.2,
+      273.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.10339232864509,
+    134.3708213450921
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
@@ -1581,12 +2703,57 @@
    "numerals_count": 0,
    "skips_minute_at_hour": false
   },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 120.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      183.8,
+      273.8
+     ]
+    },
+    "minute": {
+     "error": 0.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      141.2,
+      183.8,
+      193.8
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      181.2,
+      268.8
+     ]
+    }
+   },
+   "ok": false,
+   "pivot": [
+    97.24894597762932,
+    100.0555320815755
+   ]
+  },
   "smoothness": {
    "method": "rAF",
    "zero_latency_init": true
   },
   "time": {
-   "correct_12_top": true,
+   "correct_12_top": false,
    "hour_continuous": false,
    "minute_continuous": false,
    "second_ms_precision": false
@@ -1636,6 +2803,11 @@
    "minute_ticks_count": 60,
    "numerals_count": 0,
    "skips_minute_at_hour": false
+  },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "could not locate the pivot"
   },
   "smoothness": {
    "method": "rAF",

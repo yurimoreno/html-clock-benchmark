@@ -2,3 +2,4 @@ requests
 python-dotenv
 inquirer
 typesafe-sdk
+playwright  # render check (benchmark_system/render_check.py); needs a Chromium: playwright install chromium

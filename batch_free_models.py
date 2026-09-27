@@ -12,7 +12,7 @@ import re
 import argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from benchmark_system.runner import generate_clock, evaluate_clock, calculate_score
+from benchmark_system.runner import generate_clock, evaluate_clock, apply_render_check, calculate_score
 
 PROGRESS_FILE = "batch_progress.json"
 
@@ -137,6 +137,7 @@ def main():
         print(f"  -> Evaluating with judge ({judge})...")
         eval_start = time.time()
         audit = evaluate_clock(judge, html)
+        audit = apply_render_check(audit, html)
         eval_elapsed = time.time() - eval_start
 
         if not audit:

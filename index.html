@@ -347,7 +347,7 @@
   <div class="judge-credit">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" style="stroke:var(--border-strong)" stroke-width="1.5"/><path d="M8 4v4l3 2" style="stroke:var(--muted-4)" stroke-width="1.5" stroke-linecap="round"/></svg>
     <div>
-      <strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion over each clock's source, scored by <code>rejudge_index.py</code> on 2026-09-18. Each card's Earned/Lost summary is generated from its Jev audit (<code>audits.json</code>), so it always matches the score; the original hand review, where one exists, sits under “Original review” and may describe an earlier score. See <code>docs/rejudge-2026-09-18.md</code> for the per-dimension before and after.</div>
+      <strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion over each clock's source, scored by <code>rejudge_index.py</code> on 2026-09-26. A render check then opens each clock in headless Chromium with the time frozen and measures where the hands actually point; when that is conclusive it decides whether the clock shows the right time, overriding the judge (source-reading missed three clocks whose hands were rotated). Each card's Earned/Lost summary is generated from its Jev audit (<code>audits.json</code>), so it always matches the score; the original hand review, where one exists, sits under “Original review” and may describe an earlier score. See <code>docs/rejudge-2026-09-26.md</code> for the per-dimension before and after.</div>
   </div>
   <p class="license">
     MIT License — Copyright 2026 Yuri Moreno. Released for educational and personal use. Built by <a href="https://www.yurimoreno.com">Yuri Moreno</a>.
@@ -434,19 +434,6 @@
       </tr>
       <tr>
         <td><span class="badge b-1">2</span></td>
-        <td><div><a href="#card-deepseek/deepseek-v4-pro" class="model-link">DeepSeek V4 Pro</a></div><span class="model-id">deepseek/deepseek-v4-pro</span></td>
-        <td class="r run-date">Jun 15</td>
-        <td class="r">10.0</td><td class="r">10.0</td><td class="r">10.0</td><td class="r">7.0</td><td class="r">10</td>
-        <td class="r runs">1/1</td>
-        <td class="r overall" style="color:#d6f5d6">9.55</td>
-        <td class="r act-cost">$0.0142</td>
-        <td class="cost-eff green">$0.13</td>
-        <td class="price">$0.435/M</td>
-        <td class="price">$0.87/M</td>
-        <td class="r latency">282.0s</td>
-      </tr>
-      <tr>
-        <td><span class="badge b-1">3</span></td>
         <td>Claude Opus 5 <span class="tip" style="opacity:.6">(via subscription, not OpenRouter)</span></td>
         <td class="r run-date">Sep 1</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">10</td>
@@ -459,7 +446,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-1">4</span></td>
+        <td><span class="badge b-1">3</span></td>
         <td><div><a href="#card-deepseek/deepseek-v4.1-flash" class="model-link">DeepSeek V4.1 Flash</a></div><span class="model-id">deepseek/deepseek-v4.1-flash</span></td>
         <td class="r run-date">Sep 26</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">6.0</td><td class="r">10.0</td><td class="r">10</td>
@@ -472,7 +459,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-1">5</span></td>
+        <td><span class="badge b-1">4</span></td>
         <td><div><a href="#card-moonshotai/kimi-k2.7-code" class="model-link">Kimi K2.7 Code</a></div><span class="model-id">moonshotai/kimi-k2.7-code</span></td>
         <td class="r run-date">Jun 15</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">10.0</td><td class="r">10</td>
@@ -485,7 +472,7 @@
         <td class="r latency">65.3s</td>
       </tr>
       <tr>
-        <td><span class="badge b-1">6</span></td>
+        <td><span class="badge b-1">5</span></td>
         <td><div><a href="#card-qwen/qwen3.6-35b-a3b" class="model-link">Qwen 3.6 35B A3B</a></div><span class="model-id">qwen/qwen3.6-35b-a3b</span></td>
         <td class="r run-date">Jun 14</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">7.0</td><td class="r">10</td>
@@ -498,7 +485,7 @@
         <td class="r latency">101.3s</td>
       </tr>
       <tr>
-        <td><span class="badge b-1">7</span></td>
+        <td><span class="badge b-1">6</span></td>
         <td><div><a href="#card-z-ai/glm-5.3" class="model-link">GLM 5.3</a></div><span class="model-id">z-ai/glm-5.3</span></td>
         <td class="r run-date">Sep 26</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
@@ -511,20 +498,20 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-2">8</span></td>
-        <td><div><a href="#card-deepseek/deepseek-v4-flash" class="model-link">DeepSeek V4 Flash</a></div><span class="model-id">deepseek/deepseek-v4-flash</span></td>
+        <td><span class="badge b-2">7</span></td>
+        <td><div><a href="#card-deepseek/deepseek-v4-pro" class="model-link">DeepSeek V4 Pro</a></div><span class="model-id">deepseek/deepseek-v4-pro</span></td>
         <td class="r run-date">Jun 15</td>
-        <td class="r">10.0</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
+        <td class="r">7.5</td><td class="r">10.0</td><td class="r">10.0</td><td class="r">7.0</td><td class="r">10</td>
         <td class="r runs">1/1</td>
-        <td class="r overall" style="color:#dff5c6">8.95</td>
-        <td class="r act-cost">$0.0007</td>
-        <td class="cost-eff green">$0.03</td>
-        <td class="price">$0.098/M</td>
-        <td class="price">$0.196/M</td>
-        <td class="r latency">44.1s</td>
+        <td class="r overall" style="color:#dff5c6">8.8</td>
+        <td class="r act-cost">$0.0142</td>
+        <td class="cost-eff green">$0.13</td>
+        <td class="price">$0.435/M</td>
+        <td class="price">$0.87/M</td>
+        <td class="r latency">282.0s</td>
       </tr>
       <tr>
-        <td><span class="badge b-2">9</span></td>
+        <td><span class="badge b-2">8</span></td>
         <td>GLM 5.1</td>
         <td class="r run-date">—</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">10</td>
@@ -537,7 +524,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-2">10</span></td>
+        <td><span class="badge b-2">9</span></td>
         <td><div><a href="#card-openai/gpt-5-nano" class="model-link">OpenAI GPT-5 Nano</a></div><span class="model-id">openai/gpt-5-nano</span></td>
         <td class="r run-date">Jun 15</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
@@ -550,7 +537,7 @@
         <td class="r latency">52.5s</td>
       </tr>
       <tr>
-        <td><span class="badge b-2">11</span></td>
+        <td><span class="badge b-2">10</span></td>
         <td><div><a href="#card-tencent/hy4-preview" class="model-link">Tencent Hy4 preview</a></div><span class="model-id">tencent/hy4-preview</span></td>
         <td class="r run-date">Sep 26</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
@@ -563,7 +550,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-2">12</span></td>
+        <td><span class="badge b-2">11</span></td>
         <td><div><a href="#card-xiaomi/mimo-v2.5" class="model-link">Xiaomi MiMo-V2.5</a></div><span class="model-id">xiaomi/mimo-v2.5</span></td>
         <td class="r run-date">Sep 26</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
@@ -576,7 +563,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-3">13</span></td>
+        <td><span class="badge b-3">12</span></td>
         <td>Claude Sonnet 5 <span class="tip" style="opacity:.6">(via subscription, not OpenRouter)</span></td>
         <td class="r run-date">Sep 1</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">10</td>
@@ -588,8 +575,8 @@
         <td class="price">—</td>
         <td class="r latency">—</td>
       </tr>
-            <tr>
-        <td><span class="badge b-3">14</span></td>
+      <tr>
+        <td><span class="badge b-3">13</span></td>
         <td><div><a href="#card-nvidia/nemotron-3-ultra-550b-a55b:free" class="model-link">Nvidia Nemotron 3 Ultra (free)</a></div><span class="model-id">nvidia/nemotron-3-ultra-550b-a55b:free</span></td>
         <td class="r run-date">Sep 26</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">7</td>
@@ -600,6 +587,19 @@
         <td class="price">$0/M</td>
         <td class="price">$0/M</td>
         <td class="r latency">—</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-3">14</span></td>
+        <td><div><a href="#card-deepseek/deepseek-v4-flash" class="model-link">DeepSeek V4 Flash</a></div><span class="model-id">deepseek/deepseek-v4-flash</span></td>
+        <td class="r run-date">Jun 15</td>
+        <td class="r">7.5</td><td class="r">10.0</td><td class="r">8.0</td><td class="r">5.0</td><td class="r">10</td>
+        <td class="r runs">1/1</td>
+        <td class="r overall" style="color:#f5edd6">8.2</td>
+        <td class="r act-cost">$0.0007</td>
+        <td class="cost-eff green">$0.03</td>
+        <td class="price">$0.098/M</td>
+        <td class="price">$0.196/M</td>
+        <td class="r latency">44.1s</td>
       </tr>
       <tr>
         <td><span class="badge b-3">15</span></td>
@@ -668,6 +668,19 @@
       </tr>
       <tr>
         <td><span class="badge b-4">20</span></td>
+        <td><div><a href="#card-minimax/minimax-m3" class="model-link">MiniMax M3</a></div><span class="model-id">minimax/minimax-m3</span></td>
+        <td class="r run-date">Jun 15</td>
+        <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">7</td>
+        <td class="r runs">1/1</td>
+        <td class="r overall" style="color:#f5dcc6">7.8</td>
+        <td class="r act-cost">$0.0024</td>
+        <td class="cost-eff green">$0.19</td>
+        <td class="price">$0.3/M</td>
+        <td class="price">$1.2/M</td>
+        <td class="r latency">23.1s</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-4">21</span></td>
         <td>MiMo 2.5 Pro</td>
         <td class="r run-date">—</td>
         <td class="r">10.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">10</td>
@@ -680,7 +693,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-4">21</span></td>
+        <td><span class="badge b-4">22</span></td>
         <td><div><a href="#card-google/gemini-3.5-flash" class="model-link">Gemini 3.5 Flash</a></div><span class="model-id">google/gemini-3.5-flash</span></td>
         <td class="r run-date">Jun 15</td>
         <td class="r">10.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">2.0</td><td class="r">10</td>
@@ -693,7 +706,7 @@
         <td class="r latency">46.5s</td>
       </tr>
       <tr>
-        <td><span class="badge b-4">22</span></td>
+        <td><span class="badge b-4">23</span></td>
         <td>Grok 4.2 Expert</td>
         <td class="r run-date">—</td>
         <td class="r">10.0</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">2</td>
@@ -704,19 +717,6 @@
         <td class="price">$2/M</td>
         <td class="price">$6/M</td>
         <td class="r latency">—</td>
-      </tr>
-      <tr>
-        <td><span class="badge b-4">23</span></td>
-        <td><div><a href="#card-minimax/minimax-m3" class="model-link">MiniMax M3</a></div><span class="model-id">minimax/minimax-m3</span></td>
-        <td class="r run-date">Jun 15</td>
-        <td class="r">7.5</td><td class="r">8.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">7</td>
-        <td class="r runs">1/1</td>
-        <td class="r overall" style="color:#f5dcc6">7.05</td>
-        <td class="r act-cost">$0.0024</td>
-        <td class="cost-eff green">$0.19</td>
-        <td class="price">$0.3/M</td>
-        <td class="price">$1.2/M</td>
-        <td class="r latency">23.1s</td>
       </tr>
       <tr>
         <td><span class="badge b-5">24</span></td>
@@ -733,19 +733,6 @@
       </tr>
       <tr>
         <td><span class="badge b-5">25</span></td>
-        <td><div><a href="#card-google/gemini-2.5-flash" class="model-link">Gemini 2.5 Flash</a></div><span class="model-id">google/gemini-2.5-flash</span></td>
-        <td class="r run-date">Jun 14</td>
-        <td class="r">7.5</td><td class="r">6.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">2</td>
-        <td class="r runs">1/1</td>
-        <td class="r overall" style="color:#f5c6c6">6.45</td>
-        <td class="r act-cost">$0.0045</td>
-        <td class="cost-eff yellow">$0.46</td>
-        <td class="price">$0.3/M</td>
-        <td class="price">$2.5/M</td>
-        <td class="r latency">7.7s</td>
-      </tr>
-      <tr>
-        <td><span class="badge b-5">26</span></td>
         <td>ChatGPT Free</td>
         <td class="r run-date">—</td>
         <td class="r">7.5</td><td class="r">8.0</td><td class="r">6.0</td><td class="r">2.0</td><td class="r">2</td>
@@ -758,7 +745,7 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-5">27</span></td>
+        <td><span class="badge b-5">26</span></td>
         <td>Qwen 3.6 Plus</td>
         <td class="r run-date">—</td>
         <td class="r">7.5</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">2.0</td><td class="r">2</td>
@@ -771,20 +758,20 @@
         <td class="r latency">—</td>
       </tr>
       <tr>
-        <td><span class="badge b-5">28</span></td>
-        <td><div><a href="#card-z-ai/glm-5.3-flash" class="model-link">GLM 5.3 Flash</a></div><span class="model-id">z-ai/glm-5.3-flash</span></td>
-        <td class="r run-date">Sep 26</td>
-        <td class="r">2.5</td><td class="r">6.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
-        <td class="r runs">1/3</td>
-        <td class="r overall" style="color:#f5c6c6">6.05</td>
-        <td class="r act-cost">—</td>
-        <td class="cost-eff green">$0.09</td>
-        <td class="price">$0.04/M</td>
-        <td class="price">$0.5/M</td>
-        <td class="r latency">—</td>
+        <td><span class="badge b-5">27</span></td>
+        <td><div><a href="#card-google/gemini-2.5-flash" class="model-link">Gemini 2.5 Flash</a></div><span class="model-id">google/gemini-2.5-flash</span></td>
+        <td class="r run-date">Jun 14</td>
+        <td class="r">5.0</td><td class="r">6.0</td><td class="r">10.0</td><td class="r">2.0</td><td class="r">2</td>
+        <td class="r runs">1/1</td>
+        <td class="r overall" style="color:#f5c6c6">5.7</td>
+        <td class="r act-cost">$0.0045</td>
+        <td class="cost-eff yellow">$0.46</td>
+        <td class="price">$0.3/M</td>
+        <td class="price">$2.5/M</td>
+        <td class="r latency">7.7s</td>
       </tr>
       <tr>
-        <td><span class="badge b-5">29</span></td>
+        <td><span class="badge b-5">28</span></td>
         <td>MiniMax M2.7</td>
         <td class="r run-date">—</td>
         <td class="r">7.5</td><td class="r">4.0</td><td class="r">4.0</td><td class="r">5.0</td><td class="r">2</td>
@@ -794,6 +781,19 @@
         <td class="cost-eff green">$0.23</td>
         <td class="price">$0.30/M</td>
         <td class="price">$1.20/M</td>
+        <td class="r latency">—</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-5">29</span></td>
+        <td><div><a href="#card-z-ai/glm-5.3-flash" class="model-link">GLM 5.3 Flash</a></div><span class="model-id">z-ai/glm-5.3-flash</span></td>
+        <td class="r run-date">Sep 26</td>
+        <td class="r">0</td><td class="r">6.0</td><td class="r">6.0</td><td class="r">8.0</td><td class="r">10</td>
+        <td class="r runs">1/3</td>
+        <td class="r overall" style="color:#f5c6c6">5.3</td>
+        <td class="r act-cost">—</td>
+        <td class="cost-eff green">$0.09</td>
+        <td class="price">$0.04/M</td>
+        <td class="price">$0.5/M</td>
         <td class="r latency">—</td>
       </tr>
       <tr>
@@ -827,22 +827,10 @@
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Blind one-shot via subscription, not OpenRouter.</b> SVG clock, fully IIFE-scoped (zero global leaks), responsive <code>min(80vmin,420px)</code> sizing, dedicated <code>setRotation()</code>/<code>pad()</code> helpers, correct continuous time math. Docked only on Visual: the rim is a 4px stroke on the same face circle rather than a genuinely separate bezel layer.</details>
       </div>
     </div>
-    <div class="card" id="card-deepseek/deepseek-v4-pro">
-      <header>
-        <span class="name">DeepSeek V4 Pro</span>
-        <span class="score s-1">#2 · 9.55</span>
-      </header>
-      <iframe src="previews/deepseek_deepseek-v4-pro.html"></iframe>
-      <div class="verdict">
-        <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim good"><span>Dial</span><b>10</b></div><div class="dim warn"><span>Code</span><b>7</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
-        <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); a complete, loop-generated dial with numerals; no global leaks, helper functions and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 0.45:</b> Fixed size (−0.45).</p>
-        <div class="meta"><span class="model-id">deepseek/deepseek-v4-pro</span><span>Ran Jun 15</span><span>Latency 282.0s</span><span>Cost $0.0142</span><span>Judge runs 1/1</span></div>
-      </div>
-    </div>
     <div class="card">
       <header>
         <span class="name">Claude Opus 5</span>
-        <span class="score s-1">#3 · 9.4</span>
+        <span class="score s-1">#2 · 9.4</span>
       </header>
       <iframe src="cloud/opus-5.html"></iframe>
       <div class="verdict">
@@ -855,7 +843,7 @@
     <div class="card" id="card-deepseek/deepseek-v4.1-flash">
       <header>
         <span class="name">DeepSeek V4.1 Flash</span>
-        <span class="score s-1">#4 · 9.4</span>
+        <span class="score s-1">#3 · 9.4</span>
       </header>
       <iframe src="previews/deepseek_deepseek-v4.1-flash.html"></iframe>
       <div class="verdict">
@@ -867,7 +855,7 @@
     <div class="card" id="card-moonshotai/kimi-k2.7-code">
       <header>
         <span class="name">Kimi K2.7 Code</span>
-        <span class="score s-1">#5 · 9.3</span>
+        <span class="score s-1">#4 · 9.3</span>
       </header>
       <iframe src="previews/moonshotai_kimi-k2.7-code.html"></iframe>
       <div class="verdict">
@@ -879,7 +867,7 @@
     <div class="card" id="card-qwen/qwen3.6-35b-a3b">
       <header>
         <span class="name">Qwen 3.6 35B A3B</span>
-        <span class="score s-1">#6 · 9.25</span>
+        <span class="score s-1">#5 · 9.25</span>
       </header>
       <iframe src="previews/qwen_qwen3.6-35b-a3b.html"></iframe>
       <div class="verdict">
@@ -891,7 +879,7 @@
     <div class="card" id="card-z-ai/glm-5.3">
       <header>
         <span class="name">GLM 5.3</span>
-        <span class="score s-1">#7 · 9.1</span>
+        <span class="score s-1">#6 · 9.1</span>
       </header>
       <iframe src="previews/z-ai_glm-5.3.html"></iframe>
       <div class="verdict">
@@ -900,22 +888,22 @@
         <div class="meta"><span class="model-id">z-ai/glm-5.3</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
-    <div class="card" id="card-deepseek/deepseek-v4-flash">
+    <div class="card" id="card-deepseek/deepseek-v4-pro">
       <header>
-        <span class="name">DeepSeek V4 Flash</span>
-        <span class="score s-2">#8 · 8.95</span>
+        <span class="name">DeepSeek V4 Pro</span>
+        <span class="score s-2">#7 · 8.8</span>
       </header>
-      <iframe src="previews/deepseek_deepseek-v4-flash.html"></iframe>
+      <iframe src="previews/deepseek_deepseek-v4-pro.html"></iframe>
       <div class="verdict">
-        <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
-        <p class="why"><b>Earned:</b> Correct, continuous time math; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks, numerals and loop-generated markers; no global leaks and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.05:</b> Fixed size (−0.45), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
-        <div class="meta"><span class="model-id">deepseek/deepseek-v4-flash</span><span>Ran Jun 15</span><span>Latency 44.1s</span><span>Cost $0.0007</span><span>Judge runs 1/1</span></div>
+        <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim good"><span>Dial</span><b>10</b></div><div class="dim warn"><span>Code</span><b>7</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
+        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and millisecond-precise second hand; full visual finish (shadows, gradients, bezel, center cap, hand tails); a complete, loop-generated dial with numerals; no global leaks, helper functions and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.2:</b> Hands show the wrong time when rendered (−0.75), fixed size (−0.45).</p>
+        <div class="meta"><span class="model-id">deepseek/deepseek-v4-pro</span><span>Ran Jun 15</span><span>Latency 282.0s</span><span>Cost $0.0142</span><span>Judge runs 1/1</span></div>
       </div>
     </div>
     <div class="card">
       <header>
         <span class="name">GLM 5.1</span>
-        <span class="score s-2">#9 · 8.8</span>
+        <span class="score s-2">#8 · 8.8</span>
       </header>
       <iframe src="cloud/glm-5.1.html"></iframe>
       <div class="verdict">
@@ -927,7 +915,7 @@
     <div class="card" id="card-openai/gpt-5-nano">
       <header>
         <span class="name">OpenAI GPT-5 Nano</span>
-        <span class="score s-2">#10 · 8.7</span>
+        <span class="score s-2">#9 · 8.7</span>
       </header>
       <iframe src="previews/openai_gpt-5-nano.html"></iframe>
       <div class="verdict">
@@ -939,7 +927,7 @@
     <div class="card" id="card-tencent/hy4-preview">
       <header>
         <span class="name">Tencent Hy4 preview</span>
-        <span class="score s-2">#11 · 8.55</span>
+        <span class="score s-2">#10 · 8.55</span>
       </header>
       <iframe src="previews/tencent_hy4-preview.html"></iframe>
       <div class="verdict">
@@ -951,7 +939,7 @@
     <div class="card" id="card-xiaomi/mimo-v2.5">
       <header>
         <span class="name">Xiaomi MiMo-V2.5</span>
-        <span class="score s-2">#12 · 8.55</span>
+        <span class="score s-2">#11 · 8.55</span>
       </header>
       <iframe src="previews/xiaomi_mimo-v2.5.html"></iframe>
       <div class="verdict">
@@ -963,7 +951,7 @@
     <div class="card">
       <header>
         <span class="name">Claude Sonnet 5</span>
-        <span class="score s-3">#13 · 8.4</span>
+        <span class="score s-3">#12 · 8.4</span>
       </header>
       <iframe src="cloud/sonnet-5.html"></iframe>
       <div class="verdict">
@@ -976,13 +964,25 @@
     <div class="card" id="card-nvidia/nemotron-3-ultra-550b-a55b:free">
       <header>
         <span class="name">Nvidia Nemotron 3 Ultra (free)</span>
-        <span class="score s-3">#14 · 8.25</span>
+        <span class="score s-3">#13 · 8.25</span>
       </header>
       <iframe src="previews/nvidia_nemotron-3-ultra-550b-a55b_free.html"></iframe>
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim warn"><span>Motion</span><b>7</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; responsive sizing and helper functions; the right time on the first frame; fast-interval motion. <b>Lost 1.75:</b> Leaks globals (−0.45), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3), fast setInterval instead of rAF (−0.3).</p>
         <div class="meta"><span class="model-id">nvidia/nemotron-3-ultra-550b-a55b:free</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+      </div>
+    </div>
+    <div class="card" id="card-deepseek/deepseek-v4-flash">
+      <header>
+        <span class="name">DeepSeek V4 Flash</span>
+        <span class="score s-3">#14 · 8.2</span>
+      </header>
+      <iframe src="previews/deepseek_deepseek-v4-flash.html"></iframe>
+      <div class="verdict">
+        <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim good"><span>Visual</span><b>10</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
+        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and millisecond-precise second hand; full visual finish (shadows, gradients, bezel, center cap, hand tails); all 12 hour ticks, minute ticks, numerals and loop-generated markers; no global leaks and no dependencies; a smooth rAF sweep that is right from the first frame. <b>Lost 1.8:</b> Hands show the wrong time when rendered (−0.75), fixed size (−0.45), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
+        <div class="meta"><span class="model-id">deepseek/deepseek-v4-flash</span><span>Ran Jun 15</span><span>Latency 44.1s</span><span>Cost $0.0007</span><span>Judge runs 1/1</span></div>
       </div>
     </div>
     <div class="card">
@@ -1045,10 +1045,22 @@
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Most polished CSS clock.</b> Numbers, 60 ticks (12 major), correct pivot pattern, 50 ms refresh, ms-precision second hand. Tick <code>transform-origin</code> computed exactly to land at the rim.</details>
       </div>
     </div>
+    <div class="card" id="card-minimax/minimax-m3">
+      <header>
+        <span class="name">MiniMax M3</span>
+        <span class="score s-4">#20 · 7.8</span>
+      </header>
+      <iframe src="previews/minimax_minimax-m3.html"></iframe>
+      <div class="verdict">
+        <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim warn"><span>Motion</span><b>7</b></div></div>
+        <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; minute ticks, numerals, loop-generated markers and minute ticks that skip the hours; no dependencies; the right time on the first frame; fast-interval motion. <b>Lost 2.2:</b> Leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), missing hour ticks (−0.3), no helper functions (−0.3), fast setInterval instead of rAF (−0.3).</p>
+        <div class="meta"><span class="model-id">minimax/minimax-m3</span><span>Ran Jun 15</span><span>Latency 23.1s</span><span>Cost $0.0024</span><span>Judge runs 1/1</span></div>
+      </div>
+    </div>
     <div class="card">
       <header>
         <span class="name">MiMo 2.5 Pro</span>
-        <span class="score s-4">#20 · 7.7</span>
+        <span class="score s-4">#21 · 7.7</span>
       </header>
       <iframe src="cloud/mimo-2.5-pro.html"></iframe>
       <div class="verdict">
@@ -1060,7 +1072,7 @@
     <div class="card" id="card-google/gemini-3.5-flash">
       <header>
         <span class="name">Gemini 3.5 Flash</span>
-        <span class="score s-4">#21 · 7.6</span>
+        <span class="score s-4">#22 · 7.6</span>
       </header>
       <iframe src="previews/google_gemini-3.5-flash.html"></iframe>
       <div class="verdict">
@@ -1072,25 +1084,13 @@
     <div class="card">
       <header>
         <span class="name">Grok 4.2 Expert</span>
-        <span class="score s-4">#22 · 7.3</span>
+        <span class="score s-4">#23 · 7.3</span>
       </header>
       <iframe src="cloud/grok 4.2 expert.html"></iframe>
       <div class="verdict">
         <div class="dims"><div class="dim good"><span>Time</span><b>10</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
         <p class="why"><b>Earned:</b> Correct, continuous time math; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; helper functions; the right time on the first frame. <b>Lost 2.7:</b> Second hand ticks once a second (−0.8), leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3).</p>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Breaks out of its container.</b> 420 px container holds a <code>width: 100%</code> clock with 48 px border and no <code>box-sizing: border-box</code> — bezel spills past the layout frame. Hand pivots 2–6 px below center; second hand pulses opacity.</details>
-      </div>
-    </div>
-    <div class="card" id="card-minimax/minimax-m3">
-      <header>
-        <span class="name">MiniMax M3</span>
-        <span class="score s-4">#23 · 7.05</span>
-      </header>
-      <iframe src="previews/minimax_minimax-m3.html"></iframe>
-      <div class="verdict">
-        <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim warn"><span>Motion</span><b>7</b></div></div>
-        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and millisecond-precise second hand; shadows, gradients, a bezel and a center cap; minute ticks, numerals, loop-generated markers and minute ticks that skip the hours; no dependencies; the right time on the first frame; fast-interval motion. <b>Lost 2.95:</b> 12 is not at the top (−0.75), leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), missing hour ticks (−0.3), no helper functions (−0.3), fast setInterval instead of rAF (−0.3).</p>
-        <div class="meta"><span class="model-id">minimax/minimax-m3</span><span>Ran Jun 15</span><span>Latency 23.1s</span><span>Cost $0.0024</span><span>Judge runs 1/1</span></div>
       </div>
     </div>
     <div class="card">
@@ -1105,64 +1105,64 @@
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Cleaner K2.5 with a regression.</b> Same red-bezel look. Ticks refactored into a loop. Correct math, correct pivots — but 1 Hz <code>setInterval</code> so the second hand snaps.</details>
       </div>
     </div>
-    <div class="card" id="card-google/gemini-2.5-flash">
-      <header>
-        <span class="name">Gemini 2.5 Flash</span>
-        <span class="score s-5">#25 · 6.45</span>
-      </header>
-      <iframe src="previews/google_gemini-2.5-flash.html"></iframe>
-      <div class="verdict">
-        <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim good"><span>Dial</span><b>10</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
-        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and 12 at the top; shadows, a bezel and a center cap; a complete, loop-generated dial with numerals; no dependencies; the right time on the first frame. <b>Lost 3.55:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), leaks globals (−0.45), fixed size (−0.45), no gradients (−0.4), no hand tails (−0.4), no helper functions (−0.3).</p>
-        <div class="meta"><span class="model-id">google/gemini-2.5-flash</span><span>Ran Jun 14</span><span>Latency 7.7s</span><span>Cost $0.0045</span><span>Judge runs 1/1</span></div>
-      </div>
-    </div>
     <div class="card">
       <header>
         <span class="name">ChatGPT Free</span>
-        <span class="score s-5">#26 · 6.25</span>
+        <span class="score s-5">#25 · 6.25</span>
       </header>
       <iframe src="cloud/chatgpt-free.html"></iframe>
       <div class="verdict">
         <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim warn"><span>Visual</span><b>8</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
-        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and 12 at the top; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks and numerals; no dependencies; the right time on the first frame. <b>Lost 3.75:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), hand-placed markers (−0.3), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
+        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and hands verified at the right time when rendered; shadows, gradients, a bezel and a center cap; all 12 hour ticks, minute ticks and numerals; no dependencies; the right time on the first frame. <b>Lost 3.75:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), leaks globals (−0.45), fixed size (−0.45), no hand tails (−0.4), hand-placed markers (−0.3), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Correct but jumpy.</b> Numbers, 60 ticks, three hands, properly centered pivots. Flaw: <code>setInterval(…, 1000)</code> with no millisecond term — the second hand jumps a full step each tick.</details>
       </div>
     </div>
     <div class="card">
       <header>
         <span class="name">Qwen 3.6 Plus</span>
-        <span class="score s-5">#27 · 6.15</span>
+        <span class="score s-5">#26 · 6.15</span>
       </header>
       <iframe src="cloud/qwen-3.6-plus.html"></iframe>
       <div class="verdict">
         <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim warn"><span>Dial</span><b>8</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
-        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and 12 at the top; shadows, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; no dependencies; the right time on the first frame. <b>Lost 3.85:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), leaks globals (−0.45), fixed size (−0.45), no gradients (−0.4), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
+        <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and hands verified at the right time when rendered; shadows, a bezel and a center cap; all 12 hour ticks, minute ticks, numerals and loop-generated markers; no dependencies; the right time on the first frame. <b>Lost 3.85:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), leaks globals (−0.45), fixed size (−0.45), no gradients (−0.4), no hand tails (−0.4), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Same border-box bug, jumpier seconds.</b> Same hard-coded-center bug as mimo but with a 1 Hz <code>setInterval</code> second hand that snaps each tick.</details>
       </div>
     </div>
-    <div class="card" id="card-z-ai/glm-5.3-flash">
+    <div class="card" id="card-google/gemini-2.5-flash">
       <header>
-        <span class="name">GLM 5.3 Flash</span>
-        <span class="score s-5">#28 · 6.05</span>
+        <span class="name">Gemini 2.5 Flash</span>
+        <span class="score s-5">#27 · 5.7</span>
       </header>
-      <iframe src="previews/z-ai_glm-5.3-flash.html"></iframe>
+      <iframe src="previews/google_gemini-2.5-flash.html"></iframe>
       <div class="verdict">
-        <div class="dims"><div class="dim bad"><span>Time</span><b>2.5</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim warn"><span>Code</span><b>8</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
-        <p class="why"><b>Earned:</b> 12 at the top; shadows, a bezel and a center cap; all 12 hour ticks, minute ticks and loop-generated markers; no global leaks, responsive sizing and helper functions; a smooth rAF sweep that is right from the first frame. <b>Lost 3.95:</b> Hour hand jumps between hours (−0.75), minute hand jumps each minute (−0.75), second hand ignores milliseconds (−0.75), no gradients (−0.4), no hand tails (−0.4), no numerals (−0.3), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3).</p>
-        <div class="meta"><span class="model-id">z-ai/glm-5.3-flash</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
+        <div class="dims"><div class="dim bad"><span>Time</span><b>5</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim good"><span>Dial</span><b>10</b></div><div class="dim bad"><span>Code</span><b>2</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
+        <p class="why"><b>Earned:</b> Continuous hour hand and continuous minute hand; shadows, a bezel and a center cap; a complete, loop-generated dial with numerals; no dependencies; the right time on the first frame. <b>Lost 4.3:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), hands show the wrong time when rendered (−0.75), leaks globals (−0.45), fixed size (−0.45), no gradients (−0.4), no hand tails (−0.4), no helper functions (−0.3).</p>
+        <div class="meta"><span class="model-id">google/gemini-2.5-flash</span><span>Ran Jun 14</span><span>Latency 7.7s</span><span>Cost $0.0045</span><span>Judge runs 1/1</span></div>
       </div>
     </div>
     <div class="card">
       <header>
         <span class="name">MiniMax M2.7</span>
-        <span class="score s-5">#29 · 5.6</span>
+        <span class="score s-5">#28 · 5.6</span>
       </header>
       <iframe src="cloud/minimax-m2.7.html"></iframe>
       <div class="verdict">
         <div class="dims"><div class="dim warn"><span>Time</span><b>7.5</b></div><div class="dim bad"><span>Visual</span><b>4</b></div><div class="dim bad"><span>Dial</span><b>4</b></div><div class="dim bad"><span>Code</span><b>5</b></div><div class="dim bad"><span>Motion</span><b>2</b></div></div>
         <p class="why"><b>Earned:</b> Continuous hour hand, continuous minute hand and 12 at the top; a bezel and a center cap; all 12 hour ticks and loop-generated markers; no global leaks and no dependencies; the right time on the first frame. <b>Lost 4.4:</b> Second hand ticks once a second (−0.8), second hand ignores milliseconds (−0.75), fixed size (−0.45), no shadows (−0.4), no gradients (−0.4), no hand tails (−0.4), no minute ticks (−0.3), no numerals (−0.3), minute ticks overlap hour ticks (−0.3), no helper functions (−0.3).</p>
         <details class="orig"><summary>Original review (may describe an earlier score)</summary><b>Compound centering bug.</b> <code>margin-left: -halfWidth</code> in CSS and <code>translateX(-50%)</code> in JS both apply — compounding the pivot offset. No minute markers or numerals; 1 Hz refresh.</details>
+      </div>
+    </div>
+    <div class="card" id="card-z-ai/glm-5.3-flash">
+      <header>
+        <span class="name">GLM 5.3 Flash</span>
+        <span class="score s-5">#29 · 5.3</span>
+      </header>
+      <iframe src="previews/z-ai_glm-5.3-flash.html"></iframe>
+      <div class="verdict">
+        <div class="dims"><div class="dim bad"><span>Time</span><b>0</b></div><div class="dim warn"><span>Visual</span><b>6</b></div><div class="dim warn"><span>Dial</span><b>6</b></div><div class="dim warn"><span>Code</span><b>8</b></div><div class="dim good"><span>Motion</span><b>10</b></div></div>
+        <p class="why"><b>Earned:</b> Shadows, a bezel and a center cap; all 12 hour ticks, minute ticks and loop-generated markers; no global leaks, responsive sizing and helper functions; a smooth rAF sweep that is right from the first frame. <b>Lost 4.7:</b> Hour hand jumps between hours (−0.75), minute hand jumps each minute (−0.75), second hand ignores milliseconds (−0.75), hands show the wrong time when rendered (−0.75), no gradients (−0.4), no hand tails (−0.4), no numerals (−0.3), minute ticks overlap hour ticks (−0.3), external dependencies (−0.3).</p>
+        <div class="meta"><span class="model-id">z-ai/glm-5.3-flash</span><span>Ran Sep 26</span><span>Judge runs 1/3</span></div>
       </div>
     </div>
     <div class="card">

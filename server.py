@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from benchmark_system.runner import (
     generate_clock,
     evaluate_clock,
+    apply_render_check,
     calculate_score,
     call_openrouter,
     JUDGE_PROMPT_TEMPLATE,
@@ -91,6 +92,7 @@ def run_single_benchmark():
 
         log(f"Evaluating with judge: {judge_model}")
         audit_data = evaluate_clock(judge_model, html_content)
+        audit_data = apply_render_check(audit_data, html_content)
 
         if not audit_data:
             log("ERROR: Evaluation failed - see judge_response.txt for details")

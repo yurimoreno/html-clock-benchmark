@@ -9,9 +9,15 @@ matching table row and card in place (dimension cells, Earned/Lost summary,
 judge runs, rank), saves each audit to audits.json, and re-sorts both by the new
 score. The "Original review" prose under each card is left alone.
 
+Every audit also goes through runner.apply_render_check(), which renders the
+clock at frozen times and overrides time.correct_12_top when the result is
+conclusive.
+
 Usage:
     python rejudge_index.py --dry-run     # print before/after, touch nothing
     python rejudge_index.py               # rewrite index.html, write docs/rejudge-<date>.md
+    python rejudge_index.py --stored      # reuse audits.json instead of calling Jev
+                                          # (only the render check is re-run)
 """
 
 import argparse
@@ -23,9 +29,9 @@ import urllib.parse
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "benchmark_system"))
 
-from runner import calculate_score  # noqa: E402
+from runner import calculate_score, apply_render_check  # noqa: E402
 from typesafe_judge import evaluate_clock_typesafe  # noqa: E402
-from add_model import _OVERALL_COLORS, score_to_grade, dims_html, why_html, save_audit  # noqa: E402
+from add_model import _OVERALL_COLORS, score_to_grade, dims_html, why_html, save_audit, load_audits  # noqa: E402
 
 INDEX = "index.html"
 ROW_RE = re.compile(r"<tr>.*?</tr>", re.S)
@@ -61,22 +67,24 @@ def parse_cards(grid):
     return cards
 
 
-def rewrite_row(row_html, score, bd):
+def rewrite_row(row_html, score, bd, keep_runs=False):
     dims = [bd["time"], bd["visual"], bd["dial"], bd["code"], bd["motion"]]
     it = iter(dims)
     row_html = re.sub(r'<td class="r">[\d.]+</td>', lambda m: f'<td class="r">{_fmt(next(it))}</td>', row_html, count=5)
-    row_html = re.sub(r'(<td class="r runs">)[^<]*(</td>)', r"\g<1>1/1\g<2>", row_html)
+    if not keep_runs:
+        row_html = re.sub(r'(<td class="r runs">)[^<]*(</td>)', r"\g<1>1/1\g<2>", row_html)
     sc, _ = score_to_grade(score)
     row_html = re.sub(r'<td class="r overall"[^>]*>[\d.]+</td>',
                       f'<td class="r overall" style="color:{_OVERALL_COLORS[sc]}">{score}</td>', row_html)
     return row_html
 
 
-def rewrite_card(card_html, score, bd, audit):
+def rewrite_card(card_html, score, bd, audit, keep_runs=False):
     card_html = re.sub(r"#\d+ · [\d.]+", f"#0 · {score}", card_html)
     card_html = re.sub(r'<div class="dims">.*?</div></div>', lambda m: dims_html(bd), card_html, count=1, flags=re.S)
     card_html = re.sub(r'<p class="why">.*?</p>', lambda m: why_html(audit), card_html, count=1, flags=re.S)
-    card_html = re.sub(r"Judge runs [^<]+", "Judge runs 1/1", card_html)
+    if not keep_runs:
+        card_html = re.sub(r"Judge runs [^<]+", "Judge runs 1/1", card_html)
     return card_html
 
 
@@ -94,6 +102,8 @@ def renumber(items, key):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--stored", action="store_true",
+                    help="re-score from audits.json (plus a fresh render check) instead of calling Jev")
     args = ap.parse_args()
 
     content = open(INDEX).read()
@@ -116,14 +126,24 @@ def main():
     if unpaired:
         sys.exit(f"cards without a row: {[c['name'] for c in unpaired]}")
 
+    stored = load_audits() if args.stored else {}
     report = []
     for old_rank, (row, card) in enumerate(pairs, 1):
         html = open(card["src"]).read()
-        audit = evaluate_clock_typesafe(html)
+        if args.stored:
+            audit = dict(stored[urllib.parse.unquote(card["src"])])
+            audit["time"] = dict(audit.get("time", {}))
+            audit.pop("render_check", None)
+            if "time.correct_12_top" in audit.get("typesafe_probs", {}):
+                # undo any earlier render override: start from Jev's own answer
+                audit["time"]["correct_12_top"] = audit["typesafe_probs"]["time.correct_12_top"] >= 0.5
+        else:
+            audit = evaluate_clock_typesafe(html)
+        audit = apply_render_check(audit, html)
         score, bd = calculate_score(audit)
         row["new"], card["new"] = score, score
-        row["html"] = rewrite_row(row["html"], score, bd)
-        card["html"] = rewrite_card(card["html"], score, bd, audit)
+        row["html"] = rewrite_row(row["html"], score, bd, keep_runs=args.stored)
+        card["html"] = rewrite_card(card["html"], score, bd, audit, keep_runs=args.stored)
         if not args.dry_run:
             save_audit(urllib.parse.unquote(card["src"]), audit)
         report.append({"name": card["name"], "file": card["src"], "old_rank": old_rank,
@@ -139,10 +159,13 @@ def main():
         r["new_rank"] = new_rank[r["name"]]
 
     lines = [
-        f"# Cloud leaderboard re-judged with TypeSafe Jev ({datetime.date.today()})",
+        f"# Cloud leaderboard {'re-scored' if args.stored else 're-judged with TypeSafe Jev'} ({datetime.date.today()})",
         "",
-        "Every cloud entry re-audited from its committed clock file by `rejudge_index.py`; "
-        "the twelve April entries were previously hand-scored, the rest by a generative LLM judge.",
+        ("Every cloud entry re-scored by `rejudge_index.py --stored` from its saved Jev audit in `audits.json`, "
+         "with a fresh render check (`benchmark_system/render_check.py`) deciding `time.correct_12_top` "
+         "wherever it was conclusive." if args.stored else
+         "Every cloud entry re-audited from its committed clock file by `rejudge_index.py`, "
+         "then render-checked (`benchmark_system/render_check.py`)."),
         "",
         "| Model | File | Old rank | New rank | Old | New | Delta | Time | Visual | Dial | Code | Motion |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
@@ -168,6 +191,9 @@ def main():
         r"<strong>[^<]*</strong> acted as judge.*?(?=\s*</div>)",
         "<strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion "
         f"over each clock's source, scored by <code>rejudge_index.py</code> on {datetime.date.today()}. "
+        "A render check then opens each clock in headless Chromium with the time frozen and measures where the hands "
+        "actually point; when that is conclusive it decides whether the clock shows the right time, overriding the judge "
+        "(source-reading missed three clocks whose hands were rotated). "
         "Each card's Earned/Lost summary is generated from its Jev audit (<code>audits.json</code>), so it always "
         "matches the score; the original hand review, where one exists, sits under “Original review” and may "
         f"describe an earlier score. See <code>docs/rejudge-{datetime.date.today()}.md</code> for the per-dimension "
