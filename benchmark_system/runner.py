@@ -243,29 +243,98 @@ def _aggregate_audits(audits):
 
 
 def apply_render_check(audit, clock_code):
-    """Render the clock and let a conclusive result decide time.correct_12_top.
+    """Measure the clock in a browser and let every conclusive, reproducible
+    measurement override the judge's answer for that rubric question.
 
-    Judges read source, so they miss clocks whose math looks right but whose
-    hands point the wrong way (e.g. the -90° offset applied twice). The render
-    check measures the hands at known frozen times; see render_check.py. Like
-    static_precheck, a deterministic answer overrides the judge, in either
-    direction. Inconclusive renders leave the judge's answer alone."""
+    Judges read source, so they miss clocks whose code looks right but behaves
+    wrong (DeepSeek V4 Pro applied the -90° offset twice and got full Time
+    marks). measure.py renders the clock at frozen times and observes: hand
+    angles, whether each hand moves continuously, the first frame, network
+    requests, leaked globals, and resizing. Like static_precheck, a
+    deterministic answer beats the judge; an inconclusive one leaves it alone.
+    The judge's original answers are kept in audit["judge_answers"]."""
     if not audit:
         return audit
     try:
-        from render_check import check_rendered_time
+        from measure import measure_clock
     except ImportError:
-        from benchmark_system.render_check import check_rendered_time
-    result = check_rendered_time(clock_code)
-    audit["render_check"] = result
-    if result.get("ok") is not None:
-        audit.setdefault("time", {})["correct_12_top"] = result["ok"]
+        from benchmark_system.measure import measure_clock
+    result = measure_clock(clock_code)
+    measured = dict(result["fields"])
+    measured["time.correct_12_top"] = {"value": result["time"].get("ok"),
+                                       "evidence": result["time"].get("reason") or "hand angles at four frozen times"}
+    original = audit.setdefault("judge_answers", {})
+    for field, m in measured.items():
+        if m.get("value") is None:
+            continue
+        section, key = field.split(".")
+        original.setdefault(field, audit.get(section, {}).get(key))
+        audit.setdefault(section, {})[key] = m["value"]
+    audit["render_check"] = result["time"]
+    audit["measured"] = measured
+    return audit
+
+
+_COUNT_THRESHOLDS = {"hour_ticks_count": (12, 12, 0), "minute_ticks_count": (48, 60, 0),
+                     "numerals_count": (12, 12, 0)}  # (threshold, value if true, value if false)
+
+
+def _as_bool(key, value):
+    if key in _COUNT_THRESHOLDS:
+        return (value or 0) >= _COUNT_THRESHOLDS[key][0]
+    return bool(value)
+
+
+def _from_bool(key, flag):
+    if key in _COUNT_THRESHOLDS:
+        _, yes, no = _COUNT_THRESHOLDS[key]
+        return yes if flag else no
+    return flag
+
+
+def apply_second_judge(audit, clock_code):
+    """A vision judge looks at the rendered clock for the questions a picture
+    settles (see vision_judge.py). Where it agrees with the first judge, that's
+    the answer; where they split, a third vote from the source code decides.
+    Every vote is kept in audit["votes"]; the first judge's answers in
+    audit["judge_answers"]."""
+    if not audit:
+        return audit
+    try:
+        from vision_judge import vision_judge, tiebreak
+    except ImportError:
+        from benchmark_system.vision_judge import vision_judge, tiebreak
+    seen = vision_judge(clock_code)
+    if not seen:
+        return audit
+    votes, split = {}, []
+    for field, vision in seen.items():
+        section, key = field.split(".")
+        first = _as_bool(key, audit.get(section, {}).get(key))
+        votes[field] = {"jev": first, "vision": vision}
+        if first != vision:
+            split.append(field)
+    third = tiebreak(clock_code, split) if split else {}
+    original = audit.setdefault("judge_answers", {})
+    for field, v in votes.items():
+        section, key = field.split(".")
+        if field in split:
+            v["tiebreak"] = (third or {}).get(field)
+            final = v["tiebreak"] if v["tiebreak"] is not None else v["jev"]
+        else:
+            final = v["jev"]
+        v["final"] = final
+        if final != v["jev"]:
+            original.setdefault(field, audit[section].get(key))
+            audit[section][key] = _from_bool(key, final)
+    audit["votes"] = votes
     return audit
 
 
 def evaluate_clock_reliable(judge_model, clock_code, n_runs=3, max_tokens=30000):
     """Run judge n_runs times, return (aggregated_audit, runs_completed)."""
     audit, runs = _evaluate_clock_runs(judge_model, clock_code, n_runs, max_tokens)
+    audit = apply_second_judge(audit, clock_code)
     return apply_render_check(audit, clock_code), runs
 
 

@@ -9,15 +9,15 @@ matching table row and card in place (dimension cells, Earned/Lost summary,
 judge runs, rank), saves each audit to audits.json, and re-sorts both by the new
 score. The "Original review" prose under each card is left alone.
 
-Every audit also goes through runner.apply_render_check(), which renders the
-clock at frozen times and overrides time.correct_12_top when the result is
-conclusive.
+Every audit also goes through runner.apply_render_check(), which measures the
+clock in a browser (benchmark_system/measure.py) and overrides the judge on
+each question the measurement answers conclusively.
 
 Usage:
     python rejudge_index.py --dry-run     # print before/after, touch nothing
     python rejudge_index.py               # rewrite index.html, write docs/rejudge-<date>.md
     python rejudge_index.py --stored      # reuse audits.json instead of calling Jev
-                                          # (only the render check is re-run)
+                                          # (only the measurements are re-run)
 """
 
 import argparse
@@ -29,7 +29,7 @@ import urllib.parse
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "benchmark_system"))
 
-from runner import calculate_score, apply_render_check  # noqa: E402
+from runner import calculate_score, apply_render_check, apply_second_judge  # noqa: E402
 from typesafe_judge import evaluate_clock_typesafe  # noqa: E402
 from add_model import _OVERALL_COLORS, score_to_grade, dims_html, why_html, save_audit, load_audits  # noqa: E402
 
@@ -132,13 +132,20 @@ def main():
         html = open(card["src"]).read()
         if args.stored:
             audit = dict(stored[urllib.parse.unquote(card["src"])])
-            audit["time"] = dict(audit.get("time", {}))
-            audit.pop("render_check", None)
-            if "time.correct_12_top" in audit.get("typesafe_probs", {}):
-                # undo any earlier render override: start from Jev's own answer
+            for sec in ("time", "visual", "dial", "code", "smoothness"):
+                audit[sec] = dict(audit.get(sec, {}))
+            # undo any earlier measurement override: start from the judge's own answers
+            for field, value in (audit.pop("judge_answers", None) or {}).items():
+                section, key = field.split(".")
+                audit[section][key] = value
+            if "time.correct_12_top" in audit.get("typesafe_probs", {}):  # audits from before judge_answers existed
                 audit["time"]["correct_12_top"] = audit["typesafe_probs"]["time.correct_12_top"] >= 0.5
+            audit.pop("render_check", None)
+            audit.pop("measured", None)
+            audit.pop("votes", None)
         else:
             audit = evaluate_clock_typesafe(html)
+        audit = apply_second_judge(audit, html)
         audit = apply_render_check(audit, html)
         score, bd = calculate_score(audit)
         row["new"], card["new"] = score, score

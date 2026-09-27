@@ -248,6 +248,18 @@ def why_html(audit):
         parts.append(f"<b>Lost {lost:g}:</b> {items[0].upper() + items[1:]}.")
     else:
         parts.append("<b>Lost nothing</b> on the rubric.")
+    measured = {f for f, m in (audit.get("measured") or {}).items() if m.get("value") is not None}
+    votes = {f: v for f, v in (audit.get("votes") or {}).items() if f not in measured}
+    if measured or votes:
+        note = f"{len(measured)} of 20 answers measured in a browser"
+        if votes:
+            split = [f.split(".")[1].replace("has_", "").replace("_count", "").replace("_", " ")
+                     for f, v in votes.items() if v["jev"] != v["vision"]]
+            note += f", {len(votes)} checked by two judges (code and screenshot)"
+            if split:
+                note += f"; they split on {_join(split)}, settled by a third vote"
+        note += f", {20 - len(measured) - len(votes)} read from code."
+        parts.append(f'<span class="measured">{note}</span>')
     return '<p class="why">' + " ".join(parts) + "</p>"
 
 

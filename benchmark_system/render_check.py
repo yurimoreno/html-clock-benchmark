@@ -235,7 +235,7 @@ def check_rendered_time(html):
                 page.clock.install(time=start)
                 page.set_content(html, wait_until="load", timeout=15000)
                 page.clock.run_for(SETTLE_MS)
-                shots[name] = "data:image/png;base64," + base64.b64encode(page.screenshot()).decode()
+                shots[name] = "data:image/png;base64," + base64.b64encode(page.screenshot(animations="disabled")).decode()
                 ctx.close()
             page = browser.new_page()
             diffs = {hand: [tuple(pt) for pt in page.evaluate(_DIFF_JS, [shots["base"], shots[hand], GRID])]
