@@ -4,18 +4,98 @@
 <meta charset="UTF-8">
 <title>HTML Analog Clock Benchmark</title>
 <style>
+  /* Theme follows the OS setting via prefers-color-scheme. */
+  :root {
+    color-scheme: dark;
+    --bg: #1a1a1a;
+    --bg-raised: #191919;
+    --bg-inset: #141414;
+    --surface: #222;
+    --surface-2: #2a2a2a;
+    --border: #333;
+    --border-strong: #444;
+    --text-strong: #fff;
+    --text: #eee;
+    --text-2: #ccc;
+    --text-3: #bbb;
+    --text-4: #aaa;
+    --muted-1: #999;
+    --muted-2: #888;
+    --muted-3: #777;
+    --muted-4: #666;
+    --muted-5: #555;
+    --link: #6b9fd9;
+    --link-hover: #8bbfe9;
+    --good: #7ab86a;
+    --warn: #c9b86a;
+    --bad: #c66;
+    --t1-bg: #2c5e2c;
+    --t1-fg: #d6f5d6;
+    --t2-bg: #3a5c2c;
+    --t2-fg: #dff5c6;
+    --t3-bg: #5e562c;
+    --t3-fg: #f5edd6;
+    --t4-bg: #5e3e2c;
+    --t4-fg: #f5dcc6;
+    --t5-bg: #5e2c2c;
+    --t5-fg: #f5c6c6;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      color-scheme: light;
+    --bg: #fafafa;
+    --bg-raised: #f2f2f2;
+    --bg-inset: #f4f4f4;
+    --surface: #ffffff;
+    --surface-2: #ececec;
+    --border: #dcdcdc;
+    --border-strong: #c4c4c4;
+    --text-strong: #000000;
+    --text: #1a1a1a;
+    --text-2: #2e2e2e;
+    --text-3: #3a3a3a;
+    --text-4: #4a4a4a;
+    --muted-1: #555555;
+    --muted-2: #5e5e5e;
+    --muted-3: #666666;
+    --muted-4: #6e6e6e;
+    --muted-5: #808080;
+    --link: #1f5fb0;
+    --link-hover: #174a8c;
+    --good: #2e7d32;
+    --warn: #8a6d00;
+    --bad: #c0392b;
+    --t1-bg: #d3f0d3;
+    --t1-fg: #1b5e20;
+    --t2-bg: #e3f2cc;
+    --t2-fg: #33691e;
+    --t3-bg: #f5ecc9;
+    --t3-fg: #7a5c00;
+    --t4-bg: #f9dcc8;
+    --t4-fg: #a0461a;
+    --t5-bg: #f8cfcf;
+    --t5-fg: #b71c1c;
+    }
+    /* add_model.py writes dark-theme pastel colors inline on the Overall cell; remap them. */
+    td.overall[style*="#d6f5d6"] { color: var(--t1-fg) !important; }
+    td.overall[style*="#dff5c6"] { color: var(--t2-fg) !important; }
+    td.overall[style*="#f5edd6"] { color: var(--t3-fg) !important; }
+    td.overall[style*="#f5dcc6"] { color: var(--t4-fg) !important; }
+    td.overall[style*="#f5c6c6"] { color: var(--t5-fg) !important; }
+  }
+
   html { scroll-behavior: smooth; }
-  body { font-family: -apple-system, system-ui, sans-serif; background:#1a1a1a; color:#eee; margin:0; padding:24px; overflow-x: hidden; }
+  body { font-family: -apple-system, system-ui, sans-serif; background:var(--bg); color:var(--text); margin:0; padding:24px; overflow-x: hidden; }
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   h1 { margin: 0 0 6px; font-size: 22px; }
-  p.sub { color:#999; margin: 0 0 24px; max-width: 820px; line-height: 1.5; }
+  p.sub { color:var(--muted-1); margin: 0 0 24px; max-width: 820px; line-height: 1.5; }
 
   .about {
     display: none;
   }
 
   .accordion {
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--surface-2);
     border-radius: 8px;
     margin-bottom: 28px;
     max-width: 820px;
@@ -27,38 +107,38 @@
     gap: 8px;
     width: 100%;
     padding: 12px 16px;
-    background: #191919;
+    background: var(--bg-raised);
     border: none;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
-    color: #666;
+    color: var(--muted-4);
     text-align: left;
   }
-  .accordion-toggle:hover { color: #999; }
+  .accordion-toggle:hover { color: var(--muted-1); }
   .accordion-toggle svg { transition: transform .2s; flex-shrink: 0; }
   .accordion-toggle.open svg { transform: rotate(90deg); }
-  .accordion-toggle.open { color: #ccc; }
+  .accordion-toggle.open { color: var(--text-2); }
   .accordion-body {
     display: none;
     padding: 0 16px 16px;
     font-size: 13px;
     line-height: 1.6;
-    color: #888;
+    color: var(--muted-2);
   }
   .accordion-body.open { display: block; }
-  .accordion-body h2 { color: #ccc; font-size: 14px; margin: 0 0 10px; }
+  .accordion-body h2 { color: var(--text-2); font-size: 14px; margin: 0 0 10px; }
   .accordion-body p { margin-bottom: 10px; }
-  .accordion-body a { color: #6b9fd9; text-decoration: none; }
+  .accordion-body a { color: var(--link); text-decoration: none; }
   .accordion-body a:hover { text-decoration: underline; }
   .accordion-body .prompt {
-    background: #141414;
-    border: 1px solid #2a2a2a;
+    background: var(--bg-inset);
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
     padding: 14px 16px;
     font-family: ui-monospace, Menlo, monospace;
     font-size: 13px;
-    color: #aaa;
+    color: var(--text-4);
     line-height: 1.6;
     margin: 12px 0;
   }
@@ -66,16 +146,16 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #141414;
-    border: 1px solid #2a2a2a;
+    background: var(--bg-inset);
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
     padding: 10px 14px;
     margin: 12px 0 0;
     font-size: 12px;
-    color: #777;
+    color: var(--muted-3);
   }
-  .accordion-body .judge-credit strong { color: #bbb; }
-  .accordion-body .judge-credit span { color: #555; font-size: 11px; }
+  .accordion-body .judge-credit strong { color: var(--text-3); }
+  .accordion-body .judge-credit span { color: var(--muted-5); font-size: 11px; }
 
   .tabs { display:flex; gap:2px; margin-bottom:20px; }
   .tab {
@@ -84,13 +164,13 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    color:#888;
-    background:#2a2a2a;
-    border:1px solid #333;
+    color:var(--muted-2);
+    background:var(--surface-2);
+    border:1px solid var(--border);
     border-bottom:none;
   }
-  .tab:hover { color:#ccc; }
-  .tab.active { color:#fff; background:#222; border-color:#444; }
+  .tab:hover { color:var(--text-2); }
+  .tab.active { color:var(--text-strong); background:var(--surface); border-color:var(--border-strong); }
 
   .table-toggle {
     display: flex;
@@ -99,23 +179,23 @@
     margin-bottom: 10px;
     cursor: pointer;
     font-size: 13px;
-    color:#666;
+    color:var(--muted-4);
     user-select: none;
   }
-  .table-toggle:hover { color:#999; }
-  .table-toggle input[type="checkbox"] { accent-color: #3a5c2c; width: 14px; height: 14px; cursor: pointer; }
+  .table-toggle:hover { color:var(--muted-1); }
+  .table-toggle input[type="checkbox"] { accent-color: var(--t2-bg); width: 14px; height: 14px; cursor: pointer; }
   .table-toggle label { cursor: pointer; margin: 0; }
 
   .score-table { border-collapse: collapse; width: 100%; margin-bottom: 32px; font-size: 13px; }
   .score-table th {
-    background:#2a2a2a;
+    background:var(--surface-2);
     padding: 8px 12px;
     text-align: center;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: .5px;
-    color:#666;
-    border-bottom: 3px solid #444;
+    color:var(--muted-4);
+    border-bottom: 3px solid var(--border-strong);
     position: relative;
     cursor: help;
     user-select: none;
@@ -123,10 +203,10 @@
     line-height: 1.2;
   }
   .score-table th.sortable { cursor: pointer; }
-  .score-table th.sortable:hover { color:#aaa; }
+  .score-table th.sortable:hover { color:var(--text-4); }
   .score-table th .sort-icon { display: inline-block; margin-left: 4px; opacity: .4; font-size: 9px; vertical-align: middle; line-height: 1; }
-  .score-table th.sortable.asc .sort-icon { opacity: 1; color: #7ab86a; }
-  .score-table th.sortable.desc .sort-icon { opacity: 1; color: #c66; }
+  .score-table th.sortable.asc .sort-icon { opacity: 1; color: var(--good); }
+  .score-table th.sortable.desc .sort-icon { opacity: 1; color: var(--bad); }
   .score-table th.r { text-align: right; }
   .score-table th[data-sort="rank"] { text-align: center; }
   .score-table th:first-child { text-align: center; }
@@ -136,8 +216,8 @@
     bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
-    background: #333;
-    border: 1px solid #444;
+    background: var(--border);
+    border: 1px solid var(--border-strong);
     border-radius: 6px;
     padding: 8px 12px;
     width: 220px;
@@ -145,7 +225,7 @@
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0;
-    color: #ccc;
+    color: var(--text-2);
     line-height: 1.5;
     z-index: 20;
     pointer-events: none;
@@ -157,12 +237,12 @@
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: #333;
+    border-top-color: var(--border);
   }
   .score-table th:hover .tip { display: block; }
-  .score-table td { padding: 7px 12px; border-bottom: 1px solid #2a2a2a; vertical-align: middle; text-align: center; }
+  .score-table td { padding: 7px 12px; border-bottom: 1px solid var(--surface-2); vertical-align: middle; text-align: center; }
   .score-table td.r { text-align: right; font-variant-numeric: tabular-nums; }
-  .score-table tr:hover td { background:#222; }
+  .score-table tr:hover td { background:var(--surface); }
   .badge {
     display: inline-block;
     width: 18px; height: 18px;
@@ -172,39 +252,39 @@
     font-size: 10px;
     font-weight: 700;
   }
-  .b-1 { background:#2c5e2c; color:#d6f5d6; }
-  .b-2 { background:#3a5c2c; color:#dff5c6; }
-  .b-3 { background:#5e562c; color:#f5edd6; }
-  .b-4 { background:#5e3e2c; color:#f5dcc6; }
-  .b-5 { background:#5e2c2c; color:#f5c6c6; }
+  .b-1 { background:var(--t1-bg); color:var(--t1-fg); }
+  .b-2 { background:var(--t2-bg); color:var(--t2-fg); }
+  .b-3 { background:var(--t3-bg); color:var(--t3-fg); }
+  .b-4 { background:var(--t4-bg); color:var(--t4-fg); }
+  .b-5 { background:var(--t5-bg); color:var(--t5-fg); }
   .overall { font-weight: 700; font-size: 15px; }
-  .price { font-family: ui-monospace, monospace; font-size: 11px; color:#888; white-space: nowrap; }
+  .price { font-family: ui-monospace, monospace; font-size: 11px; color:var(--muted-2); white-space: nowrap; }
   .cost-eff { font-family: ui-monospace, monospace; font-size: 11px; white-space: nowrap; }
-.cost-eff.green { color: #7ab86a; }
-  .cost-eff.yellow { color: #c9b86a; }
-  .cost-eff.red { color: #c66; }
+.cost-eff.green { color: var(--good); }
+  .cost-eff.yellow { color: var(--warn); }
+  .cost-eff.red { color: var(--bad); }
 
   .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; }
-  .card { background:#222; border:1px solid #333; border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
-  .card header { padding: 10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; }
-  .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color:#bbb; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card header { padding: 10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
+  .name { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color:var(--text-3); }
   .score { font-weight: 700; font-size: 14px; padding: 3px 8px; border-radius: 4px; }
-  .s-1 { background:#2c5e2c; color:#d6f5d6; }
-  .s-2 { background:#3a5c2c; color:#dff5c6; }
-  .s-3 { background:#5e562c; color:#f5edd6; }
-  .s-4 { background:#5e3e2c; color:#f5dcc6; }
-  .s-5 { background:#5e2c2c; color:#f5c6c6; }
-  iframe { width:100%; height: 480px; border:0; background:#fff; }
-  .verdict { padding: 10px 14px; font-size: 13px; color:#ccc; line-height: 1.45; }
-  .verdict b { color:#fff; }
-  .verdict code { font-size: 11px; background:#333; padding: 1px 4px; border-radius: 3px; }
+  .s-1 { background:var(--t1-bg); color:var(--t1-fg); }
+  .s-2 { background:var(--t2-bg); color:var(--t2-fg); }
+  .s-3 { background:var(--t3-bg); color:var(--t3-fg); }
+  .s-4 { background:var(--t4-bg); color:var(--t4-fg); }
+  .s-5 { background:var(--t5-bg); color:var(--t5-fg); }
+  iframe { width:100%; height: 480px; border:0; background:#ffffff; }
+  .verdict { padding: 10px 14px; font-size: 13px; color:var(--text-2); line-height: 1.45; }
+  .verdict b { color:var(--text-strong); }
+  .verdict code { font-size: 11px; background:var(--border); padding: 1px 4px; border-radius: 3px; }
 
-  .model-id { font-family: ui-monospace, monospace; font-size: 10px; color: #555; display: block; margin-top: 2px; }
-  .model-link { color: #6b9fd9; text-decoration: none; cursor: pointer; }
-  .model-link:hover { text-decoration: underline; color: #8bbfe9; }
-  .runs { font-family: ui-monospace, monospace; font-size: 11px; color: #7ab86a; white-space: nowrap; }
-  .act-cost { font-family: ui-monospace, monospace; font-size: 11px; color: #aaa; white-space: nowrap; }
-  .run-date { font-family: ui-monospace, monospace; font-size: 11px; color: #666; white-space: nowrap; }
+  .model-id { font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted-5); display: block; margin-top: 2px; }
+  .model-link { color: var(--link); text-decoration: none; cursor: pointer; }
+  .model-link:hover { text-decoration: underline; color: var(--link-hover); }
+  .runs { font-family: ui-monospace, monospace; font-size: 11px; color: var(--good); white-space: nowrap; }
+  .act-cost { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-4); white-space: nowrap; }
+  .run-date { font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted-4); white-space: nowrap; }
   [data-tab] { display:none; }
   [data-tab].active { display:block; }
 </style>
@@ -215,7 +295,7 @@
 
 <div class="accordion">
 <button class="accordion-toggle" onclick="toggleAccordion(this)">
-  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" style="stroke:var(--muted-4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   About this benchmark
 </button>
 <div class="accordion-body">
@@ -228,7 +308,7 @@
   </p>
   <div class="prompt">Generate a single HTML file that displays a working analog clock showing the current time with hour, minute, and second hands.</div>
   <div class="judge-credit">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#444" stroke-width="1.5"/><path d="M8 4v4l3 2" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" style="stroke:var(--border-strong)" stroke-width="1.5"/><path d="M8 4v4l3 2" style="stroke:var(--muted-4)" stroke-width="1.5" stroke-linecap="round"/></svg>
     <div>
       <strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion over each clock's source, scored by <code>rejudge_index.py</code> on 2026-09-18. Card commentary is from each entry's original review and may describe the earlier score; see <code>docs/rejudge-2026-09-18.md</code> for the per-dimension before and after.</div>
   </div>
