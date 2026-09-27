@@ -5579,5 +5579,185 @@
     "vision": true
    }
   }
+ },
+ "local /qwen3.8-flash-next.html": {
+  "time": {
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true,
+   "correct_12_top": false
+  },
+  "visual": {
+   "has_shadows": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_center_cap": true,
+   "has_bezel": true
+  },
+  "dial": {
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "automated_marker_generation": true,
+   "skips_minute_at_hour": false
+  },
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": false
+  },
+  "typesafe_probs": {
+   "time.hour_continuous": 0.86,
+   "time.minute_continuous": 0.66,
+   "time.correct_12_top": 0.77,
+   "visual.has_shadows": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.27,
+   "visual.has_center_cap": 0.98,
+   "visual.has_bezel": 0.95,
+   "dial.hour_ticks_count": 0.96,
+   "dial.minute_ticks_count": 0.77,
+   "dial.numerals_count": 0.15,
+   "dial.automated_marker_generation": 0.98,
+   "dial.skips_minute_at_hour": 0.21,
+   "code.globals_count": 0.78,
+   "code.is_responsive": 0.74,
+   "code.uses_helpers": 0.87,
+   "smoothness.zero_latency_init": 0.4
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_usage": {
+   "input_tokens": 16635,
+   "output_tokens": 345
+  },
+  "judge_answers": {
+   "code.zero_dependencies": false,
+   "code.globals_count": 0,
+   "visual.has_gradients": true,
+   "visual.has_shadows": true,
+   "time.correct_12_top": true
+  },
+  "votes": {
+   "visual.has_hand_tails": {
+    "jev": false,
+    "vision": false,
+    "final": false
+   },
+   "visual.has_center_cap": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "visual.has_bezel": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.hour_ticks_count": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.minute_ticks_count": {
+    "jev": true,
+    "vision": true,
+    "final": true
+   },
+   "dial.numerals_count": {
+    "jev": false,
+    "vision": true,
+    "tiebreak": false,
+    "final": false
+   }
+  },
+  "render_check": {
+   "ok": false,
+   "hands": {
+    "second": {
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": null
+    },
+    "minute": {
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      38.8,
+      303.8,
+      323.8,
+      333.8
+     ],
+     "error": 102.2
+    },
+    "hour": {
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      31.2,
+      293.8,
+      303.8,
+      313.8
+     ],
+     "error": 3.0
+    }
+   },
+   "pivot": [
+    76.03343630462635,
+    197.23757212123917
+   ]
+  },
+  "measured": {
+   "code.zero_dependencies": {
+    "value": false,
+    "evidence": "loads https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap, https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2, https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2"
+   },
+   "code.globals_count": {
+    "value": 0,
+    "evidence": "0 global(s)"
+   },
+   "visual.has_gradients": {
+    "value": true,
+    "evidence": "gradients applied: 29 (cssGradient 6, cssShadow 17, svgGradient 23, svgShadow 1)"
+   },
+   "visual.has_shadows": {
+    "value": true,
+    "evidence": "shadows applied: 18 (cssGradient 6, cssShadow 17, svgGradient 23, svgShadow 1)"
+   },
+   "time.second_ms_precision": {
+    "value": null,
+    "evidence": "skipped: time check not passed"
+   },
+   "time.minute_continuous": {
+    "value": null,
+    "evidence": "skipped: time check not passed"
+   },
+   "time.hour_continuous": {
+    "value": null,
+    "evidence": "skipped: time check not passed"
+   },
+   "smoothness.zero_latency_init": {
+    "value": null,
+    "evidence": "skipped: time check not passed"
+   },
+   "code.is_responsive": {
+    "value": null,
+    "evidence": "second hand not found at both sizes"
+   },
+   "time.correct_12_top": {
+    "value": false,
+    "evidence": "hand angles at four frozen times"
+   }
+  }
  }
 }
