@@ -2625,6 +2625,1264 @@
    }
   }
  },
+ "local /claude-sonnet-5.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "judge_answers": {
+   "code.globals_count": 0,
+   "code.is_responsive": true,
+   "code.zero_dependencies": true,
+   "smoothness.zero_latency_init": true,
+   "time.correct_12_top": true,
+   "time.hour_continuous": true,
+   "time.minute_continuous": true,
+   "time.second_ms_precision": true,
+   "visual.has_gradients": true,
+   "visual.has_shadows": true
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "0 global(s)",
+    "value": 0
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 160px at 320w vs 297px at 900w",
+    "value": true
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "first frame already shows the time (0 px of noise vs 385 for a real move)",
+    "value": true
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": true
+   },
+   "time.hour_continuous": {
+    "evidence": "219 px changed along the hour hand's path",
+    "value": true
+   },
+   "time.minute_continuous": {
+    "evidence": "250 px changed along the minute hand's path",
+    "value": true
+   },
+   "time.second_ms_precision": {
+    "evidence": "142 px changed along the second hand's path",
+    "value": true
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 596 (canvasGradient 594, canvasShadow 198, cssGradient 2, cssShadow 1)",
+    "value": true
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 199 (canvasGradient 594, canvasShadow 198, cssGradient 2, cssShadow 1)",
+    "value": true
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      178.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      178.8,
+      306.2
+     ]
+    },
+    "second": {
+     "error": 1.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      178.8,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.0,
+    99.74297957619649
+   ]
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.79,
+   "code.is_responsive": 0.98,
+   "code.uses_helpers": 0.98,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.97,
+   "dial.minute_ticks_count": 0.89,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.99,
+   "smoothness.zero_latency_init": 0.91,
+   "time.correct_12_top": 0.92,
+   "time.hour_continuous": 0.97,
+   "time.minute_continuous": 0.94,
+   "visual.has_bezel": 0.96,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.96,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 4082,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.minute_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.numerals_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_bezel": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_center_cap": {
+    "final": true,
+    "jev": true,
+    "tiebreak": true,
+    "vision": false
+   },
+   "visual.has_hand_tails": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   }
+  }
+ },
+ "local /gemma-4-e4b-uncensored-hauhaucs-aggressive.html": {
+  "code": {
+   "globals_count": 4,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 0,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "judge_answers": {
+   "code.globals_count": 99,
+   "code.is_responsive": false,
+   "code.zero_dependencies": true,
+   "smoothness.zero_latency_init": true,
+   "time.correct_12_top": true,
+   "time.hour_continuous": true,
+   "time.minute_continuous": true,
+   "time.second_ms_precision": false,
+   "visual.has_gradients": false,
+   "visual.has_shadows": true
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "4 global(s): updateClock, hourHand, minuteHand, secondHand",
+    "value": 4
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 198px at 320w vs 198px at 900w",
+    "value": false
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "first frame already shows the time (0 px of noise vs 351 for a real move)",
+    "value": true
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": true
+   },
+   "time.hour_continuous": {
+    "evidence": "154 px changed along the hour hand's path",
+    "value": true
+   },
+   "time.minute_continuous": {
+    "evidence": "177 px changed along the minute hand's path",
+    "value": true
+   },
+   "time.second_ms_precision": {
+    "evidence": "nothing changed; the second hand stayed put",
+    "value": false
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0 (cssShadow 1)",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 1 (cssShadow 1)",
+    "value": true
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 4.5,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      308.8
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      48.8,
+      138.8,
+      181.2,
+      308.8
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      178.8,
+      273.8,
+      303.8
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    99.0,
+    103.94469683442249
+   ]
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.13,
+   "code.is_responsive": 0.04,
+   "code.uses_helpers": 0.09,
+   "dial.automated_marker_generation": 0.02,
+   "dial.hour_ticks_count": 0.95,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.06,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.82,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.09,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3679,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": true,
+    "jev": true,
+    "tiebreak": true,
+    "vision": false
+   },
+   "dial.minute_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_center_cap": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   }
+  }
+ },
+ "local /gemma-4-e4b.html": {
+  "code": {
+   "globals_count": 1,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 0,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "judge_answers": {
+   "code.globals_count": 0,
+   "code.is_responsive": false,
+   "code.zero_dependencies": true,
+   "smoothness.zero_latency_init": true,
+   "time.correct_12_top": false,
+   "time.hour_continuous": true,
+   "time.minute_continuous": true,
+   "time.second_ms_precision": false,
+   "visual.has_gradients": false,
+   "visual.has_shadows": true
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "1 global(s): updateClock",
+    "value": 1
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 318px at 320w vs 454px at 900w",
+    "value": true
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "first frame already shows the time (0 px of noise vs 768 for a real move)",
+    "value": true
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": true
+   },
+   "time.hour_continuous": {
+    "evidence": "565 px changed along the hour hand's path",
+    "value": true
+   },
+   "time.minute_continuous": {
+    "evidence": "472 px changed along the minute hand's path",
+    "value": true
+   },
+   "time.second_ms_precision": {
+    "evidence": "nothing changed; the second hand stayed put",
+    "value": false
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0 (cssShadow 1)",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 1 (cssShadow 1)",
+    "value": true
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      33.8,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      301.2,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.60318672872683,
+    91.55115101423735
+   ]
+  },
+  "smoothness": {
+   "method": "high_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.6,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.07,
+   "dial.automated_marker_generation": 0.02,
+   "dial.hour_ticks_count": 0.02,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.17,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.23,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3518,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.minute_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_center_cap": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "tiebreak": false,
+    "vision": true
+   }
+  }
+ },
+ "local /glm-4.6v-flash.html": {
+  "code": {
+   "globals_count": 3,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": true
+  },
+  "judge_answers": {
+   "code.globals_count": 99,
+   "code.is_responsive": false,
+   "code.zero_dependencies": true,
+   "time.correct_12_top": false,
+   "visual.has_gradients": false,
+   "visual.has_shadows": false
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "3 global(s): drawClock, canvas, ctx",
+    "value": 3
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 136px at 320w vs 135px at 900w",
+    "value": false
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": false
+   },
+   "time.hour_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.minute_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.second_ms_precision": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 0",
+    "value": false
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 92.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      48.8,
+      123.8,
+      133.8
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      36.2,
+      48.8,
+      141.2,
+      228.8
+     ]
+    },
+    "second": {
+     "error": 38.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      3.8,
+      141.2,
+      266.2
+     ]
+    }
+   },
+   "ok": false,
+   "pivot": [
+    99.0,
+    98.99494936611666
+   ]
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": false,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.31,
+   "code.is_responsive": 0.36,
+   "code.uses_helpers": 0.04,
+   "dial.automated_marker_generation": 0.94,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.91,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.76,
+   "smoothness.zero_latency_init": 0.96,
+   "time.correct_12_top": 0.1,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.95,
+   "visual.has_bezel": 0.85,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.03,
+   "visual.has_shadows": 0.03
+  },
+  "typesafe_usage": {
+   "input_tokens": 3552,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": false
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.minute_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_center_cap": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   }
+  }
+ },
+ "local /lfm2.5-1.2b.html": {
+  "code": {
+   "globals_count": 1,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 0,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "judge_answers": {
+   "code.globals_count": 0,
+   "code.zero_dependencies": true,
+   "visual.has_gradients": false,
+   "visual.has_shadows": true
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "1 global(s): updateClock",
+    "value": 1
+   },
+   "code.is_responsive": {
+    "evidence": "second hand not found at both sizes",
+    "value": null
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.correct_12_top": {
+    "evidence": "no hand movement detected",
+    "value": null
+   },
+   "time.hour_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.minute_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.second_ms_precision": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0 (cssShadow 1)",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 1 (cssShadow 1)",
+    "value": true
+   }
+  },
+  "render_check": {
+   "hands": {},
+   "ok": null,
+   "reason": "no hand movement detected"
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": false
+  },
+  "time": {
+   "correct_12_top": false,
+   "hour_continuous": true,
+   "minute_continuous": false,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.83,
+   "code.is_responsive": 0.06,
+   "code.uses_helpers": 0.04,
+   "dial.automated_marker_generation": 0.03,
+   "dial.hour_ticks_count": 0.02,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.06,
+   "time.correct_12_top": 0.12,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.02,
+   "visual.has_bezel": 0.05,
+   "visual.has_center_cap": 0.05,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.17,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 2752,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": false,
+   "has_center_cap": false,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.minute_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_center_cap": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   }
+  }
+ },
+ "local /qwen2.5-coder-14b.html": {
+  "code": {
+   "globals_count": 3,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": true
+  },
+  "judge_answers": {
+   "code.globals_count": 99,
+   "code.is_responsive": false,
+   "code.zero_dependencies": true,
+   "smoothness.zero_latency_init": true,
+   "time.correct_12_top": true,
+   "time.hour_continuous": true,
+   "time.minute_continuous": true,
+   "time.second_ms_precision": false,
+   "visual.has_bezel": true,
+   "visual.has_gradients": false,
+   "visual.has_shadows": false
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "3 global(s): drawClock, canvas, ctx",
+    "value": 3
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 234px at 320w vs 90px at 900w",
+    "value": false
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "first frame already shows the time (0 px of noise vs 379 for a real move)",
+    "value": true
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": true
+   },
+   "time.hour_continuous": {
+    "evidence": "211 px changed along the hour hand's path",
+    "value": true
+   },
+   "time.minute_continuous": {
+    "evidence": "188 px changed along the minute hand's path",
+    "value": true
+   },
+   "time.second_ms_precision": {
+    "evidence": "nothing changed; the second hand stayed put",
+    "value": false
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 0",
+    "value": false
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "error": 2.0,
+     "expected": [
+      34.2,
+      304.2
+     ],
+     "measured": [
+      36.2,
+      306.2
+     ]
+    },
+    "minute": {
+     "error": 2.2,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      51.2,
+      138.8,
+      301.2,
+      311.2
+     ]
+    },
+    "second": {
+     "error": 3.8,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      51.2,
+      176.2,
+      271.2
+     ]
+    }
+   },
+   "ok": true,
+   "pivot": [
+    98.75881452392704,
+    99.73871568048548
+   ]
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.31,
+   "code.is_responsive": 0.14,
+   "code.uses_helpers": 0.05,
+   "dial.automated_marker_generation": 0.89,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.91,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.99,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.77,
+   "time.hour_continuous": 0.97,
+   "time.minute_continuous": 0.95,
+   "visual.has_bezel": 0.54,
+   "visual.has_center_cap": 0.05,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.21,
+   "visual.has_shadows": 0.03
+  },
+  "typesafe_usage": {
+   "input_tokens": 3006,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": false,
+   "has_center_cap": false,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": false
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.minute_ticks_count": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": false,
+    "jev": true,
+    "tiebreak": false,
+    "vision": false
+   },
+   "visual.has_center_cap": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   }
+  }
+ },
+ "local /qwen3.5-9b.html": {
+  "code": {
+   "globals_count": 4,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 0,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "judge_answers": {
+   "code.globals_count": 99,
+   "code.is_responsive": false,
+   "code.zero_dependencies": true,
+   "visual.has_gradients": false,
+   "visual.has_shadows": true
+  },
+  "measured": {
+   "code.globals_count": {
+    "evidence": "4 global(s): setDate, hourHand, minuteHand, secondHand",
+    "value": 4
+   },
+   "code.is_responsive": {
+    "evidence": "second-hand sweep 258px at 320w vs 252px at 900w",
+    "value": false
+   },
+   "code.zero_dependencies": {
+    "evidence": "no network requests",
+    "value": true
+   },
+   "smoothness.zero_latency_init": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.correct_12_top": {
+    "evidence": "hand angles at four frozen times",
+    "value": null
+   },
+   "time.hour_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.minute_continuous": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "time.second_ms_precision": {
+    "evidence": "skipped: time check not passed",
+    "value": null
+   },
+   "visual.has_gradients": {
+    "evidence": "gradients applied: 0 (cssShadow 1)",
+    "value": false
+   },
+   "visual.has_shadows": {
+    "evidence": "shadows applied: 1 (cssShadow 1)",
+    "value": true
+   }
+  },
+  "render_check": {
+   "hands": {
+    "hour": {
+     "expected": [
+      34.25,
+      304.25
+     ],
+     "measured": null
+    },
+    "minute": {
+     "error": 4.8,
+     "expected": [
+      51.0,
+      141.0
+     ],
+     "measured": [
+      36.2,
+      46.2,
+      143.8
+     ]
+    },
+    "second": {
+     "error": 6.2,
+     "expected": [
+      180.0,
+      270.0
+     ],
+     "measured": [
+      48.8,
+      186.2,
+      271.2
+     ]
+    }
+   },
+   "ok": null,
+   "pivot": [
+    103.97358915441504,
+    99.67316382731067
+   ]
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.12,
+   "code.is_responsive": 0.07,
+   "code.uses_helpers": 0.08,
+   "dial.automated_marker_generation": 0.04,
+   "dial.hour_ticks_count": 0.04,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.92,
+   "time.hour_continuous": 0.91,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.15,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3302,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  },
+  "votes": {
+   "dial.hour_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.minute_ticks_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "dial.numerals_count": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   },
+   "visual.has_bezel": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_center_cap": {
+    "final": true,
+    "jev": true,
+    "vision": true
+   },
+   "visual.has_hand_tails": {
+    "final": false,
+    "jev": false,
+    "vision": false
+   }
+  }
+ },
  "local /qwen3.8-flash-next.html": {
   "code": {
    "globals_count": 6,
@@ -2665,7 +3923,7 @@
     "value": true
    },
    "smoothness.zero_latency_init": {
-    "evidence": "first frame already shows the time (0 px of noise vs 471 for a real move)",
+    "evidence": "first frame already shows the time (0 px of noise vs 466 for a real move)",
     "value": true
    },
    "time.correct_12_top": {
@@ -2751,22 +4009,22 @@
   },
   "typesafe_model": "jev-1.13.0",
   "typesafe_probs": {
-   "code.globals_count": 0.15,
+   "code.globals_count": 0.14,
    "code.is_responsive": 0.4,
    "code.uses_helpers": 0.97,
    "dial.automated_marker_generation": 0.99,
-   "dial.hour_ticks_count": 0.98,
-   "dial.minute_ticks_count": 0.96,
+   "dial.hour_ticks_count": 0.97,
+   "dial.minute_ticks_count": 0.95,
    "dial.numerals_count": 0.99,
    "dial.skips_minute_at_hour": 0.03,
    "smoothness.zero_latency_init": 0.97,
    "time.correct_12_top": 0.96,
    "time.hour_continuous": 0.97,
    "time.minute_continuous": 0.89,
-   "visual.has_bezel": 0.85,
+   "visual.has_bezel": 0.86,
    "visual.has_center_cap": 0.99,
-   "visual.has_gradients": 0.66,
-   "visual.has_hand_tails": 0.91,
+   "visual.has_gradients": 0.52,
+   "visual.has_hand_tails": 0.9,
    "visual.has_shadows": 0.99
   },
   "typesafe_usage": {
