@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analog Clock</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    .clock {
+      width: min(90vw, 420px);
+      aspect-ratio: 1;
+      padding: 14px;
+      border-radius: 50%;
+      background: #f8fafc;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        inset 0 0 0 10px #cbd5e1,
+        inset 0 0 0 14px #475569;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .face {
+      fill: #ffffff;
+    }
+
+    .tick {
+      stroke: #334155;
+      stroke-linecap: round;
+    }
+
+    .hour-tick {
+      stroke-width: 4;
+    }
+
+    .minute-tick {
+      stroke-width: 2;
+    }
+
+    .number {
+      fill: #0f172a;
+      font-size: 18px;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .hand {
+      stroke-linecap: round;
+      transform-origin: 100px 100px;
+    }
+
+    .hour-hand {
+      stroke: #0f172a;
+      stroke-width: 7;
+    }
+
+    .minute-hand {
+      stroke: #1e293b;
+      stroke-width: 5;
+    }
+
+    .second-hand {
+      stroke: #ef4444;
+      stroke-width: 2;
+    }
+
+    .center {
+      fill: #ef4444;
+      stroke: #ffffff;
+      stroke-width: 3;
+    }
+  </style>
+</head>
+<body>
+  <main class="clock" aria-label="Analog clock">
+    <svg viewBox="0 0 200 200" role="img" aria-label="Current time">
+      <circle class="face" cx="100" cy="100" r="96"></circle>
+
+      <!-- Clock ticks -->
+      <g id="ticks"></g>
+
+      <!-- Clock numbers -->
+      <g class="number">
+        <text x="100" y="27">12</text>
+        <text x="173" y="100">3</text>
+        <text x="100" y="177">6</text>
+        <text x="27" y="100">9</text>
+      </g>
+
+      <!-- Hands -->
+      <line id="hourHand" class="hand hour-hand" x1="100" y1="100" x2="100" y2="57"></line>
+      <line id="minuteHand" class="hand minute-hand" x1="100" y1="100" x2="100" y2="38"></line>
+      <line id="secondHand" class="hand second-hand" x1="100" y1="108" x2="100" y2="27"></line>
+
+      <circle class="center" cx="100" cy="100" r="6"></circle>
+    </svg>
+  </main>
+
+  <script>
+    const ticks = document.getElementById("ticks");
+
+    // Create 60 minute/hour marks.
+    for (let i = 0; i < 60; i++) {
+      const angle = i * 6;
+      const isHour = i % 5 === 0;
+      const outerRadius = 90;
+      const innerRadius = isHour ? 80 : 85;
+
+      const radians = (angle - 90) * Math.PI / 180;
+
+      const x1 = 100 + Math.cos(radians) * innerRadius;
+      const y1 = 100 + Math.sin(radians) * innerRadius;
+      const x2 = 100 + Math.cos(radians) * outerRadius;
+      const y2 = 100 + Math.sin(radians) * outerRadius;
+
+      const mark = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      mark.setAttribute("x1", x1);
+      mark.setAttribute("y1", y1);
+      mark.setAttribute("x2", x2);
+      mark.setAttribute("y2", y2);
+      mark.setAttribute("class", isHour ? "tick hour-tick" : "tick minute-tick");
+
+      ticks.appendChild(mark);
+    }
+
+    const hourHand = document.getElementById("hourHand");
+    const minuteHand = document.getElementById("minuteHand");
+    const secondHand = document.getElementById("secondHand");
+
+    function updateClock() {
+      const now = new Date();
+
+      const milliseconds = now.getMilliseconds();
+      const seconds = now.getSeconds() + milliseconds / 1000;
+      const minutes = now.getMinutes() + seconds / 60;
+      const hours = (now.getHours() % 12) + minutes / 60;
+
+      hourHand.style.transform = `rotate(${hours * 30}deg)`;
+      minuteHand.style.transform = `rotate(${minutes * 6}deg)`;
+      secondHand.style.transform = `rotate(${seconds * 6}deg)`;
+
+      requestAnimationFrame(updateClock);
+    }
+
+    updateClock();
+  </script>
+</body>
+</html>

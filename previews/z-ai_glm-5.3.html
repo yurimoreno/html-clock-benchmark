@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Méridienne — Horloge Nº 001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..650;1,9..144,300..650&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12100D; --ink:#E8E1CD;
+  --dim:rgba(232,225,205,.55); --faint:rgba(232,225,205,.34);
+  --hair:rgba(232,225,205,.13); --red:#C7452C;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Spline Sans Mono',ui-monospace,SFMono-Regular,monospace;-webkit-font-smoothing:antialiased}
+::selection{background:var(--red);color:var(--bg)}
+@keyframes rise{from{opacity:0}to{opacity:1}}
+.grain{position:fixed;inset:-40px;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>")}
+.frame{min-height:100%;display:flex;flex-direction:column;padding:clamp(16px,3vw,40px) clamp(18px,3.6vw,56px);animation:rise .7s ease both}
+header,footer{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding:15px 2px}
+header{border-bottom:1px solid var(--hair)}
+footer{border-top:1px solid var(--hair);margin-top:auto}
+main{flex:1;display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);gap:clamp(28px,4.5vw,70px);align-items:center;padding:clamp(22px,4vh,44px) 0}
+/* ---- clock column ---- */
+.stage-col{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+.stage{width:100%;display:flex;justify-content:center;perspective:1200px}
+#clockWrap{will-change:transform;filter:drop-shadow(0 28px 46px rgba(0,0,0,.55))}
+#clock{width:min(100%,58vh,600px);height:auto;display:block}
+.figcap{margin:4px 0 0;font-size:9px;letter-spacing:.22em;color:var(--faint);text-align:center;text-transform:uppercase}
+/* ---- readout column ---- */
+.readout{min-width:0;display:flex;flex-direction:column;gap:clamp(15px,2.4vh,24px)}
+.overline{display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.overline .rule{flex:1;height:1px;background:var(--hair)}
+.big{display:flex;align-items:baseline;white-space:nowrap;font-family:'Fraunces',serif;font-optical-sizing:auto;font-variant-numeric:tabular-nums;font-weight:390;line-height:.92;font-size:clamp(72px,8.4vw,158px);color:var(--ink)}
+.big .grp{display:inline-block}
+.big .sep{color:var(--faint);font-weight:300;margin:0 .02em}
+.big .ssep{font-size:.4em;color:var(--faint);font-weight:300;margin:0 .06em 0 .1em}
+.big .ss{font-size:.4em;font-weight:430;color:var(--red);letter-spacing:.03em}
+.chiprow{min-height:24px;display:flex;align-items:center}
+.chip{display:inline-flex;align-items:baseline;gap:8px;font-size:9.5px;letter-spacing:.22em;padding:4px 9px;border:1px solid rgba(199,69,44,.55);color:var(--red);text-transform:uppercase;opacity:0;transform:translateY(-5px);transition:opacity .25s ease,transform .25s ease}
+.chip.on{opacity:1;transform:none}
+.chip b{font-weight:500}
+.dateline{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+.spec{border-top:1px solid var(--hair)}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:8px 1px;border-bottom:1px solid var(--hair);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.row .k{color:var(--faint)} .row .v{color:var(--ink);text-align:right}
+.daytrack .th{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.rail{position:relative;height:24px}
+.rail .line{position:absolute;left:0;right:0;top:9px;height:1px;background:rgba(232,225,205,.16)}
+.rail .tk{position:absolute;top:6px;width:1px;height:7px;background:rgba(232,225,205,.3)}
+.rail .lb{position:absolute;top:14px;font-size:8px;letter-spacing:.12em;color:var(--faint);transform:translateX(-50%)}
+.rail .lb.f{transform:none}.rail .lb.l{transform:none;left:auto;right:0}
+#mark{position:absolute;top:3px;width:2px;height:13px;background:var(--red);left:0}
+.caption{margin:2px 0 0;font-family:'Fraunces',serif;font-optical-sizing:auto;font-weight:350;font-size:clamp(14px,1.22vw,16.5px);line-height:1.62;color:var(--dim);max-width:54ch}
+.caption em{color:var(--ink);font-style:italic}
+/* ---- dial typography (inline SVG shares page fonts) ---- */
+.t-brand{font-family:'Fraunces',serif;font-weight:500;font-size:21px;letter-spacing:5px;fill:#EAE3D1;opacity:.96;text-anchor:middle}
+.t-sub{font-family:'Spline Sans Mono',monospace;font-size:8px;letter-spacing:4px;fill:#E8E1CD;opacity:.42;text-anchor:middle}
+.t-cal{font-family:'Spline Sans Mono',monospace;font-size:9px;letter-spacing:2.6px;fill:#E8E1CD;opacity:.52;text-anchor:middle}
+.t-date{font-family:'Spline Sans Mono',monospace;font-size:21px;font-weight:500;fill:#E8E1CD;text-anchor:middle}
+#crownHit{cursor:grab;touch-action:none}
+#crownHit:hover .crownMain{stroke:rgba(232,225,205,.42)}
+body.dragging .crownMain{stroke:rgba(199,69,44,.65)}
+body.dragging,body.dragging *{cursor:grabbing!important}
+#capG,#ripple{transform-box:fill-box;transform-origin:center}
+@media (max-width:920px){
+  main{grid-template-columns:1fr;gap:10px;padding-top:16px}
+  #clock{width:min(100%,46vh)}
+  .big{font-size:clamp(64px,16.5vw,112px)}
+  .caption{max-width:none}
+  header,footer{font-size:9px;letter-spacing:.18em}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="frame">
+  <header>
+    <span>MÉRIDIENNE — HORLOGERIE · PARIS</span>
+    <span>REF. Nº 001 — 38.5 MM</span>
+  </header>
+  <main>
+    <section class="stage-col">
+      <div class="stage">
+        <div id="clockWrap">
+          <svg id="clock" viewBox="0 0 644 600" role="img" aria-label="Analog clock showing the current local time">
+            <defs>
+              <radialGradient id="dialG" cx="0.5" cy="0.4" r="0.75">
+                <stop offset="0" stop-color="#1F1A11"/>
+                <stop offset="0.55" stop-color="#1A150D"/>
+                <stop offset="1" stop-color="#130F09"/>
+              </radialGradient>
+              <linearGradient id="rimG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#E8E1CD" stop-opacity="0.26"/>
+                <stop offset="0.35" stop-color="#E8E1CD" stop-opacity="0.05"/>
+                <stop offset="1" stop-color="#E8E1CD" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="sheenG" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#FFF6E4" stop-opacity="0.09"/>
+                <stop offset="0.6" stop-color="#FFF6E4" stop-opacity="0.03"/>
+                <stop offset="1" stop-color="#FFF6E4" stop-opacity="0"/>
+              </radialGradient>
+              <clipPath id="dialClip"><circle cx="290" cy="300" r="251"/></clipPath>
+              <clipPath id="crownClip"><rect x="570" y="260" width="52" height="80" rx="10"/></clipPath>
+              <filter id="shHM" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/></filter>
+              <filter id="shS" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.32"/></filter>
+            </defs>
+            <!-- case & dial -->
+            <circle cx="290" cy="300" r="274" fill="#2A2316" stroke="rgba(232,225,205,0.15)"/>
+            <circle cx="290" cy="300" r="263" fill="#231D10"/>
+            <circle cx="290" cy="300" r="252" fill="url(#dialG)" stroke="rgba(0,0,0,0.6)"/>
+            <g id="ticks"></g>
+            <g id="batons"></g>
+            <text class="t-brand" x="290" y="216">MÉRIDIENNE</text>
+            <text class="t-sub" x="290" y="235">PARIS</text>
+            <text class="t-cal" x="290" y="388">AUTOMATIQUE</text>
+            <text class="t-cal" x="290" y="403">28 800 A/H</text>
+            <!-- date window -->
+            <rect x="462" y="283" width="56" height="34" rx="4" fill="#0D0B08" stroke="rgba(232,225,205,0.22)"/>
+            <text class="t-date" id="dateNum" x="490" y="307">00</text>
+            <!-- hands -->
+            <g id="hourH" filter="url(#shHM)">
+              <path d="M282.6 334 L297.4 334 L294.5 148 L285.5 148 Z" fill="#E8E1CD" stroke="rgba(10,8,5,0.5)"/>
+              <line x1="290" y1="328" x2="290" y2="154" stroke="rgba(10,8,5,0.26)" stroke-width="2"/>
+            </g>
+            <g id="minH" filter="url(#shHM)">
+              <path d="M284 338 L296 338 L293.2 66 L286.8 66 Z" fill="#E8E1CD" stroke="rgba(10,8,5,0.5)"/>
+              <line x1="290" y1="332" x2="290" y2="70" stroke="rgba(10,8,5,0.26)" stroke-width="1.6"/>
+            </g>
+            <g id="secH" filter="url(#shS)">
+              <line x1="290" y1="357" x2="290" y2="64" stroke="#C7452C" stroke-width="3"/>
+              <circle cx="290" cy="343" r="8.5" fill="#C7452C"/>
+              <circle cx="290" cy="127" r="8.5" fill="none" stroke="#C7452C" stroke-width="3"/>
+            </g>
+            <circle cx="290" cy="300" r="13" fill="#12100D" stroke="rgba(232,225,205,0.25)"/>
+            <circle id="ripple" cx="290" cy="300" r="15" fill="none" stroke="#C7452C" stroke-width="1.6" opacity="0"/>
+            <g id="capG"><circle cx="290" cy="300" r="5.4" fill="#C7452C"/><circle cx="290" cy="300" r="1.7" fill="#12100D"/></g>
+            <!-- crystal -->
+            <g clip-path="url(#dialClip)">
+              <g id="crystal">
+                <ellipse cx="212" cy="188" rx="310" ry="250" fill="url(#sheenG)"/>
+                <circle cx="290" cy="300" r="249" fill="none" stroke="url(#rimG)" stroke-width="2.5"/>
+              </g>
+            </g>
+            <!-- crown -->
+            <g id="crownHit">
+              <rect x="556" y="279" width="18" height="42" fill="#1C170C"/>
+              <rect class="crownMain" x="570" y="260" width="52" height="80" rx="10" fill="#241E12" stroke="rgba(232,225,205,0.18)"/>
+              <g clip-path="url(#crownClip)">
+                <g id="ridges"></g>
+                <line x1="570" y1="263.5" x2="622" y2="263.5" stroke="rgba(0,0,0,0.4)" stroke-width="1.5"/>
+                <line x1="570" y1="336.5" x2="622" y2="336.5" stroke="rgba(232,225,205,0.1)" stroke-width="1"/>
+              </g>
+              <rect x="552" y="242" width="92" height="116" fill="transparent"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <p class="figcap">FIG. 1 — CADRAN Nº 001 · CROWN: DRAG TO WIND, RELEASE TO RETURN</p>
+    </section>
+    <section class="readout">
+      <div class="overline"><span>HEURE LOCALE — LOCAL TIME</span><i class="rule"></i></div>
+      <div class="big" aria-hidden="true">
+        <span class="grp" id="hh">00</span><span class="sep">:</span><span class="grp" id="mm">00</span><span class="ssep">:</span><span class="grp ss" id="ss">00</span>
+      </div>
+      <div class="chiprow"><span class="chip" id="chip">OFFSET <b id="chipVal">+00:00:00</b></span></div>
+      <div class="dateline" id="dateline">—</div>
+      <div class="spec">
+        <div class="row"><span class="k">TIME ZONE</span><span class="v" id="tz">—</span></div>
+        <div class="row"><span class="k">UTC OFFSET</span><span class="v" id="utc">—</span></div>
+        <div class="row"><span class="k">DAY OF YEAR</span><span class="v" id="doy">—</span></div>
+        <div class="row"><span class="k">ISO WEEK</span><span class="v" id="week">—</span></div>
+      </div>
+      <div class="daytrack">
+        <div class="th"><span>TODAY — ELAPSED</span><span id="pct">0.0 %</span></div>
+        <div class="rail">
+          <i class="line"></i>
+          <i class="tk" style="left:0"></i><i class="tk" style="left:25%"></i><i class="tk" style="left:50%"></i><i class="tk" style="left:75%"></i><i class="tk" style="left:100%"></i>
+          <span class="lb f" style="left:0">00</span><span class="lb" style="left:25%">06</span><span class="lb" style="left:50%">12</span><span class="lb" style="left:75%">18</span><span class="lb l">24</span>
+          <i id="mark"></i>
+        </div>
+      </div>
+      <p class="caption">Nº 001 — <em>glide</em>. The seconds hand advances in eight micro-beats each second, the way a 28 800 A/H escapement sweeps. Dial, date and calendar all follow the crown — let go, and time springs home.</p>
+    </section>
+  </main>
+  <footer>
+    <span>ATELIER MÉRIDIENNE — ÉTABLI MMXXV</span>
+    <span>SWEEP · HACKING · 39 JEWELS</span>
+  </footer>
+</div>
+<script>
+(() => {
+"use strict";
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+const CX=290,CY=300;
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const hourH=$("#hourH"),minH=$("#minH"),secH=$("#secH"),dateNum=$("#dateNum");
+const hhEl=$("#hh"),mmEl=$("#mm"),ssEl=$("#ss");
+const chip=$("#chip"),chipVal=$("#chipVal"),dateline=$("#dateline");
+const tzEl=$("#tz"),utcEl=$("#utc"),doyEl=$("#doy"),weekEl=$("#week"),pctEl=$("#pct"),markEl=$("#mark");
+const crystal=$("#crystal"),wrap=$("#clockWrap"),capG=$("#capG"),ripple=$("#ripple");
+const crown=$("#crownHit"),ridges=$("#ridges");
+
+/* ---------- generate the dial furniture ---------- */
+const pol=(r,a)=>{const t=a*Math.PI/180;return [CX+r*Math.sin(t),CY-r*Math.cos(t)]};
+function ln(g,x1,y1,x2,y2,st,w,op,tr){
+  const l=document.createElementNS(NS,"line");
+  l.setAttribute("x1",x1);l.setAttribute("y1",y1);l.setAttribute("x2",x2);l.setAttribute("y2",y2);
+  l.setAttribute("stroke",st);l.setAttribute("stroke-width",w);l.setAttribute("opacity",op);
+  if(tr)l.setAttribute("transform",tr);
+  g.appendChild(l);
+}
+const ticksG=$("#ticks"),batonsG=$("#batons");
+for(let i=0;i<60;i++){
+  const a=i*6,maj=i%5===0;
+  const [x1,y1]=pol(maj?222:231.5,a),[x2,y2]=pol(240,a);
+  ln(ticksG,x1,y1,x2,y2,"#E8E1CD",maj?3:1.4,maj?0.95:0.5);
+}
+for(let i=0;i<12;i++){
+  if(i===3)continue;                 // 3 o'clock gives way to the date window
+  const as=i===0?[-4.2,4.2]:[i*30];  // twin baton at 12
+  for(const a of as){
+    const [x1,y1]=pol(204,a),[x2,y2]=pol(222,a);
+    ln(batonsG,x1,y1,x2,y2,"rgba(0,0,0,0.45)",i===0?7.5:9,1,"translate(1.4 2.4)"); // applied-marker shadow
+    ln(batonsG,x1,y1,x2,y2,"#E8E1CD",i===0?6.5:8,0.97);
+  }
+}
+for(let x=575.5;x<=617;x+=5.8){      // crown knurling
+  ln(ridges,x,246,x,352,"rgba(0,0,0,0.55)",2.4);
+  ln(ridges,x+2.6,246,x+2.6,352,"rgba(232,225,205,0.09)",1);
+}
+
+/* ---------- time state ---------- */
+let offset=0,eff=0,prevEff=0,returning=null,intro=!reduced;
+let dragging=false,dragId=null,startY=0,startOffset=0;
+let crownRot=0,wheelT=0;
+const p2=n=>String(n).padStart(2,"0");
+const WD=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+const MO=["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+let tzName="LOCAL TIME";
+try{tzName=(Intl.DateTimeFormat().resolvedOptions().timeZone||tzName).toUpperCase()}catch(e){}
+
+function isoWeek(d){
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dn=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dn+3);
+  const f=new Date(Date.UTC(t.getUTCFullYear(),0,4));
+  const fn=(f.getUTCDay()+6)%7;f.setUTCDate(f.getUTCDate()-fn+3);
+  return 1+Math.round((t-f)/604800000);
+}
+function setSpecs(d){
+  tzEl.textContent=tzName;
+  const om=-d.getTimezoneOffset(),sg=om<0?"−":"+";
+  utcEl.textContent=sg+p2(Math.floor(Math.abs(om)/60))+":"+p2(Math.abs(om)%60);
+  const y=d.getFullYear();
+  const doy=Math.floor((Date.UTC(y,d.getMonth(),d.getDate())-Date.UTC(y,0,0))/864e5);
+  const dim=((y%4===0&&y%100!==0)||y%400===0)?366:365;
+  doyEl.textContent=doy+" / "+dim;
+  weekEl.textContent="W"+p2(isoWeek(d));
+}
+function fmtOffset(ms){
+  const s=Math.round(Math.abs(ms)/1000);
+  return (ms<0?"−":"+")+p2(Math.floor(s/3600))+":"+p2(Math.floor(s/60)%60)+":"+p2(s%60);
+}
+function put(el,v,anim){
+  if(el.__v===v)return;
+  el.__v=v;el.textContent=v;
+  if(anim&&!reduced)el.animate(
+    [{transform:"translateY(0.3em)",opacity:0.1},{transform:"translateY(0)",opacity:1}],
+    {duration:380,easing:"cubic-bezier(.19,.7,.3,1)"});
+}
+
+/* ---------- the crown ---------- */
+function setRidges(){
+  ridges.setAttribute("transform","translate(0 "+((((crownRot%5.8)+5.8)%5.8)-5.8)+")");
+}
+function beginReturn(){
+  if(Math.abs(offset)<2){offset=0;return;}
+  returning={phase:"decay",from:offset,t0:performance.now()};
+  offset=0;
+}
+function land(){
+  intro=false;
+  if(reduced)return;
+  capG.animate([{transform:"scale(1)"},{transform:"scale(1.45)"},{transform:"scale(1)"}],{duration:320,easing:"ease-out"});
+  ripple.animate([{opacity:0.5,transform:"scale(0.4)"},{opacity:0,transform:"scale(3.4)"}],{duration:620,easing:"cubic-bezier(.2,.65,.35,1)"});
+}
+crown.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  crown.setPointerCapture(e.pointerId);
+  if(returning){offset=eff;returning=null;}   // grab mid-flight: keep where it is
+  intro=false;
+  dragging=true;dragId=e.pointerId;startY=e.clientY;startOffset=offset;
+  document.body.classList.add("dragging");
+});
+crown.addEventListener("pointermove",e=>{
+  if(!dragging||e.pointerId!==dragId)return;
+  const dy=e.clientY-startY;
+  offset=Math.max(-432e5,Math.min(432e5,startOffset+dy*30000)); // 30 s per pixel, ±12 h
+  crownRot=dy*1.6;setRidges();
+});
+function endDrag(e){
+  if(!dragging||e.pointerId!==dragId)return;
+  dragging=false;document.body.classList.remove("dragging");
+  beginReturn();
+}
+crown.addEventListener("pointerup",endDrag);
+crown.addEventListener("pointercancel",endDrag);
+crown.addEventListener("wheel",e=>{
+  if(dragging)return;
+  e.preventDefault();
+  if(returning){offset=eff;returning=null;}
+  const sg=Math.sign(e.deltaY);
+  offset=Math.max(-432e5,Math.min(432e5,offset+sg*60000)); // ±1 min per wheel notch
+  crownRot+=sg*3.2;setRidges();
+  clearTimeout(wheelT);
+  wheelT=setTimeout(()=>{if(!dragging)beginReturn()},700);
+},{passive:false});
+
+/* ---------- pointer tilt & crystal reflection ---------- */
+let rX=0,rY=0,tX=0,tY=0,hX=0,hY=0,thX=0,thY=0;
+if(!reduced)addEventListener("pointermove",e=>{
+  if(dragging||e.pointerType==="touch")return;
+  const nx=e.clientX/innerWidth*2-1,ny=e.clientY/innerHeight*2-1;
+  tY=nx*4.2;tX=-ny*3.2;thX=-nx*18;thY=-ny*14;
+});
+
+/* ---------- main loop ---------- */
+const easeOut=p=>1-Math.pow(1-p,3);
+let lastKey="";
+function stepReturn(t){
+  const r=returning;
+  if(r.phase==="decay"){
+    const o=r.from*Math.exp(-0.0058*(t-r.t0));       // exponential spring, k = 5.8 s⁻¹
+    if(Math.abs(o)<=320){returning={phase:"settle",from:o,t0:t};return o;}
+    return o;
+  }
+  const p=Math.min(1,(t-r.t0)/340);
+  if(p>=1){returning=null;offset=0;land();return 0;} // gentle final landing
+  return r.from*(1-easeOut(p));
+}
+function frame(t){
+  prevEff=eff;
+  eff=returning?stepReturn(t):offset;
+  if(eff!==prevEff){crownRot+=(eff-prevEff)*5.33e-5;setRidges();} // the crown unwinds with the hands
+  const d=new Date(Date.now()+eff);
+  const s=d.getSeconds()+Math.floor(d.getMilliseconds()/125)/8;  // 8 micro-beats per second
+  const m=d.getMinutes()+s/60,h=d.getHours()%12+m/60;
+  secH.setAttribute("transform","rotate("+(s*6)+" "+CX+" "+CY+")");
+  minH.setAttribute("transform","rotate("+(m*6)+" "+CX+" "+CY+")");
+  hourH.setAttribute("transform","rotate("+(h*30)+" "+CX+" "+CY+")");
+  const quiet=dragging||!!returning;
+  put(hhEl,p2(d.getHours()),!quiet);
+  put(mmEl,p2(d.getMinutes()),!quiet);
+  put(ssEl,p2(d.getSeconds()),!quiet);
+  const ds=String(d.getDate());
+  if(dateNum.textContent!==ds)dateNum.textContent=ds;
+  const show=!intro&&Math.abs(eff)>350;
+  chip.classList.toggle("on",show);
+  if(show)chipVal.textContent=fmtOffset(eff);
+  const key=d.toDateString()+d.getMinutes();
+  if(key!==lastKey){
+    lastKey=key;
+    dateline.textContent=WD[d.getDay()]+" · "+d.getDate()+" "+MO[d.getMonth()]+" "+d.getFullYear();
+    setSpecs(d);
+  }
+  const midnight=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+  const frac=(d.getTime()-midnight)/864e5;
+  markEl.style.left=(frac*100).toFixed(3)+"%";
+  const ps=(frac*100).toFixed(1)+" %";
+  if(pctEl.textContent!==ps)pctEl.textContent=ps;
+  rX+=(tX-rX)*0.055;rY+=(tY-rY)*0.055;hX+=(thX-hX)*0.055;hY+=(thY-hY)*0.055;
+  wrap.style.transform="rotateX("+rX.toFixed(3)+"deg) rotateY("+rY.toFixed(3)+"deg)";
+  crystal.setAttribute("transform","translate("+hX.toFixed(1)+" "+hY.toFixed(1)+")");
+  requestAnimationFrame(frame);
+}
+
+/* opening gesture: the day winds itself onto the dial from midnight */
+if(!reduced){
+  const md=new Date();md.setHours(0,0,0,0);
+  const from=-(Date.now()-md.getTime());
+  offset=0;returning={phase:"decay",from:from,t0:performance.now()};
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

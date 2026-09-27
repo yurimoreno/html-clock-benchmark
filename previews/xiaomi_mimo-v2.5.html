@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> analog Clock</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.clock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.clock {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #3a3a5c, #1a1a2e);
+    border: 8px solid #c9a96e;
+    position: relative;
+    box-shadow:
+        0 0 30px rgba(201, 169, 110, 0.3),
+        0 0 60px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Hour numbers */
+.hour-number {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #e8d5b0;
+    text-shadow: 0 0 8px rgba(201, 169, 110, 0.5);
+}
+
+.hour-number span {
+    display: block;
+    padding-top: 20px;
+}
+
+/* Hour tick marks */
+.tick {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform-origin: 50% 150px;
+}
+
+.tick::after {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 15px;
+    background: #c9a96e;
+    margin-left: -1.5px;
+    border-radius: 2px;
+}
+
+.tick.major::after {
+    width: 4px;
+    height: 22px;
+    margin-left: -2px;
+    background: #e8d5b0;
+}
+
+/* Hands */
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 4px;
+    transition: transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.hand.no-transition {
+    transition: none;
+}
+
+.hour-hand {
+    width: 6px;
+    height: 85px;
+    background: linear-gradient(to top, #e8d5b0, #c9a96e);
+    margin-left: -3px;
+    z-index: 3;
+    border-radius: 3px;
+}
+
+.minute-hand {
+    width: 4px;
+    height: 115px;
+    background: linear-gradient(to top, #e8d5b0, #b8976a);
+    margin-left: -2px;
+    z-index: 4;
+    border-radius: 2px;
+}
+
+.second-hand {
+    width: 2px;
+    height: 130px;
+    background: linear-gradient(to top, #ff6b6b, #ee5a24);
+    margin-left: -1px;
+    z-index: 5;
+    border-radius: 1px;
+}
+
+.second-hand::after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 25px;
+    background: #ee5a24;
+    border-radius: 1px;
+}
+
+/* Center cap */
+.center-cap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    background: radial-gradient(circle at 40% 35%, #f0c040, #c9a96e);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    box-shadow: 0 0 6px rgba(201, 169, 110, 0.6);
+}
+
+/* Inner ring decoration */
+.inner-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 240px;
+    height: 240px;
+    border: 1px solid rgba(201, 169, 110, 0.15);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* Minute markers */
+.min-tick {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform-origin: 50% 146px;
+}
+
+.min-tick::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 8px;
+    background: rgba(201, 169, 110, 0.3);
+    margin-left: -0.5px;
+}
+
+/* Digital display */
+.digital-time {
+    color: #e8d5b0;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-shadow: 0 0 15px rgba(201, 169, 110, 0.4);
+    font-variant-numeric: tabular-nums;
+}
+
+.label {
+    color: rgba(201, 169, 110, 0.5);
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="clock-container">
+    <div class="label">Analog Clock</div>
+    <div class="clock" id="clock">
+        <div class="inner-ring"></div>
+
+        <!-- Hour tick marks and numbers -->
+        <div id="tickMarks"></div>
+        <div id="hourNumbers"></div>
+
+        <!-- Clock hands -->
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand no-transition" id="secondHand"></div>
+
+        <!-- Center decoration -->
+        <div class="center-cap"></div>
+    </div>
+    <div class="digital-time" id="digitalTime">00:00:00</div>
+</div>
+
+<script>
+(function () {
+    const clock = document.getElementById('clock');
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+    const digitalTime = document.getElementById('digitalTime');
+    const tickContainer = document.getElementById('tickMarks');
+    const numbersContainer = document.getElementById('hourNumbers');
+
+    // Generate tick marks
+    for (let i = 0; i < 60; i++) {
+        if (i % 5 === 0) continue; // Skip where hour numbers go
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.style.transform = `rotate(${i * 6}deg)`;
+        tickContainer.appendChild(tick);
+    }
+
+    // Generate minute tick marks
+    for (let i = 0; i < 60; i++) {
+        if (i % 5 === 0) continue;
+        const mtick = document.createElement('div');
+        mtick.className = 'min-tick';
+        mtick.style.transform = `rotate(${i * 6}deg)`;
+        tickContainer.appendChild(mtick);
+    }
+
+    // Generate hour numbers
+    for (let i = 1; i <= 12; i++) {
+        const numDiv = document.createElement('div');
+        numDiv.className = 'hour-number';
+        numDiv.style.transform = `rotate(${i * 30}deg)`;
+
+        const span = document.createElement('span');
+        span.textContent = i;
+        span.style.transform = `rotate(${-i * 30}deg)`;
+        span.style.display = 'inline-block';
+        span.style.paddingTop = '18px';
+
+        numDiv.appendChild(span);
+        numbersContainer.appendChild(numDiv);
+    }
+
+    function pad(n) {
+        return n.toString().padStart(2, '0');
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const millis = now.getMilliseconds();
+
+        // Smooth hand angles
+        const secondAngle = (seconds + millis / 1000) * 6;
+        const minuteAngle = (minutes + seconds / 60) * 6;
+        const hourAngle = (hours + minutes / 60) * 30;
+
+        hourHand.style.transform = `rotate(${hourAngle}deg)`;
+        minuteHand.style.transform = `rotate(${minuteAngle}deg)`;
+        secondHand.style.transform = `rotate(${secondAngle}deg)`;
+
+        // Digital time
+        digitalTime.textContent =
+            pad(now.getHours()) + ':' + pad(minutes) + ':' + pad(seconds);
+
+        requestAnimationFrame(updateClock);
+    }
+
+    updateClock();
+})();
+</script>
+
+</body>
+</html>

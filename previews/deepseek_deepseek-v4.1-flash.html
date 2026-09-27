@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analog Clock</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at 50% 20%, #2f3750 0%, #141824 55%, #0a0c12 100%);
+  }
+
+  .clock {
+    position: relative;
+    width: min(78vmin, 440px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #ffffff 0%, #eef1f8 50%, #c9d1e2 100%);
+    box-shadow:
+      0 0 0 10px #171c29,
+      0 0 0 13px #3b4562,
+      0 22px 45px rgba(0, 0, 0, 0.65),
+      inset 0 -8px 22px rgba(28, 40, 70, 0.20),
+      inset 0 8px 22px rgba(255, 255, 255, 0.95);
+    animation: appear 0.7s ease both;
+  }
+
+  @keyframes appear {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .clock svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+  <div class="clock" role="img" aria-label="Analog clock showing the current time">
+    <svg viewBox="0 0 200 200">
+      <!-- Tick marks -->
+      <g id="ticks"></g>
+
+      <!-- Quarter-hour numerals -->
+      <g id="numerals"></g>
+
+      <!-- Hands -->
+      <g id="hands">
+        <!-- Hour hand -->
+        <line id="hourHand" x1="100" y1="100" x2="100" y2="48"
+              stroke="#1e2637" stroke-width="7" stroke-linecap="round"/>
+        <!-- Minute hand -->
+        <line id="minuteHand" x1="100" y1="100" x2="100" y2="24"
+              stroke="#1e2637" stroke-width="5" stroke-linecap="round"/>
+        <!-- Second hand (with counterweight tail) -->
+        <line id="secondHand" x1="100" y1="118" x2="100" y2="16"
+              stroke="#e5383b" stroke-width="2" stroke-linecap="round"/>
+        <!-- Center cap -->
+        <circle cx="100" cy="100" r="5.5" fill="#1e2637"/>
+        <circle cx="100" cy="100" r="2.6" fill="#e5383b"/>
+      </g>
+    </svg>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  const NS  = "http://www.w3.org/2000/svg";
+  const CX  = 100;   // center x in viewBox units
+  const CY  = 100;   // center y in viewBox units
+
+  const tickGroup = document.getElementById("ticks");
+  const numGroup  = document.getElementById("numerals");
+
+  /* ---------- Build the 60 tick marks ---------- */
+  for (let i = 0; i < 60; i++) {
+    const isHour = i % 5 === 0;
+    const rad    = (i * 6) * Math.PI / 180;   // 6° per tick
+    const sin    = Math.sin(rad);
+    const cos    = Math.cos(rad);
+
+    const r1 = isHour ? 78 : 83;   // inner radius
+    const r2 = 87;                 // outer radius
+
+    const line = document.createElementNS(NS, "line");
+    line.setAttribute("x1", (CX + r1 * sin).toFixed(2));
+    line.setAttribute("y1", (CY - r1 * cos).toFixed(2));
+    line.setAttribute("x2", (CX + r2 * sin).toFixed(2));
+    line.setAttribute("y2", (CY - r2 * cos).toFixed(2));
+    line.setAttribute("stroke", isHour ? "#1e2637" : "#9aa4b8");
+    line.setAttribute("stroke-width", isHour ? "3.4" : "1.4");
+    line.setAttribute("stroke-linecap", "round");
+    tickGroup.appendChild(line);
+  }
+
+  /* ---------- Build the 12 / 3 / 6 / 9 numerals ---------- */
+  [12, 3, 6, 9].forEach(function (n) {
+    const rad = (n * 30) * Math.PI / 180;
+    const r   = 62;
+
+    const text = document.createElementNS(NS, "text");
+    text.setAttribute("x", (CX + r * Math.sin(rad)).toFixed(2));
+    text.setAttribute("y", (CY - r * Math.cos(rad)).toFixed(2));
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("dominant-baseline", "central");
+    text.setAttribute("font-size", "17");
+    text.setAttribute("font-weight", "600");
+    text.setAttribute("fill", "#2b3448");
+    text.setAttribute("font-family", "inherit");
+    text.textContent = n;
+    numGroup.appendChild(text);
+  });
+
+  /* ---------- Hands ---------- */
+  const hourHand   = document.getElementById("hourHand");
+  const minuteHand = document.getElementById("minuteHand");
+  const secondHand = document.getElementById("secondHand");
+
+  function setRotation(el, degrees) {
+    el.setAttribute(
+      "transform",
+      "rotate(" + degrees.toFixed(3) + " " + CX + " " + CY + ")"
+    );
+  }
+
+  /* ---------- Animation loop ---------- */
+  function render() {
+    const now   = new Date();
+    const ms    = now.getMilliseconds();
+
+    // Smooth, continuous values
+    const secs  = now.getSeconds() + ms / 1000;
+    const mins  = now.getMinutes() + secs / 60;
+    const hours = (now.getHours() % 12) + mins / 60;
+
+    setRotation(hourHand,   hours * 30);   // 360° / 12h = 30° per hour
+    setRotation(minuteHand, mins  * 6);    // 360° / 60m = 6°  per minute
+    setRotation(secondHand, secs  * 6);    // 360° / 60s = 6°  per second
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+})();
+</script>
+
+</body>
+</html>

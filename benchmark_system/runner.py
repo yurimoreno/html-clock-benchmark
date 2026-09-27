@@ -155,6 +155,12 @@ def evaluate_clock(judge_model, clock_code, max_tokens=30000):
     if not clock_code:
         return None
     if judge_model == "typesafe/jev":
+        # typesafe_judge imports `runner` as a top-level module, so this dir must be on
+        # sys.path; it isn't when runner is imported as benchmark_system.runner (add_model.py).
+        import sys
+        _here = str(Path(__file__).resolve().parent)
+        if _here not in sys.path:
+            sys.path.insert(0, _here)
         from typesafe_judge import evaluate_clock_typesafe
         return evaluate_clock_typesafe(clock_code)
     print(f"Evaluating clock with judge {judge_model}...")

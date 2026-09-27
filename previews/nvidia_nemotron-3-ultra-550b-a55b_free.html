@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d12;
+      --bg-elevated: #16161f;
+      --fg: #e8e8ed;
+      --muted: #6b6b7a;
+      --accent: #e8a838;
+      --accent-dim: #c49030;
+      --card: #1a1a24;
+      --border: #2a2a3a;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f5f5f0;
+        --bg-elevated: #ffffff;
+        --fg: #1a1a24;
+        --muted: #8a8a9a;
+        --accent: #c47818;
+        --accent-dim: #a86810;
+        --card: #fefefe;
+        --border: #e0e0e8;
+        --glass: rgba(0, 0, 0, 0.02);
+        --glass-border: rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* Ambient background */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232, 168, 56, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(232, 168, 56, 0.04) 0%, transparent 50%);
+    }
+
+    .ambient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .clock-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .clock-wrapper {
+      position: relative;
+      width: min(480px, 90vw);
+      aspect-ratio: 1;
+    }
+
+    .clock-face {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: 
+        radial-gradient(ellipse at 30% 30%, var(--bg-elevated) 0%, var(--card) 40%, var(--bg) 100%),
+        radial-gradient(circle at 70% 70%, rgba(232, 168, 56, 0.05) 0%, transparent 70%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 
+        0 0 0 1px var(--border),
+        0 4px 24px rgba(0, 0, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.05),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.2),
+        0 0 60px -20px rgba(232, 168, 56, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clock-face::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+    }
+
+    .clock-face::after {
+      content: '';
+      position: absolute;
+      inset: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+
+    /* Hour markers */
+    .markers {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .marker {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      width: 2px;
+      background: var(--fg);
+      opacity: 0.6;
+    }
+
+    .marker.hour {
+      height: 16px;
+      width: 3px;
+      margin-top: -16px;
+      margin-left: -1.5px;
+      background: linear-gradient(180deg, var(--fg) 0%, var(--muted) 100%);
+      opacity: 1;
+      border-radius: 2px;
+    }
+
+    .marker.minute {
+      height: 8px;
+      width: 1.5px;
+      margin-top: -8px;
+      margin-left: -0.75px;
+      background: var(--muted);
+      opacity: 0.5;
+      border-radius: 1px;
+    }
+
+    /* Numbers */
+    .numbers {
+      position: absolute;
+      inset: 32px;
+      pointer-events: none;
+    }
+
+    .number {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: var(--fg);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      transform: translate(-50%, -50%);
+    }
+
+    /* Hands container */
+    .hands {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: center bottom;
+      border-radius: 3px;
+      box-shadow: 
+        0 -2px 8px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      will-change: transform;
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hand.hour {
+      width: 7px;
+      height: 32%;
+      margin-left: -3.5px;
+      background: linear-gradient(180deg, var(--fg) 0%, var(--muted) 100%);
+      z-index: 3;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .hand.minute {
+      width: 4px;
+      height: 42%;
+      margin-left: -2px;
+      background: linear-gradient(180deg, var(--fg) 0%, var(--muted) 100%);
+      z-index: 4;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .hand.second {
+      width: 2px;
+      height: 46%;
+      margin-left: -1px;
+      background: var(--accent);
+      z-index: 5;
+      border-radius: 1px;
+      box-shadow: 
+        0 -2px 12px var(--accent),
+        0 0 20px var(--accent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .hand.second::before {
+      content: '';
+      position: absolute;
+      bottom: -18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .hand.second::after {
+      content: '';
+      position: absolute;
+      bottom: -14%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    /* Center hub */
+    .hub {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fg) 0%, var(--muted) 100%);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 2px var(--border);
+      z-index: 6;
+    }
+
+    .hub::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .hub::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+
+    /* Digital time display */
+    .digital-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--fg);
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: baseline;
+      gap: 0.25em;
+    }
+
+    .digital-time .seconds {
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .digital-time .separator {
+      color: var(--muted);
+      animation: blink 1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Date display */
+    .date-display {
+      font-size: 0.875rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .hand {
+        transition: none;
+      }
+      .digital-time .separator {
+        animation: none;
+      }
+    }
+
+    /* Focus visible for accessibility */
+    .clock-wrapper:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  
+  <main class="clock-container" role="main">
+    <div class="clock-wrapper" tabindex="0" aria-label="Analog clock showing current time">
+      <div class="clock-face">
+        <div class="markers" aria-hidden="true"></div>
+        <div class="numbers" aria-hidden="true"></div>
+        <div class="hands" aria-hidden="true">
+          <div class="hand hour" id="hourHand" aria-hidden="true"></div>
+          <div class="hand minute" id="minuteHand" aria-hidden="true"></div>
+          <div class="hand second" id="secondHand" aria-hidden="true"></div>
+        </div>
+        <div class="hub" aria-hidden="true"></div>
+      </div>
+    </div>
+    
+    <div class="digital-time" aria-live="polite" aria-atomic="true">
+      <span id="digitalHours">00</span>
+      <span class="separator" aria-hidden="true">:</span>
+      <span id="digitalMinutes">00</span>
+      <span class="separator" aria-hidden="true">:</span>
+      <span class="seconds" id="digitalSeconds">00</span>
+    </div>
+    
+    <div class="date-display" id="dateDisplay" aria-live="polite"></div>
+  </main>
+
+  <script>
+    // Initialize clock
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+    const digitalHours = document.getElementById('digitalHours');
+    const digitalMinutes = document.getElementById('digitalMinutes');
+    const digitalSeconds = document.getElementById('digitalSeconds');
+    const dateDisplay = document.getElementById('dateDisplay');
+    const markersContainer = document.querySelector('.markers');
+    const numbersContainer = document.querySelector('.numbers');
+
+    // Create markers
+    function createMarkers() {
+      for (let i = 0; i < 60; i++) {
+        const marker = document.createElement('div');
+        const angle = i * 6; // 360/60 = 6 degrees per minute
+        const isHour = i % 5 === 0;
+        
+        marker.className = `marker ${isHour ? 'hour' : 'minute'}`;
+        marker.style.transform = `rotate(${angle}deg) translateY(-${isHour ? 140 : 148}px)`;
+        markersContainer.appendChild(marker);
+      }
+    }
+
+    // Create numbers
+    function createNumbers() {
+      const numbers = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+      const radius = 138; // Distance from center
+      
+      numbers.forEach((num, i) => {
+        const angle = (i * 30) - 90; // 30 degrees per hour, -90 to start at 12
+        const rad = angle * Math.PI / 180;
+        const x = 50 + (radius / 240) * 100 * Math.cos(rad); // percentage based
+        const y = 50 + (radius / 240) * 100 * Math.sin(rad);
+        
+        const numberEl = document.createElement('span');
+        numberEl.className = 'number';
+        numberEl.textContent = num.toString().padStart(2, '0');
+        numberEl.style.left = `${x}%`;
+        numberEl.style.top = `${y}%`;
+        numbersContainer.appendChild(numberEl);
+      });
+    }
+
+    // Update clock
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const milliseconds = now.getMilliseconds();
+
+      // Continuous smooth movement
+      const secondDeg = (seconds + milliseconds / 1000) * 6; // 6 deg per second
+      const minuteDeg = (minutes + seconds / 60) * 6; // 6 deg per minute
+      const hourDeg = ((hours % 12) + minutes / 60 + seconds / 3600) * 30; // 30 deg per hour
+
+      // Apply transforms
+      secondHand.style.transform = `rotate(${secondDeg}deg)`;
+      minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+      hourHand.style.transform = `rotate(${hourDeg}deg)`;
+
+      // Digital display
+      digitalHours.textContent = hours.toString().padStart(2, '0');
+      digitalMinutes.textContent = minutes.toString().padStart(2, '0');
+      digitalSeconds.textContent = seconds.toString().padStart(2, '0');
+
+      // Date display
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateDisplay.textContent = now.toLocaleDateString(undefined, options);
+    }
+
+    // Initialize
+    createMarkers();
+    createNumbers();
+    updateClock();
+    setInterval(updateClock, 50); // Update at ~20fps for smooth second hand
+
+    // Handle visibility change to reduce CPU when tab is hidden
+    let intervalId = setInterval(updateClock, 50);
+    
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearInterval(intervalId);
+        intervalId = setInterval(updateClock, 1000);
+      } else {
+        clearInterval(intervalId);
+        intervalId = setInterval(updateClock, 50);
+        updateClock(); // Immediate update on return
+      }
+    });
+  </script>
+</body>
+</html>

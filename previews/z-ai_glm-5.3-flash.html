@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F2ECDF">
+<title>Meridian · Standard Dial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Spline+Sans+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2ECDF;
+    --paper-hi:#FAF5E9;
+    --ink:#1C1912;
+    --red:#C13A26;
+    --hair:rgba(28,25,18,.30);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Spline Sans Mono",ui-monospace,monospace;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* faint paper grain */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.055;mix-blend-mode:multiply;
+  }
+  .plate{
+    min-height:100dvh;
+    display:grid;grid-template-rows:auto 1fr auto;
+    padding:clamp(14px,2.6vh,26px) clamp(18px,4.5vw,60px);
+  }
+  header.bar,footer.bar{display:flex;justify-content:space-between;gap:24px}
+  header.bar{align-items:flex-start;border-bottom:1px solid var(--hair);padding-bottom:16px}
+  footer.bar{align-items:center;border-top:1px solid var(--hair);padding-top:16px;flex-wrap:wrap;row-gap:14px}
+  main{display:grid;place-items:center;min-height:0;padding:16px 0}
+
+  .brand{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(19px,2.3vw,25px);line-height:1;letter-spacing:.02em}
+  .subline{margin-top:7px;font-size:9.5px;letter-spacing:.24em;opacity:.6;font-weight:430}
+  .right{text-align:right;font-size:10.5px;letter-spacing:.16em;line-height:1.8;font-weight:460}
+  .right #tzLine{opacity:.55;font-size:9.5px}
+
+  #clock{
+    width:min(520px,86vw,calc(100vh - 235px));
+    width:min(520px,86vw,max(300px,calc(100dvh - 235px)));
+    height:auto;display:block;
+    cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+    filter:drop-shadow(0 22px 34px rgba(28,25,18,.16)) drop-shadow(0 3px 9px rgba(28,25,18,.10));
+  }
+  body.setting #clock{cursor:grabbing}
+
+  /* entrance */
+  .rise{opacity:0;transform:translateY(7px);transition:opacity .8s ease,transform .8s ease}
+  body.ready .rise{opacity:1;transform:none}
+  .d1{transition-delay:.05s}.d2{transition-delay:.16s}.d3{transition-delay:.27s}
+
+  .controls{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.18em;font-weight:470;flex-wrap:wrap}
+  .lbl{opacity:.5}
+  .dot{opacity:.3;padding:0 3px}
+  .btn{
+    font:inherit;letter-spacing:inherit;color:var(--ink);background:transparent;
+    border:1px solid var(--hair);padding:5px 10px 4px;cursor:pointer;
+    transition:background .18s,color .18s,border-color .18s,opacity .3s,transform .3s;
+  }
+  .btn:hover{border-color:var(--ink)}
+  .btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  #syncBtn{border-color:rgba(193,58,38,.55);color:var(--red);opacity:0;transform:translateX(-6px);pointer-events:none;margin-left:4px}
+  #syncBtn.show{opacity:1;transform:none;pointer-events:auto}
+  #syncBtn:hover{background:var(--red);color:var(--paper);border-color:var(--red)}
+
+  .readout{text-align:right}
+  #digital{font-size:15px;letter-spacing:.14em;font-weight:520;font-variant-numeric:tabular-nums}
+  .hint{margin-top:6px;font-size:9px;letter-spacing:.2em;opacity:.5}
+
+  @media (max-width:560px){
+    .hint{display:none}
+    .right{font-size:9.5px}
+  }
+</style>
+</head>
+<body>
+<div class="plate">
+
+  <header class="bar rise d1">
+    <div>
+      <div class="brand">Meridian</div>
+      <div class="subline">STANDARD DIAL · N° 001</div>
+    </div>
+    <div class="right">
+      <div id="dateLine">—</div>
+      <div id="tzLine">—</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="rise d2">
+      <svg id="clock" viewBox="0 0 418 400" role="img" aria-label="Analog clock showing the current local time">
+        <defs>
+          <filter id="hsh" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="2.4" stdDeviation="2" flood-color="#1C1912" flood-opacity=".18"/>
+          </filter>
+        </defs>
+        <g id="scene">
+          <!-- winding crown (drawn first so the case ring overlaps its stem) -->
+          <g id="crown">
+            <rect x="378" y="195.5" width="10" height="9" fill="#1C1912"/>
+            <rect x="386.5" y="190" width="14" height="20" rx="3.2" fill="#FAF5E9" stroke="#1C1912" stroke-width="2"/>
+            <g stroke="#1C1912" stroke-width="1" opacity=".75">
+              <line x1="390.5" y1="193.5" x2="390.5" y2="206.5"/>
+              <line x1="393.5" y1="193.5" x2="393.5" y2="206.5"/>
+              <line x1="396.5" y1="193.5" x2="396.5" y2="206.5"/>
+            </g>
+          </g>
+          <!-- case -->
+          <circle cx="200" cy="200" r="184" fill="none" stroke="#1C1912" stroke-width="2.6"/>
+          <circle cx="200" cy="200" r="178.6" fill="none" stroke="#1C1912" stroke-width=".7" opacity=".5"/>
+          <!-- minute track + dial print (generated) -->
+          <g id="track"></g>
+          <g id="dial"></g>
+          <!-- hands -->
+          <g id="hands" filter="url(#hsh)">
+            <path id="hourHand" fill="#1C1912"
+              d="M195.8,232 L204.2,232 L204.2,206 L202.4,120 L200,96 L197.6,120 L195.8,206 Z"/>
+            <path id="minHand" fill="#1C1912"
+              d="M197.2,236 L202.8,236 L202.8,210 L201.35,64 L200,38 L198.65,64 L197.2,210 Z"/>
+            <g id="secHand">
+              <line x1="200" y1="254" x2="200" y2="34" stroke="#C13A26" stroke-width="1.7"/>
+              <circle cx="200" cy="231" r="6.6" fill="#C13A26"/>
+            </g>
+          </g>
+          <circle cx="200" cy="200" r="6.3" fill="#1C1912"/>
+          <circle cx="200" cy="200" r="2.5" fill="#C13A26"/>
+        </g>
+      </svg>
+    </div>
+  </main>
+
+  <footer class="bar rise d3">
+    <div class="controls">
+      <span class="lbl">MOVEMENT</span>
+      <button class="btn on" id="mQ">QUARTZ</button>
+      <span class="lbl">/</span>
+      <button class="btn" id="mS">SWEEP</button>
+      <span class="dot">·</span>
+      <span class="lbl">TICK</span>
+      <button class="btn" id="sndBtn" aria-pressed="false">OFF</button>
+      <button class="btn" id="syncBtn">SYNC TO NOW</button>
+    </div>
+    <div class="readout">
+      <div id="digital">--:--:--</div>
+      <div class="hint">DRAG THE HANDS OR THE CROWN TO SET</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const INK = '#1C1912', RED = '#C13A26', PAPER_HI = '#FAF5E9';
+  const svg = document.getElementById('clock');
+  const hourHand = document.getElementById('hourHand');
+  const minHand  = document.getElementById('minHand');
+  const secHand  = document.getElementById('secHand');
+  const crown    = document.getElementById('crown');
+  const mQ = document.getElementById('mQ'), mS = document.getElementById('mS');
+  const sndBtn = document.getElementById('sndBtn'), syncBtn = document.getElementById('syncBtn');
+  const digital = document.getElementById('digital');
+  const dateLine = document.getElementById('dateLine'), tzLine = document.getElementById('tzLine');
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const mk = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    parent.appendChild(e); return e;
+  };
+  const mod = (x, n) => ((x % n) + n) % n;
+  const shortDelta = d => ((d % 360) + 540) % 360 - 180;
+  const easeOutCubic   = p => 1 - Math.pow(1 - p, 3);
+  const easeInOutCubic = p => p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;
+
+  /* ---------- dial print: railway minute track, numerals, date, brand ---------- */
+  const track = document.getElementById('track'), dial = document.getElementById('dial');
+
+  mk('circle', {cx:200, cy:200, r:170,   fill:'none', stroke:INK, 'stroke-width':.8, opacity:.85}, track);
+  mk('circle', {cx:200, cy:200, r:162.5, fill:'none', stroke:INK, 'stroke-width':.7, opacity:.75}, track);
+  for (let i = 0; i < 60; i++) {
+    const a = i * 6 * Math.PI / 180, major = i % 5 === 0;
+    const r1 = major ? 160.8 : 166.2, r2 = 170;
+    mk('line', {
+      x1:200 + r1*Math.sin(a), y1:200 - r1*Math.cos(a),
+      x2:200 + r2*Math.sin(a), y2:200 - r2*Math.cos(a),
+      stroke:INK, 'stroke-width': major ? 2.4 : .9, opacity: major ? 1 : .85
+    }, track);
+  }
+  for (let h = 1; h <= 12; h++) {
+    if (h === 3) continue; // date aperture lives here
+    const a = h * 30 * Math.PI / 180;
+    mk('text', {
+      x:200 + 134*Math.sin(a), y:200 - 134*Math.cos(a), dy:'.34em',
+      'text-anchor':'middle', fill:INK,
+      'font-family':'Fraunces, Georgia, serif', 'font-size':21, 'font-weight':545
+    }, dial).textContent = h;
+  }
+  // date aperture at 3 o'clock
+  mk('rect', {x:320.5, y:189, width:27, height:22, rx:2.2, fill:PAPER_HI,
+              stroke:INK, 'stroke-width':.8, opacity:.9}, dial);
+  const dateNum = mk('text', {x:334, y:200, dy:'.34em', 'text-anchor':'middle', fill:INK,
+      'font-family':'"Spline Sans Mono", monospace', 'font-size':11.5, 'font-weight':540}, dial);
+  // maker's marks
+  mk('rect', {x:197.6, y:137.6, width:4.8, height:4.8, fill:RED,
+              transform:'rotate(45 200 140)'}, dial);
+  mk('text', {x:201.8, y:156, 'text-anchor':'middle', fill:INK,
+      'font-family':'Fraunces, Georgia, serif', 'font-size':12.5, 'font-weight':600,
+      'letter-spacing':3}, dial).textContent = 'MERIDIAN';
+  mk('text', {x:201.5, y:248, 'text-anchor':'middle', fill:RED, opacity:.9,
+      'font-family':'"Spline Sans Mono", monospace', 'font-size':8, 'font-weight':480,
+      'letter-spacing':2.8}, dial).textContent = 'ANTIMAGNETIC';
+
+  /* ---------- time state ---------- */
+  let mode = 'quartz';       // 'quartz' (ticking spring) | 'sweep' (mechanical glide)
+  let offset = 0;            // ms added to Date.now() while hands are set
+  let soundOn = false;
+  let setting = false;       // user is dragging the hands / crown
+  let catchup = null;        // second-hand fly-back animation after setting
+  let resync  = null;        // animated return to real time
+
+  const dispNow = () => Date.now() + offset;
+  const angles  = ms => ({
+    s: mod(ms/1000, 60),
+    m: mod(ms/60000, 60),
+    h: mod(ms/3600000, 12)
+  });
+  const liveTgt = () => { const A = angles(dispNow()); return mode === 'sweep' ? A.s*6 : Math.floor(A.s)*6; };
+
+  // quartz spring: the tick lands with a small overshoot, then settles
+  const K = 520, C = RM ? 2*Math.sqrt(520) : 24;
+  let sa = 0, sv = 0, sTarget = 0;
+  sa = sTarget = Math.floor(angles(dispNow()).s) * 6;
+
+  let crownA = 0, crownT = 0, crownBase = 0;
+  let unwrap = 0, prevPtr = 0, startDisplay = 0, frozenSec = 0, activeId = null;
+  let lastSecFloor = Math.floor(angles(dispNow()).s);
+
+  /* ---------- optional tick-tock sound (WebAudio, generated locally) ---------- */
+  let actx = null, alt = false;
+  function playTick() {
+    if (!soundOn || !actx || actx.state !== 'running') return;
+    alt = !alt;
+    const t = actx.currentTime + 0.001, f = alt ? 1750 : 1380;
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, t);
+    o.frequency.exponentialRampToValueAtTime(f*0.55, t+0.05);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.28, t+0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+0.07);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t+0.09);
+    const o2 = actx.createOscillator(), g2 = actx.createGain(); // woody body
+    o2.type = 'triangle'; o2.frequency.setValueAtTime(240, t);
+    g2.gain.setValueAtTime(0.0001, t);
+    g2.gain.linearRampToValueAtTime(0.10, t+0.004);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t+0.05);
+    o2.connect(g2).connect(actx.destination); o2.start(t); o2.stop(t+0.07);
+  }
+
+  /* ---------- readouts ---------- */
+  const WD = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+  const MO = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  let dStr = '', dateStr = '';
+  function updateReadouts(ms) {
+    const d = new Date(ms);
+    const s2 = [d.getHours(), d.getMinutes(), d.getSeconds()]
+      .map(v => String(v).padStart(2,'0')).join(':');
+    if (s2 !== dStr) { dStr = s2; digital.textContent = s2; }
+    const ds = `${WD[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}`;
+    if (ds !== dateStr) { dateStr = ds; dateLine.textContent = ds; }
+    if (dateNum.textContent !== String(d.getDate())) dateNum.textContent = d.getDate();
+  }
+  // timezone plate line (static)
+  {
+    const off = -new Date().getTimezoneOffset(), sign = off >= 0 ? '+' : '−', a = Math.abs(off);
+    let tz = 'LOCAL';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g,' ').toUpperCase(); } catch(e){}
+    tzLine.textContent = `${tz} · UTC${sign}${String(Math.floor(a/60)).padStart(2,'0')}:${String(a%60).padStart(2,'0')}`;
+  }
+
+  /* ---------- setting: drag the hands or the crown ---------- */
+  function ptr(e) {
+    const r = svg.getBoundingClientRect(), sc = r.width / 418;
+    const cx = r.left + 200*sc, cy = r.top + r.height*0.5;
+    const dx = (e.clientX - cx)/sc, dy = (e.clientY - cy)/sc;
+    return { a: mod(Math.atan2(dx, -dy)*180/Math.PI, 360), r: Math.hypot(dx,dy), dx, dy };
+  }
+  const updateSyncBtn = () => syncBtn.classList.toggle('show', !setting && Math.abs(offset) > 800);
+
+  svg.addEventListener('pointerdown', e => {
+    const p = ptr(e);
+    const inDial  = p.r < 186;
+    const inCrown = p.dx > 376 && p.dx < 406 && Math.abs(p.dy) < 16;
+    if (!inDial && !inCrown) return;
+    e.preventDefault();
+    svg.setPointerCapture(e.pointerId);
+    activeId = e.pointerId;
+    setting = true; document.body.classList.add('setting');
+    catchup = null; resync = null;
+    unwrap = 0; prevPtr = p.a;
+    startDisplay = dispNow();
+    frozenSec = sa;               // hacking: the second hand stops while setting
+    crownBase = Math.round(crownA/360)*360;
+    updateSyncBtn();
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!setting || e.pointerId !== activeId) return;
+    const p = ptr(e);
+    if (p.r > 6) {                // ignore angle jitter at the very centre
+      const d = shortDelta(p.a - prevPtr);
+      unwrap += d; prevPtr = p.a;
+    }
+    offset = startDisplay + unwrap*10000 - Date.now();  // 1° of minute hand = 10 s
+  });
+  function endDrag(e) {
+    if (!setting || (e.pointerId !== undefined && e.pointerId !== activeId)) return;
+    setting = false; document.body.classList.remove('setting');
+    const dist = mod(liveTgt() - frozenSec, 360);       // second hand flies forward to re-engage
+    catchup = { from: frozenSec, kind: 'fwd', start: performance.now(),
+                dur: RM ? 150 : Math.min(1500, 240 + dist*6) };
+    updateSyncBtn();
+  }
+  svg.addEventListener('pointerup', endDrag);
+  svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('lostpointercapture', endDrag);
+
+  /* ---------- controls ---------- */
+  function setMode(m) {
+    if (m === mode) return;
+    mode = m;
+    mQ.classList.toggle('on', m === 'quartz');
+    mS.classList.toggle('on', m === 'sweep');
+    if (m === 'sweep') {
+      catchup = { from: sa, kind: 'short', start: performance.now(), dur: RM ? 120 : 420 };
+    } else {
+      catchup = null; sv = 0; sTarget = Math.floor(angles(dispNow()).s)*6;
+    }
+  }
+  mQ.addEventListener('click', () => setMode('quartz'));
+  mS.addEventListener('click', () => setMode('sweep'));
+  sndBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    sndBtn.textContent = soundOn ? 'ON' : 'OFF';
+    sndBtn.classList.toggle('on', soundOn);
+    sndBtn.setAttribute('aria-pressed', soundOn);
+    if (soundOn) {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      actx.resume();
+    }
+  });
+  syncBtn.addEventListener('click', () => {
+    if (Math.abs(offset) < 1) return;
+    resync = { from: offset, start: performance.now(), dur: RM ? 200 : 900 };
+    syncBtn.classList.remove('show');
+  });
+
+  /* ---------- render loop ---------- */
+  let lastT = performance.now()/1000;
+  function frame(tNow) {
+    const t = tNow/1000;
+    const dt = Math.min(0.05, Math.max(0.001, t - lastT)); lastT = t;
+
+    const ms = dispNow(), A = angles(ms);
+
+    if (setting) {
+      sa = frozenSec;                                  // hacked, holds still
+    } else if (resync) {
+      const p = Math.min(1, (performance.now() - resync.start)/resync.dur);
+      offset = resync.from * (1 - easeInOutCubic(p));
+      sa = angles(dispNow()).s * 6;                    // glide continuously back
+      if (p >= 1) { resync = null; offset = 0; sv = 0; sTarget = Math.floor(A.s)*6; sa = A.s*6; }
+    } else if (catchup) {
+      const to = liveTgt();
+      const d = catchup.kind === 'fwd' ? mod(to - catchup.from, 360) : shortDelta(to - catchup.from);
+      const p = Math.min(1, (performance.now() - catchup.start)/catchup.dur);
+      sa = catchup.from + d*(catchup.kind === 'fwd' ? easeOutCubic(p) : easeInOutCubic(p));
+      if (p >= 1) { catchup = null; sv = 0; sTarget = Math.floor(A.s)*6; }
+    } else if (mode === 'quartz') {
+      const tgt = Math.floor(A.s)*6;
+      if (tgt !== sTarget) {
+        sTarget = tgt;
+        if (Math.abs(tgt - sa) > 90) { sa = tgt; sv = 0; }   // e.g. after a hidden tab
+        playTick();
+      }
+      sv += (K*(sTarget - sa) - C*sv) * dt;
+      sa += sv * dt;
+    } else {
+      sa = A.s*6;
+      if (Math.floor(A.s) !== lastSecFloor) playTick();
+    }
+    lastSecFloor = Math.floor(A.s);
+
+    hourHand.setAttribute('transform', `rotate(${A.h*30} 200 200)`);
+    minHand .setAttribute('transform', `rotate(${A.m*6 } 200 200)`);
+    secHand .setAttribute('transform', `rotate(${sa    } 200 200)`);
+
+    // crown spins as you wind, then eases back home
+    crownT = setting ? crownBase + unwrap*2.2 : Math.round(crownA/360)*360;
+    crownA += (crownT - crownA) * Math.min(1, dt*14);
+    crown.setAttribute('transform', `rotate(${crownA} 393.5 200)`);
+
+    updateReadouts(dispNow());
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------- entrance after the serif numerals are ready ---------- */
+  const ready = () => document.body.classList.add('ready');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(ready, 60));
+  setTimeout(ready, 900); // fallback
+})();
+</script>
+</body>
+</html>
