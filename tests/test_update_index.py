@@ -111,13 +111,6 @@ def test_table_insert_in_middle(tmp_path, monkeypatch):
     assert _table_order(content) == [(1, 9.0), (2, 8.0), (3, 7.5)]
 
 
-@pytest.mark.xfail(
-    reason="KNOWN BUG: _make_card emits <div class=\"card\" id=...> but the grid "
-           "split regex in update_index only matches <div class=\"card\"> (no id). "
-           "id'd cards get lumped, so the rank-renumber re.sub stamps a duplicate "
-           "rank onto every card in the lump. The cloud table is unaffected.",
-    strict=True,
-)
 def test_card_grid_ranks_should_match_table(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_fixture(tmp_path)
@@ -127,7 +120,6 @@ def test_card_grid_ranks_should_match_table(tmp_path, monkeypatch):
                  display_name="Delta")
 
     content = (tmp_path / "index.html").read_text()
-    # Desired behaviour: card grid mirrors the (correct) table ordering.
     assert _card_order(content) == [(1, 9.0), (2, 8.0), (3, 7.5)]
 
 

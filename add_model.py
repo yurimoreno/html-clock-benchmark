@@ -141,6 +141,140 @@ def _fmt_price(val):
     return f"${int(val)}/M" if val == int(val) else f"${val}/M"
 
 
+AUDITS_FILE = "audits.json"
+
+
+def load_audits():
+    """Jev audits keyed by the clock path each card embeds (previews/... or cloud/...)."""
+    try:
+        with open(AUDITS_FILE) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+
+def save_audit(clock_path, audit):
+    audits = load_audits()
+    audits[clock_path] = audit
+    with open(AUDITS_FILE, "w") as f:
+        json.dump(audits, f, indent=1, sort_keys=True)
+
+
+_DIMS = [("time", "Time"), ("visual", "Visual"), ("dial", "Dial"), ("code", "Code"), ("motion", "Motion")]
+
+
+def _fmt_dim(v):
+    return str(int(v)) if float(v) == int(v) else str(v)
+
+
+def dims_html(breakdown):
+    cells = []
+    for key, label in _DIMS:
+        v = breakdown[key]
+        cls = "good" if v >= 10 else ("warn" if v >= 6 else "bad")
+        cells.append(f'<div class="dim {cls}"><span>{label}</span><b>{_fmt_dim(v)}</b></div>')
+    return '<div class="dims">' + "".join(cells) + "</div>"
+
+
+def _join(items):
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def why_html(audit):
+    """Plain-language account of the score, derived from the same audit fields
+    calculate_score() reads, so the text can't drift from the number."""
+    t, v, d, c, s = (audit.get(k, {}) for k in ("time", "visual", "dial", "code", "smoothness"))
+    # (dimension summary when perfect, [(passed, win text, loss text, overall points)])
+    checks = [
+        ("correct, continuous time math", [
+            (t.get("hour_continuous"), "continuous hour hand", "hour hand jumps between hours", 0.75),
+            (t.get("minute_continuous"), "continuous minute hand", "minute hand jumps each minute", 0.75),
+            (t.get("second_ms_precision"), "millisecond-precise second hand", "second hand ignores milliseconds", 0.75),
+            (t.get("correct_12_top"), "12 at the top", "12 is not at the top", 0.75),
+        ]),
+        ("full visual finish (shadows, gradients, bezel, center cap, hand tails)", [
+            (v.get("has_shadows"), "shadows", "no shadows", 0.4),
+            (v.get("has_gradients"), "gradients", "no gradients", 0.4),
+            (v.get("has_bezel"), "a bezel", "no bezel", 0.4),
+            (v.get("has_center_cap"), "a center cap", "no center cap", 0.4),
+            (v.get("has_hand_tails"), "hand tails", "no hand tails", 0.4),
+        ]),
+        ("a complete, loop-generated dial with numerals", [
+            (d.get("hour_ticks_count", 0) >= 12, "all 12 hour ticks", "missing hour ticks", 0.3),
+            (d.get("minute_ticks_count", 0) >= 48, "minute ticks", "no minute ticks", 0.3),
+            (d.get("numerals_count", 0) >= 12, "numerals", "no numerals", 0.3),
+            (d.get("automated_marker_generation"), "loop-generated markers", "hand-placed markers", 0.3),
+            (d.get("skips_minute_at_hour"), "minute ticks that skip the hours", "minute ticks overlap hour ticks", 0.3),
+        ]),
+        ("clean code (scoped, responsive, helpers, no dependencies)", [
+            (c.get("globals_count", 99) <= 2, "no global leaks", "leaks globals", 0.45),
+            (c.get("is_responsive"), "responsive sizing", "fixed size", 0.45),
+            (c.get("uses_helpers"), "helper functions", "no helper functions", 0.3),
+            (c.get("zero_dependencies"), "no dependencies", "external dependencies", 0.3),
+        ]),
+    ]
+    method = s.get("method")
+    motion_checks = [
+        (method == "rAF", "a smooth requestAnimationFrame sweep",
+         "fast setInterval instead of rAF" if method == "high_freq" else "second hand ticks once a second",
+         0.3 if method == "high_freq" else 0.8),
+        (s.get("zero_latency_init"), "the right time on the first frame", "wrong or blank first frame", 1.0),
+    ]
+    checks.append(("a smooth rAF sweep that is right from the first frame", motion_checks))
+
+    wins, losses = [], []
+    for summary, items in checks:
+        if all(ok for ok, *_ in items):
+            wins.append(summary)
+            continue
+        passed = [win for ok, win, _, _ in items if ok]
+        if passed:
+            wins.append(_join(passed))
+        losses += [(pts, loss) for ok, _, loss, pts in items if not ok]
+    if method == "high_freq":
+        wins.append("fast-interval motion")
+
+    parts = []
+    if wins:
+        text = "; ".join(wins)
+        parts.append(f"<b>Earned:</b> {text[0].upper() + text[1:]}.")
+    if losses:
+        losses.sort(key=lambda x: -x[0])
+        lost = round(sum(p for p, _ in losses), 2)
+        items = ", ".join(f"{loss} (−{p:g})" for p, loss in losses)
+        parts.append(f"<b>Lost {lost:g}:</b> {items[0].upper() + items[1:]}.")
+    else:
+        parts.append("<b>Lost nothing</b> on the rubric.")
+    return '<p class="why">' + " ".join(parts) + "</p>"
+
+
+def make_verdict(breakdown, audit=None, model_id=None, run_date=None, latency=None,
+                 actual_cost=None, judge_runs=None, judge_runs_attempted=None, original=None,
+                 source=None):
+    meta = []
+    if model_id:
+        meta.append(f'<span class="model-id">{model_id}</span>')
+    if source:
+        meta.append(f"<span>{source}</span>")
+    if run_date:
+        meta.append(f"<span>Ran {run_date if not str(run_date)[:1].isdigit() else _fmt_run_date(run_date)}</span>")
+    if latency is not None:
+        meta.append(f"<span>Latency {latency}s</span>")
+    if actual_cost is not None:
+        meta.append(f"<span>Cost ${actual_cost:.4f}</span>")
+    if judge_runs is not None:
+        meta.append(f"<span>Judge runs {judge_runs}/{judge_runs_attempted or judge_runs}</span>")
+    out = ['      <div class="verdict">', f"        {dims_html(breakdown)}"]
+    if audit:
+        out.append(f"        {why_html(audit)}")
+    if meta:
+        out.append('        <div class="meta">' + "".join(meta) + "</div>")
+    if original:
+        out.append(f'        <details class="orig"><summary>Original review (may describe an earlier score)</summary>{original}</details>')
+    out.append("      </div>")
+    return "\n".join(out)
+
+
 def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
                     actual_cost=None, model_id=None, run_date=None,
                     judge_runs=None, judge_runs_attempted=None, display_name=None):
@@ -189,7 +323,7 @@ def _make_table_row(model, rank, score, breakdown, latency=None, pricing=None,
 
 def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None,
                model_id=None, run_date=None, actual_cost=None,
-               judge_runs=None, judge_runs_attempted=None, display_name=None):
+               judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None):
     score_class, _ = score_to_grade(score)
     # Previews must live in a committed dir; runs/ is gitignored so iframes
     # pointing there 404 on GitHub Pages. Copy the generated HTML into previews/.
@@ -201,35 +335,25 @@ def _make_card(model, rank, score, breakdown, file_path, timestamp, latency=None
     except (OSError, shutil.SameFileError):
         pass
     relative_path = f"previews/{basename}"
-    latency_note = f" | Latency: {latency}s" if latency is not None else ""
-    run_date_str = _fmt_run_date(run_date) if run_date else "—"
-    cost_note = f" | Cost: ${actual_cost:.4f}" if actual_cost is not None else ""
-    runs = judge_runs if judge_runs is not None else '—'
-    runs_att = judge_runs_attempted if judge_runs_attempted is not None else runs
-    runs_str = f"{runs}/{runs_att}" if runs != '—' else '—'
-    runs_note = f" | Runs: {runs_str}"
-    model_id_str = model_id or ""
     display = display_name or model
+    verdict = make_verdict(breakdown, audit, model_id=model_id, run_date=run_date, latency=latency,
+                           actual_cost=actual_cost, judge_runs=judge_runs,
+                           judge_runs_attempted=judge_runs_attempted)
     return (
-        f'    <div class="card" id="card-{model_id_str}">\n'
+        f'    <div class="card" id="card-{model_id or ""}">\n'
         f'      <header>\n'
         f'        <span class="name">{display}</span>\n'
         f'        <span class="score {score_class}">#{rank} · {score}</span>\n'
         f'      </header>\n'
         f'      <iframe src="{relative_path}"></iframe>\n'
-        f'      <div class="verdict">Score: {score} | '
-        f'Time:{breakdown["time"]} Visual:{breakdown["visual"]} '
-        f'Dial:{breakdown["dial"]} Code:{breakdown["code"]} '
-        f'Motion:{breakdown["motion"]}{latency_note}{cost_note}{runs_note}'
-        f' | <span class="model-id">{model_id_str}</span>'
-        f' | Ran: {run_date_str}</div>\n'
+        f'{verdict}\n'
         f'    </div>'
     )
 
 
 def update_index(model, score, breakdown, file_path, timestamp, latency=None, pricing=None,
                  actual_cost=None, model_id=None, run_date=None,
-                 judge_runs=None, judge_runs_attempted=None, display_name=None):
+                 judge_runs=None, judge_runs_attempted=None, display_name=None, audit=None):
     index_path = "index.html"
     if not os.path.exists(index_path):
         print(f"Warning: {index_path} not found, skipping index update")
@@ -287,8 +411,8 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
     if grid_match:
         grid_content = grid_match.group(2)
 
-        # Split on card boundaries (4-space indented opening tag)
-        card_pieces = re.split(r'(?=    <div class="card">)', grid_content)
+        # Split on card boundaries (4-space indented opening tag, with or without an id)
+        card_pieces = re.split(r'(?=    <div class="card"[ >])', grid_content)
         scored_cards = []
         for piece in card_pieces:
             piece = piece.strip()
@@ -301,7 +425,7 @@ def update_index(model, score, breakdown, file_path, timestamp, latency=None, pr
         scored_cards.append([score, _make_card(model, 0, score, breakdown, file_path, timestamp, latency,
                                                model_id=model_id, run_date=run_date, actual_cost=actual_cost,
                                                judge_runs=judge_runs, judge_runs_attempted=judge_runs_attempted,
-                                               display_name=display_name)])
+                                               display_name=display_name, audit=audit)])
         scored_cards.sort(key=lambda x: x[0], reverse=True)
 
         # Renumber ranks in cards
@@ -398,7 +522,8 @@ def main():
         update_index(model, score, breakdown, file_path, ts, latency=latency_s, pricing=pricing,
                      actual_cost=actual_cost, model_id=model, run_date=ts,
                      judge_runs=judge_runs_completed, judge_runs_attempted=args.judge_runs,
-                     display_name=display_name)
+                     display_name=display_name, audit=audit)
+        save_audit("previews/" + os.path.basename(file_path), audit)
 
     print(f"\nDone! Score: {score}")
     print(f"Clock saved to: {file_path}")

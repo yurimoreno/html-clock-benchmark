@@ -5,8 +5,9 @@ Each card in the cloud tab embeds its clock file (previews/... or cloud/...),
 so the page itself is the source of truth for which HTML to audit. For every
 entry this script runs typesafe_judge.evaluate_clock_typesafe() on that file,
 recomputes the rubric score with runner.calculate_score(), then rewrites the
-matching table row and card in place (dimension cells, overall, runs, rank)
-and re-sorts both by the new score. Prose in card verdicts is left alone.
+matching table row and card in place (dimension cells, Earned/Lost summary,
+judge runs, rank), saves each audit to audits.json, and re-sorts both by the new
+score. The "Original review" prose under each card is left alone.
 
 Usage:
     python rejudge_index.py --dry-run     # print before/after, touch nothing
@@ -18,12 +19,13 @@ import datetime
 import os
 import re
 import sys
+import urllib.parse
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "benchmark_system"))
 
 from runner import calculate_score  # noqa: E402
 from typesafe_judge import evaluate_clock_typesafe  # noqa: E402
-from add_model import _OVERALL_COLORS, score_to_grade  # noqa: E402
+from add_model import _OVERALL_COLORS, score_to_grade, dims_html, why_html, save_audit  # noqa: E402
 
 INDEX = "index.html"
 ROW_RE = re.compile(r"<tr>.*?</tr>", re.S)
@@ -70,15 +72,11 @@ def rewrite_row(row_html, score, bd):
     return row_html
 
 
-def rewrite_card(card_html, score, bd):
+def rewrite_card(card_html, score, bd, audit):
     card_html = re.sub(r"#\d+ · [\d.]+", f"#0 · {score}", card_html)
-    card_html = re.sub(
-        r"Score: [\d.]+ \| Time:[\d.]+ Visual:[\d.]+ Dial:[\d.]+ Code:[\d.]+ Motion:[\d.]+",
-        f"Score: {score} | Time:{_fmt(bd['time'])} Visual:{_fmt(bd['visual'])} "
-        f"Dial:{_fmt(bd['dial'])} Code:{_fmt(bd['code'])} Motion:{bd['motion']}",
-        card_html,
-    )
-    card_html = re.sub(r"Runs: [^<|]+", "Runs: 1/1", card_html)
+    card_html = re.sub(r'<div class="dims">.*?</div></div>', lambda m: dims_html(bd), card_html, count=1, flags=re.S)
+    card_html = re.sub(r'<p class="why">.*?</p>', lambda m: why_html(audit), card_html, count=1, flags=re.S)
+    card_html = re.sub(r"Judge runs [^<]+", "Judge runs 1/1", card_html)
     return card_html
 
 
@@ -125,7 +123,9 @@ def main():
         score, bd = calculate_score(audit)
         row["new"], card["new"] = score, score
         row["html"] = rewrite_row(row["html"], score, bd)
-        card["html"] = rewrite_card(card["html"], score, bd)
+        card["html"] = rewrite_card(card["html"], score, bd, audit)
+        if not args.dry_run:
+            save_audit(urllib.parse.unquote(card["src"]), audit)
         report.append({"name": card["name"], "file": card["src"], "old_rank": old_rank,
                        "old": row["overall"], "new": score, "bd": bd,
                        "probs": audit.get("typesafe_probs", {})})
@@ -168,8 +168,10 @@ def main():
         r"<strong>[^<]*</strong> acted as judge.*?(?=\s*</div>)",
         "<strong>TypeSafe Jev</strong> acted as judge — one typed yes/no question per rubric criterion "
         f"over each clock's source, scored by <code>rejudge_index.py</code> on {datetime.date.today()}. "
-        "Card commentary is from each entry's original review and may describe the earlier score; "
-        f"see <code>docs/rejudge-{datetime.date.today()}.md</code> for the per-dimension before and after.",
+        "Each card's Earned/Lost summary is generated from its Jev audit (<code>audits.json</code>), so it always "
+        "matches the score; the original hand review, where one exists, sits under “Original review” and may "
+        f"describe an earlier score. See <code>docs/rejudge-{datetime.date.today()}.md</code> for the per-dimension "
+        "before and after.",
         content, count=1, flags=re.S,
     )
     open(INDEX, "w").write(content)

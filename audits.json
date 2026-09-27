@@ -1,0 +1,1682 @@
+{
+ "cloud/chatgpt-free.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.17,
+   "code.is_responsive": 0.06,
+   "code.uses_helpers": 0.14,
+   "dial.automated_marker_generation": 0.32,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.97,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.52,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.09,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3944,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/fable-5.1.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.8,
+   "code.is_responsive": 0.93,
+   "code.uses_helpers": 0.91,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.05,
+   "smoothness.zero_latency_init": 0.97,
+   "time.correct_12_top": 0.74,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.9,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.93,
+   "visual.has_hand_tails": 0.79,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3892,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "cloud/gemini-3.1-pro.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 0,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.15,
+   "code.is_responsive": 0.09,
+   "code.uses_helpers": 0.08,
+   "dial.automated_marker_generation": 0.02,
+   "dial.hour_ticks_count": 0.28,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.79,
+   "dial.skips_minute_at_hour": 0.07,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.6,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.92,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.37,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3829,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/glm-5.1.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.16,
+   "code.is_responsive": 0.14,
+   "code.uses_helpers": 0.05,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.94,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.98,
+   "smoothness.zero_latency_init": 0.95,
+   "time.correct_12_top": 0.78,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.95,
+   "visual.has_bezel": 0.75,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.86,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3485,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "cloud/grok 4.2 expert.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": true,
+   "zero_dependencies": false
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.15,
+   "code.is_responsive": 0.07,
+   "code.uses_helpers": 0.6,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.97,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.96,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.99,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.5,
+   "visual.has_hand_tails": 0.14,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 4602,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/kimi k2.5.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "high_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.84,
+   "code.is_responsive": 0.06,
+   "code.uses_helpers": 0.06,
+   "dial.automated_marker_generation": 0.02,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.23,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.84,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.97,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.22,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 5534,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/kimi k2.6.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.21,
+   "code.is_responsive": 0.06,
+   "code.uses_helpers": 0.16,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.9,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.96,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.08,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3527,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/mimo-2.5-pro.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.26,
+   "code.is_responsive": 0.06,
+   "code.uses_helpers": 0.1,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.96,
+   "time.correct_12_top": 0.88,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.07,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3420,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/minimax-m2.7.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 0,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.55,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.15,
+   "dial.automated_marker_generation": 0.93,
+   "dial.hour_ticks_count": 0.91,
+   "dial.minute_ticks_count": 0.2,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.82,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.01,
+   "visual.has_hand_tails": 0.09,
+   "visual.has_shadows": 0.03
+  },
+  "typesafe_usage": {
+   "input_tokens": 3044,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": false
+  }
+ },
+ "cloud/opus 4.7.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "high_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.1,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.15,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.95,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.97,
+   "visual.has_bezel": 0.94,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.08,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3701,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/opus-5.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.8,
+   "code.is_responsive": 0.91,
+   "code.uses_helpers": 0.43,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.97,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.86,
+   "time.correct_12_top": 0.73,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.97,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.63,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 4429,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "cloud/qwen-3.6-plus.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.39,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.12,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.95,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.05,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.95,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.09,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3227,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "cloud/sonnet 4.6.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.14,
+   "code.is_responsive": 0.13,
+   "code.uses_helpers": 0.98,
+   "dial.automated_marker_generation": 0.94,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.99,
+   "smoothness.zero_latency_init": 0.93,
+   "time.correct_12_top": 0.92,
+   "time.hour_continuous": 0.97,
+   "time.minute_continuous": 0.95,
+   "visual.has_bezel": 0.7,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.96,
+   "visual.has_shadows": 0.03
+  },
+  "typesafe_usage": {
+   "input_tokens": 3278,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": true,
+   "has_shadows": false
+  }
+ },
+ "cloud/sonnet-5.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.09,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.07,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.95,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.98,
+   "smoothness.zero_latency_init": 0.95,
+   "time.correct_12_top": 0.92,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.95,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.97,
+   "visual.has_hand_tails": 0.08,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3969,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/deepseek_deepseek-v4-flash.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.78,
+   "code.is_responsive": 0.15,
+   "code.uses_helpers": 0.07,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.95,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.97,
+   "time.correct_12_top": 0.98,
+   "time.hour_continuous": 0.95,
+   "time.minute_continuous": 0.89,
+   "visual.has_bezel": 0.93,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.49,
+   "visual.has_hand_tails": 0.91,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 5331,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/deepseek_deepseek-v4-pro.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": false,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.79,
+   "code.is_responsive": 0.44,
+   "code.uses_helpers": 0.97,
+   "dial.automated_marker_generation": 0.98,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.99,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.95,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.97,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 1.0,
+   "visual.has_hand_tails": 0.92,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 8946,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/deepseek_deepseek-v4.1-flash.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.75,
+   "code.is_responsive": 0.96,
+   "code.uses_helpers": 0.91,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.92,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.06,
+   "smoothness.zero_latency_init": 0.89,
+   "time.correct_12_top": 0.9,
+   "time.hour_continuous": 0.95,
+   "time.minute_continuous": 0.96,
+   "visual.has_bezel": 0.92,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 1.0,
+   "visual.has_hand_tails": 0.95,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3985,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/google_gemini-2.5-flash.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "low_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.08,
+   "code.is_responsive": 0.05,
+   "code.uses_helpers": 0.11,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.98,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.97,
+   "dial.skips_minute_at_hour": 0.98,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.5,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.15,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3837,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/google_gemini-3.5-flash.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 0,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.15,
+   "code.is_responsive": 0.09,
+   "code.uses_helpers": 0.06,
+   "dial.automated_marker_generation": 0.02,
+   "dial.hour_ticks_count": 0.26,
+   "dial.minute_ticks_count": 0.02,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.09,
+   "smoothness.zero_latency_init": 0.92,
+   "time.correct_12_top": 0.74,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.96,
+   "visual.has_bezel": 0.97,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.94,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 4456,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/minimax_minimax-m3.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "high_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": false,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.09,
+   "code.is_responsive": 0.08,
+   "code.uses_helpers": 0.14,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.1,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.97,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.33,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.68,
+   "visual.has_hand_tails": 0.1,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3825,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/moonshotai_kimi-k2.7-code.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.85,
+   "code.is_responsive": 0.96,
+   "code.uses_helpers": 0.6,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.97,
+   "dial.numerals_count": 0.99,
+   "dial.skips_minute_at_hour": 0.05,
+   "smoothness.zero_latency_init": 0.92,
+   "time.correct_12_top": 0.95,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.98,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.07,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 4434,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/nvidia_nemotron-3-ultra-550b-a55b_free.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": false
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "high_freq",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.1,
+   "code.is_responsive": 0.91,
+   "code.uses_helpers": 0.8,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.94,
+   "dial.numerals_count": 0.89,
+   "dial.skips_minute_at_hour": 0.17,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.97,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.95,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.07,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 6706,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/openai_gpt-5-nano.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.72,
+   "code.is_responsive": 0.68,
+   "code.uses_helpers": 0.25,
+   "dial.automated_marker_generation": 0.84,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.93,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.05,
+   "smoothness.zero_latency_init": 0.98,
+   "time.correct_12_top": 0.94,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.97,
+   "visual.has_bezel": 0.85,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.86,
+   "visual.has_hand_tails": 0.04,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3687,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/openai_gpt-5.6-luna.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": false,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.08,
+   "code.is_responsive": 0.91,
+   "code.uses_helpers": 0.11,
+   "dial.automated_marker_generation": 0.46,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.94,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.05,
+   "smoothness.zero_latency_init": 0.92,
+   "time.correct_12_top": 0.97,
+   "time.hour_continuous": 0.92,
+   "time.minute_continuous": 0.81,
+   "visual.has_bezel": 0.86,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.02,
+   "visual.has_hand_tails": 0.62,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3572,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/qwen_qwen3.6-35b-a3b.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.1,
+   "code.is_responsive": 0.94,
+   "code.uses_helpers": 0.97,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.94,
+   "time.correct_12_top": 0.96,
+   "time.hour_continuous": 0.97,
+   "time.minute_continuous": 0.96,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.88,
+   "visual.has_shadows": 1.0
+  },
+  "typesafe_usage": {
+   "input_tokens": 4683,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ },
+ "previews/tencent_hy4-preview.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.1,
+   "code.is_responsive": 0.97,
+   "code.uses_helpers": 0.09,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.97,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.95,
+   "time.correct_12_top": 0.93,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.93,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.63,
+   "visual.has_hand_tails": 0.08,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 3627,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/xiaomi_mimo-v2.5.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": false,
+   "uses_helpers": false,
+   "zero_dependencies": true
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 0,
+   "minute_ticks_count": 60,
+   "numerals_count": 12,
+   "skips_minute_at_hour": true
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.86,
+   "code.is_responsive": 0.04,
+   "code.uses_helpers": 0.36,
+   "dial.automated_marker_generation": 0.99,
+   "dial.hour_ticks_count": 0.21,
+   "dial.minute_ticks_count": 0.9,
+   "dial.numerals_count": 0.98,
+   "dial.skips_minute_at_hour": 0.98,
+   "smoothness.zero_latency_init": 0.94,
+   "time.correct_12_top": 0.52,
+   "time.hour_continuous": 0.99,
+   "time.minute_continuous": 0.99,
+   "visual.has_bezel": 0.98,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.12,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 4516,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/z-ai_glm-5.2.html": {
+  "code": {
+   "globals_count": 99,
+   "is_responsive": true,
+   "uses_helpers": false,
+   "zero_dependencies": false
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.08,
+   "code.is_responsive": 0.95,
+   "code.uses_helpers": 0.36,
+   "dial.automated_marker_generation": 0.98,
+   "dial.hour_ticks_count": 0.99,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.02,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.85,
+   "time.correct_12_top": 0.94,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.96,
+   "visual.has_bezel": 0.71,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.99,
+   "visual.has_hand_tails": 0.1,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 6627,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/z-ai_glm-5.3-flash.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": false
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": false,
+   "minute_continuous": false,
+   "second_ms_precision": false
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.55,
+   "code.is_responsive": 0.92,
+   "code.uses_helpers": 0.91,
+   "dial.automated_marker_generation": 0.97,
+   "dial.hour_ticks_count": 0.96,
+   "dial.minute_ticks_count": 0.96,
+   "dial.numerals_count": 0.07,
+   "dial.skips_minute_at_hour": 0.03,
+   "smoothness.zero_latency_init": 0.89,
+   "time.correct_12_top": 0.72,
+   "time.hour_continuous": 0.35,
+   "time.minute_continuous": 0.12,
+   "visual.has_bezel": 0.95,
+   "visual.has_center_cap": 0.99,
+   "visual.has_gradients": 0.03,
+   "visual.has_hand_tails": 0.38,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 9250,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": false,
+   "has_hand_tails": false,
+   "has_shadows": true
+  }
+ },
+ "previews/z-ai_glm-5.3.html": {
+  "code": {
+   "globals_count": 0,
+   "is_responsive": true,
+   "uses_helpers": true,
+   "zero_dependencies": false
+  },
+  "dial": {
+   "automated_marker_generation": true,
+   "hour_ticks_count": 12,
+   "minute_ticks_count": 60,
+   "numerals_count": 0,
+   "skips_minute_at_hour": false
+  },
+  "smoothness": {
+   "method": "rAF",
+   "zero_latency_init": true
+  },
+  "time": {
+   "correct_12_top": true,
+   "hour_continuous": true,
+   "minute_continuous": true,
+   "second_ms_precision": true
+  },
+  "typesafe_model": "jev-1.13.0",
+  "typesafe_probs": {
+   "code.globals_count": 0.76,
+   "code.is_responsive": 0.78,
+   "code.uses_helpers": 0.97,
+   "dial.automated_marker_generation": 0.94,
+   "dial.hour_ticks_count": 0.97,
+   "dial.minute_ticks_count": 0.95,
+   "dial.numerals_count": 0.03,
+   "dial.skips_minute_at_hour": 0.04,
+   "smoothness.zero_latency_init": 0.81,
+   "time.correct_12_top": 0.79,
+   "time.hour_continuous": 0.98,
+   "time.minute_continuous": 0.97,
+   "visual.has_bezel": 0.94,
+   "visual.has_center_cap": 0.98,
+   "visual.has_gradients": 0.94,
+   "visual.has_hand_tails": 0.72,
+   "visual.has_shadows": 0.99
+  },
+  "typesafe_usage": {
+   "input_tokens": 10262,
+   "output_tokens": 345
+  },
+  "visual": {
+   "has_bezel": true,
+   "has_center_cap": true,
+   "has_gradients": true,
+   "has_hand_tails": true,
+   "has_shadows": true
+  }
+ }
+}
