@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Meridian — Live Analog Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#0b1c18; --ivory:#f1e9d4; --muted:rgba(241,233,212,.52);
+    --brass:#c9a24b; --brass2:#e8cd8a; --line:rgba(201,162,75,.26);
+    --red:#c8452c; --ink:#24352c;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+    --disp:'Cinzel',Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ivory); font-family:var(--mono);
+    display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden;
+    background:
+      radial-gradient(1100px 700px at 18% -8%, rgba(232,205,138,.07), transparent 60%),
+      radial-gradient(900px 700px at 88% 108%, rgba(46,102,84,.32), transparent 62%),
+      radial-gradient(1600px 1100px at 50% 46%, #14332c 0%, #0e2420 48%, var(--bg0) 100%);
+    background-color:var(--bg0);
+  }
+  /* film grain */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:6; pointer-events:none;
+    opacity:.055; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+  /* slow rotating dial rings in the background */
+  .bg-ring{
+    position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+    background:repeating-conic-gradient(rgba(232,205,138,.85) 0deg .5deg, transparent .5deg 6deg);
+    -webkit-mask:radial-gradient(closest-side, transparent 61%, #000 62% 72%, transparent 73%);
+            mask:radial-gradient(closest-side, transparent 61%, #000 62% 72%, transparent 73%);
+  }
+  .r1{width:125vmin;height:125vmin; right:-32vmin; top:-46vmin; opacity:.07; animation:spin 300s linear infinite}
+  .r2{width:90vmin;height:90vmin; left:-28vmin; bottom:-34vmin; opacity:.05; animation:spin 220s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:relative; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:16px;
+    padding:16px clamp(20px,4vw,44px); border-bottom:1px solid var(--line);
+    animation:rise .8s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .brand{display:flex; align-items:baseline; gap:14px; white-space:nowrap}
+  .brand-name{font-family:var(--disp); font-weight:700; font-size:clamp(16px,1.6vw,20px); letter-spacing:.42em}
+  .brand-sub{font-size:10px; letter-spacing:.3em; color:var(--brass)}
+  .utc{display:flex; align-items:center; gap:10px; font-size:11px; letter-spacing:.22em; color:var(--muted)}
+  .utc b{color:var(--ivory); font-weight:500}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#8fd6a0;box-shadow:0 0 0 0 rgba(143,214,160,.5);animation:pulse 2s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(143,214,160,0)}100%{box-shadow:0 0 0 0 rgba(143,214,160,0)}}
+
+  /* ---------- layout ---------- */
+  main{
+    position:relative; z-index:1; flex:1; width:100%; max-width:1220px; margin:0 auto;
+    display:grid; grid-template-columns:minmax(0,1.25fr) minmax(320px,420px);
+    gap:clamp(28px,5vw,76px); align-items:center; padding:clamp(20px,4vw,48px);
+  }
+  .clock-col{perspective:1100px; position:relative}
+  .stage{width:min(100%,560px); margin:0 auto; transition:transform .18s ease-out; will-change:transform}
+  #face{
+    display:block; width:100%; height:auto;
+    filter:drop-shadow(0 26px 40px rgba(0,0,0,.5)) drop-shadow(0 4px 10px rgba(0,0,0,.35));
+    animation:faceIn 1s cubic-bezier(.2,.8,.25,1) .15s both;
+  }
+  @keyframes faceIn{from{opacity:0; transform:scale(.94)} to{opacity:1; transform:scale(1)}}
+
+  /* svg face text */
+  #numerals text{font-family:var(--disp); font-size:29px; font-weight:600; fill:var(--ink)}
+  .brand1{font-family:var(--disp); font-size:14px; font-weight:700; letter-spacing:5px; fill:#7d6428}
+  .brand2{font-family:var(--mono); font-size:7px; letter-spacing:3px; fill:rgba(36,53,44,.5)}
+  .dateNum{font-family:var(--mono); font-size:15px; font-weight:600; fill:var(--ink)}
+  #hand-hour{filter:drop-shadow(0 2.5px 1.5px rgba(30,25,10,.35))}
+  #hand-min {filter:drop-shadow(0 3px 2px rgba(30,25,10,.35))}
+  #hand-sec {filter:drop-shadow(0 3px 2.5px rgba(60,20,10,.4))}
+
+  /* ---------- panel ---------- */
+  .panel{display:flex; flex-direction:column}
+  .panel section{border-top:1px solid var(--line); padding-top:22px; margin-top:22px}
+  .panel section:first-child{border-top:0; padding-top:0; margin-top:0}
+  .rv{opacity:0; animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  .panel section:nth-of-type(1){animation-delay:.2s}
+  .panel section:nth-of-type(2){animation-delay:.34s}
+  .panel section:nth-of-type(3){animation-delay:.48s}
+  .panel section:nth-of-type(4){animation-delay:.62s}
+  @keyframes rise{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)}}
+
+  .sec-h{display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    font-size:10px; font-weight:500; letter-spacing:.34em; color:var(--brass)}
+  .sec-h::before{content:""; width:14px; height:1px; background:var(--brass)}
+
+  .big-time{display:flex; align-items:baseline; font-weight:600; line-height:1;
+    font-size:clamp(44px,4.6vw,62px); letter-spacing:.02em}
+  .colon{animation:blink 1s steps(1,end) infinite}
+  @keyframes blink{0%,49.9%{opacity:1} 50%,100%{opacity:.22}}
+  .secs{font-size:.44em; color:var(--brass); margin-left:6px}
+  .ap{margin-left:14px; font-size:11px; letter-spacing:.25em; color:var(--muted);
+    border:1px solid var(--line); padding:5px 9px; align-self:center}
+  .dateline{margin-top:12px; font-family:var(--disp); font-weight:500; font-size:14px;
+    letter-spacing:.16em; color:rgba(241,233,212,.85)}
+
+  .meta{display:grid; grid-template-columns:1fr 1fr; gap:14px 24px}
+  .meta dt{font-size:9px; letter-spacing:.28em; color:var(--brass); margin-bottom:5px}
+  .meta dd{margin:0; font-size:12px; font-weight:500; letter-spacing:.06em}
+
+  .daybar-row{display:flex; justify-content:space-between; font-size:10px;
+    letter-spacing:.25em; color:var(--muted); margin-bottom:8px}
+  .daybar{height:4px; background:rgba(241,233,212,.1); position:relative}
+  #dayFill{position:absolute; inset:0 auto 0 0; width:0%;
+    background:linear-gradient(90deg,var(--brass),var(--brass2)); transition:width .6s linear}
+
+  .city{display:grid; grid-template-columns:1fr auto auto; gap:14px; align-items:baseline;
+    padding:9px 8px; margin:0 -8px; font-size:12px; letter-spacing:.14em;
+    transition:background .25s, transform .25s}
+  .city:hover{background:rgba(201,162,75,.08); transform:translateX(4px)}
+  .c-name{color:rgba(241,233,212,.8); transition:color .25s}
+  .city:hover .c-name{color:var(--ivory)}
+  .c-off{font-size:10px; letter-spacing:.1em; color:var(--brass)}
+  .c-time{font-size:12px; font-weight:500}
+  .tag{font-style:normal; font-size:8px; letter-spacing:.2em; color:#13231d;
+    background:var(--brass); padding:2px 6px; margin-left:9px; vertical-align:1px}
+
+  .seg{display:flex; border:1px solid var(--line)}
+  .seg button{flex:1; background:transparent; border:0; border-right:1px solid var(--line);
+    color:var(--muted); font:500 10px var(--mono); letter-spacing:.26em; padding:12px 6px;
+    cursor:pointer; transition:background .25s,color .25s}
+  .seg button:last-child{border-right:0}
+  .seg button:hover{color:var(--ivory); background:rgba(201,162,75,.08)}
+  .seg button.on{background:var(--brass); color:#13231d; font-weight:600}
+  .ctrl-row{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:14px}
+  #soundBtn{display:inline-flex; align-items:center; gap:9px; background:transparent;
+    border:1px solid var(--line); color:var(--muted); font:500 10px var(--mono);
+    letter-spacing:.26em; padding:10px 14px; cursor:pointer; transition:.25s}
+  #soundBtn:hover{color:var(--ivory); border-color:var(--brass)}
+  #soundBtn .dot{width:7px; height:7px; border-radius:50%; background:rgba(241,233,212,.25); transition:.25s}
+  #soundBtn.on{color:var(--ivory); border-color:var(--brass)}
+  #soundBtn.on .dot{background:var(--red); box-shadow:0 0 8px rgba(200,69,44,.8)}
+  .mode-desc{font-size:10px; letter-spacing:.16em; color:var(--muted); text-align:right}
+
+  .foot{position:relative; z-index:1; display:flex; justify-content:space-between; gap:16px;
+    padding:16px clamp(20px,4vw,44px); border-top:1px solid var(--line);
+    font-size:9px; letter-spacing:.3em; color:rgba(241,233,212,.4); margin-top:clamp(20px,4vh,48px)}
+
+  @media (max-width:940px){
+    main{grid-template-columns:1fr; gap:40px}
+    .stage{width:min(84vw,420px)}
+    .panel{max-width:480px; width:100%; margin:0 auto}
+    .foot{flex-direction:column; align-items:center; text-align:center; gap:6px}
+  }
+  @media (max-width:560px){ .brand-sub{display:none} }
+  @media (prefers-reduced-motion:reduce){
+    .bg-ring,.live-dot,.colon{animation:none}
+    .rv,#face,.topbar{animation-duration:.01s}
+    .stage{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-ring r1" aria-hidden="true"></div>
+<div class="bg-ring r2" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-name">MERIDIAN</span>
+    <span class="brand-sub">HOROLOGY · LOCAL STANDARD</span>
+  </div>
+  <div class="utc"><span class="live-dot" aria-hidden="true"></span>UTC&nbsp;<b id="utc">--:--:--</b></div>
+</header>
+
+<main>
+  <!-- ================= THE DIAL ================= -->
+  <section class="clock-col" aria-label="Analog clock">
+    <div class="stage" id="stage">
+      <svg id="face" viewBox="0 0 400 400" role="img" aria-label="Analog clock">
+        <defs>
+          <radialGradient id="faceGrad" cx="42%" cy="36%" r="78%">
+            <stop offset="0%"  stop-color="#faf5e7"/>
+            <stop offset="62%" stop-color="#f1e8d2"/>
+            <stop offset="100%" stop-color="#e0d2b2"/>
+          </radialGradient>
+          <linearGradient id="brassGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"  stop-color="#8a6a2f"/>
+            <stop offset="30%" stop-color="#ecd292"/>
+            <stop offset="55%" stop-color="#b8892f"/>
+            <stop offset="80%" stop-color="#f0d99a"/>
+            <stop offset="100%" stop-color="#7a5c26"/>
+          </linearGradient>
+          <radialGradient id="glassGrad" cx="30%" cy="20%" r="85%">
+            <stop offset="0%"  stop-color="rgba(255,255,255,.28)"/>
+            <stop offset="34%" stop-color="rgba(255,255,255,.07)"/>
+            <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- case + dial -->
+        <circle cx="200" cy="200" r="197" fill="none" stroke="#4a3a17" stroke-width="2.5"/>
+        <circle cx="200" cy="200" r="190.5" fill="none" stroke="url(#brassGrad)" stroke-width="11"/>
+        <circle cx="200" cy="200" r="185" fill="url(#faceGrad)" stroke="rgba(58,44,16,.55)" stroke-width="1"/>
+
+        <!-- guilloché -->
+        <g fill="none" stroke="#24352c">
+          <circle cx="200" cy="200" r="148" stroke-opacity=".09"/>
+          <circle cx="200" cy="200" r="140" stroke-opacity=".14" stroke-dasharray=".8 5"/>
+          <circle cx="200" cy="200" r="96"  stroke-opacity=".09"/>
+          <circle cx="200" cy="200" r="30"  stroke-opacity=".07"/>
+        </g>
+
+        <g id="ticks"></g>
+        <g id="numerals"></g>
+
+        <!-- date aperture at 3 -->
+        <rect x="307" y="187" width="40" height="27" rx="3" fill="#fbf6e9" stroke="#b9a77c" stroke-width="1"/>
+        <text id="dateNum" class="dateNum" x="327" y="200" text-anchor="middle" dominant-baseline="central">--</text>
+
+        <!-- lettering -->
+        <text class="brand1" x="200" y="112" text-anchor="middle">MERIDIAN</text>
+        <rect x="197.4" y="121.4" width="5.2" height="5.2" transform="rotate(45 200 124)" fill="#c8452c" opacity=".85"/>
+        <text class="brand2" x="200" y="252" text-anchor="middle">CHRONOMETER · 21 JEWELS</text>
+
+        <!-- hands (local origin = clock centre) -->
+        <g transform="translate(200 200)">
+          <g id="hand-hour"><path d="M0 18 L-6.2 -58 L0 -103 L6.2 -58 Z" fill="#24352c"/></g>
+          <g id="hand-min"><path d="M0 20 L-4.8 -76 L0 -137 L4.8 -76 Z" fill="#24352c"/></g>
+          <g id="hand-sec">
+            <line x1="0" y1="34" x2="0" y2="-148" stroke="#c8452c" stroke-width="2.4"/>
+            <circle cx="0" cy="26" r="7.5" fill="#c8452c"/>
+          </g>
+        </g>
+        <circle cx="200" cy="200" r="9.5" fill="url(#brassGrad)" stroke="#5e4a1e" stroke-width="1"/>
+        <circle cx="200" cy="200" r="3.6" fill="#c8452c"/>
+
+        <!-- crystal -->
+        <circle cx="200" cy="200" r="185" fill="url(#glassGrad)" pointer-events="none"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ================= TIME PANEL ================= -->
+  <aside class="panel">
+    <section class="rv">
+      <h2 class="sec-h">LOCAL</h2>
+      <div class="big-time">
+        <span id="dh">--</span><span class="colon">:</span><span id="dm">--</span>
+        <span class="secs"><span class="colon">:</span><span id="ds">--</span></span>
+        <span class="ap" id="ap">--</span>
+      </div>
+      <div class="dateline" id="dateLine">—</div>
+    </section>
+
+    <section class="rv">
+      <h2 class="sec-h">COORDINATES</h2>
+      <dl class="meta">
+        <div><dt>TIMEZONE</dt><dd id="mTz">—</dd></div>
+        <div><dt>OFFSET</dt><dd id="mOff">—</dd></div>
+        <div><dt>24-HOUR</dt><dd id="m24">--:--:--</dd></div>
+        <div><dt>BEAT</dt><dd id="mBeat">1.0 / S</dd></div>
+      </dl>
+      <div style="margin-top:18px">
+        <div class="daybar-row"><span>DAY PROGRESS</span><span id="dayPct">0%</span></div>
+        <div class="daybar"><div id="dayFill"></div></div>
+      </div>
+    </section>
+
+    <section class="rv">
+      <h2 class="sec-h">OTHER MERIDIANS</h2>
+      <div id="worldList"></div>
+    </section>
+
+    <section class="rv">
+      <h2 class="sec-h">MOVEMENT</h2>
+      <div class="seg" role="group" aria-label="Movement style">
+        <button data-mode="mech"  type="button">MECH</button>
+        <button data-mode="quartz" class="on" type="button">QUARTZ</button>
+        <button data-mode="sweep" type="button">SWISS</button>
+      </div>
+      <div class="ctrl-row">
+        <button id="soundBtn" type="button" aria-pressed="false"><span class="dot" aria-hidden="true"></span>TICK SOUND</button>
+        <span class="mode-desc" id="modeDesc">1 BEAT / SEC · STEP</span>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<footer class="foot">
+  <span>MERIDIAN HOROLOGY · REF. 04 — HANDCUT IN THE BROWSER</span>
+  <span>SET AUTOMATICALLY TO YOUR LOCAL TIME</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var NS = "http://www.w3.org/2000/svg";
+
+  /* ---------- build dial marks ---------- */
+  var ticksG = $("ticks");
+  for (var i = 0; i < 60; i++){
+    var a  = i * 6 * Math.PI / 180;
+    var major = (i % 5 === 0);
+    var r1 = 173, r2 = major ? 152.5 : 163;
+    var l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", (200 + r1 * Math.sin(a)).toFixed(2));
+    l.setAttribute("y1", (200 - r1 * Math.cos(a)).toFixed(2));
+    l.setAttribute("x2", (200 + r2 * Math.sin(a)).toFixed(2));
+    l.setAttribute("y2", (200 - r2 * Math.cos(a)).toFixed(2));
+    l.setAttribute("stroke", "#24352c");
+    l.setAttribute("stroke-width", major ? 4 : 1.4);
+    l.setAttribute("opacity", major ? ".92" : ".45");
+    ticksG.appendChild(l);
+  }
+  var romans = {12:"XII",1:"I",2:"II",4:"IIII",5:"V",6:"VI",7:"VII",8:"VIII",9:"IX",10:"X",11:"XI"};
+  var numG = $("numerals");
+  Object.keys(romans).forEach(function(h){
+    var ang = (h % 12) * 30 * Math.PI / 180;
+    var t = document.createElementNS(NS, "text");
+    t.setAttribute("x", (200 + 124 * Math.sin(ang)).toFixed(2));
+    t.setAttribute("y", (200 - 124 * Math.cos(ang)).toFixed(2));
+    t.setAttribute("text-anchor", "middle");
+    t.setAttribute("dominant-baseline", "central");
+    t.textContent = romans[h];
+    numG.appendChild(t);
+  });
+
+  /* ---------- hands: JS-tweened rotation (robust across browsers) ---------- */
+  function makeHand(el){ return {el:el, cur:0, from:0, to:0, t0:0, dur:0, ease:null, active:false}; }
+  var hH = makeHand($("hand-hour")),
+      hM = makeHand($("hand-min")),
+      hS = makeHand($("hand-sec"));
+
+  var easeOutCubic = function(t){ return 1 - Math.pow(1 - t, 3); };
+  function backOut(c){ return function(t){ var c3 = c + 1; return 1 + c3 * Math.pow(t-1,3) + c * Math.pow(t-1,2); }; }
+  var snapBack  = backOut(2.1),   /* crisp mechanical snap */
+      softBack  = backOut(1.4);   /* quartz step */
+
+  function setHand(h, angle){
+    h.active = false; h.cur = angle;
+    h.el.setAttribute("transform", "rotate(" + angle + ")");
+  }
+  function tween(h, to, dur, ease){
+    if (to === h.cur) return;
+    h.from = h.cur; h.to = to; h.t0 = performance.now();
+    h.dur = dur; h.ease = ease; h.active = true;
+  }
+  function stepHand(h, now){
+    if (!h.active) return;
+    var p = (now - h.t0) / h.dur;
+    if (p >= 1) p = 1;
+    h.cur = h.from + (h.to - h.from) * h.ease(p);
+    if (p === 1) h.active = false;
+    h.el.setAttribute("transform", "rotate(" + h.cur.toFixed(3) + ")");
+  }
+
+  /* ---------- movement modes ---------- */
+  var mode = "quartz";
+  var BEAT  = { mech: .5, quartz: 1, sweep: 0 };
+  var DESC  = { mech: "2 BEATS / SEC · SNAP & SETTLE", quartz: "1 BEAT / SEC · STEP", sweep: "CONTINUOUS · 4 HZ GLIDE" };
+  var BEATTXT = { mech: "2.0 / S", quartz: "1.0 / S", sweep: "4 HZ" };
+  var lastStep = 0;
+
+  /* ---------- optional tick-tock (WebAudio) ---------- */
+  var soundOn = false, actx = null;
+  function ensureCtx(){
+    if (!actx){ var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); }
+    if (actx && actx.state === "suspended") actx.resume();
+  }
+  function playTick(down){
+    if (!soundOn) return;
+    try{
+      ensureCtx(); if (!actx) return;
+      var t = actx.currentTime,
+          o = actx.createOscillator(),
+          g = actx.createGain();
+      o.type = "square";
+      o.frequency.value = down ? 1650 : 1180;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.09, t + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + 0.06);
+    }catch(e){}
+  }
+
+  /* ---------- side panel data ---------- */
+  var el = { dh:$("dh"), dm:$("dm"), ds:$("ds"), ap:$("ap"), utc:$("utc"),
+             dateLine:$("dateLine"), mTz:$("mTz"), mOff:$("mOff"), m24:$("m24"),
+             mBeat:$("mBeat"), dayPct:$("dayPct"), dayFill:$("dayFill"),
+             dateNum:$("dateNum"), face:$("face"), modeDesc:$("modeDesc"),
+             soundBtn:$("soundBtn") };
+
+  function offsetStr(d){
+    var m = -d.getTimezoneOffset(), s = m < 0 ? "-" : "+", a = Math.abs(m);
+    return "UTC" + s + Math.floor(a/60) + (a % 60 ? ":" + String(a % 60).padStart(2,"0") : "");
+  }
+  try { el.mTz.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "LOCAL"; }
+  catch(e){ el.mTz.textContent = "LOCAL"; }
+
+  /* world rows */
+  var localTz = "";
+  try { localTz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e){}
+  var cities = [{name:"LOCAL", tz:localTz, local:true},
+                {name:"NEW YORK", tz:"America/New_York"},
+                {name:"LONDON",   tz:"Europe/London"},
+                {name:"TOKYO",    tz:"Asia/Tokyo"},
+                {name:"SYDNEY",   tz:"Australia/Sydney"}].filter(function(c){ return !c.local || c.tz; });
+  var worldList = $("worldList");
+  cities.forEach(function(c){
+    var row = document.createElement("div");
+    row.className = "city" + (c.local ? " local" : "");
+    var off = "";
+    try{
+      var p = new Intl.DateTimeFormat("en", {timeZone:c.tz, timeZoneName:"shortOffset"}).formatToParts(new Date());
+      var g = p.find(function(x){ return x.type === "timeZoneName"; });
+      off = g ? g.value.replace("GMT","UTC") : "";
+    }catch(e){}
+    row.innerHTML =
+      '<span class="c-name">' + c.name + (c.local ? '<em class="tag">LOCAL</em>' : '') + '</span>' +
+      '<span class="c-off">' + off + '</span>' +
+      '<span class="c-time">--:--:--</span>';
+    worldList.appendChild(row);
+    c.el = row.querySelector(".c-time");
+    try { c.fmt = new Intl.DateTimeFormat("en-GB", {timeZone:c.tz, hour:"2-digit", minute:"2-digit", second:"2-digit", hourCycle:"h23"}); }
+    catch(e){ c.fmt = null; }
+  });
+
+  function refresh(d){
+    var h24 = d.getHours(), m = d.getMinutes(), s = d.getSeconds(),
+        h12 = h24 % 12 || 12;
+    el.dh.textContent = String(h12).padStart(2,"0");
+    el.dm.textContent = String(m).padStart(2,"0");
+    el.ds.textContent = String(s).padStart(2,"0");
+    el.ap.textContent = h24 >= 12 ? "PM" : "AM";
+    el.utc.textContent = d.toISOString().slice(11,19);
+    el.m24.textContent = d.toTimeString().slice(0,8);
+    el.mOff.textContent = offsetStr(d);
+    el.dateNum.textContent = d.getDate();
+    var ds = d.toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    el.dateLine.textContent = ds.toUpperCase();
+    var tod = h24*3600 + m*60 + s;
+    el.dayPct.textContent = (tod/864).toFixed(1) + "%";
+    el.dayFill.style.width = (tod/864) + "%";
+    cities.forEach(function(c){ if (c.fmt) c.el.textContent = c.fmt.format(d); });
+    el.face.setAttribute("aria-label", "Analog clock showing " + d.toLocaleTimeString());
+  }
+
+  /* ---------- main loop ---------- */
+  var lastSec = -1;
+  function frame(){
+    var now = performance.now(),
+        d   = new Date(),
+        T   = d.getTime() / 1000;
+
+    if (mode === "sweep"){
+      setHand(hH, T / 120);
+      setHand(hM, T * 0.1);
+      setHand(hS, T * 6);
+    } else {
+      var beat = BEAT[mode],
+          idx  = Math.floor(T / beat);
+      if (idx !== lastStep){
+        lastStep = idx;
+        var B = idx * beat,
+            down = (idx % 2 === 0);
+        tween(hS, B * 6, mode === "mech" ? (down ? 90 : 330) : 150, mode === "mech" ? (down ? snapBack : easeOutCubic) : softBack);
+        tween(hM, Math.floor(B / 60) * 6, 240, easeOutCubic);
+        tween(hH, B / 120, 320, easeOutCubic);
+        playTick(down);
+      }
+    }
+    stepHand(hH, now); stepHand(hM, now); stepHand(hS, now);
+
+    if (d.getSeconds() !== lastSec){ lastSec = d.getSeconds(); refresh(d); }
+    requestAnimationFrame(frame);
+  }
+
+  /* init: snap hands to now, then run */
+  var T0 = Date.now() / 1000;
+  setHand(hH, T0/120); setHand(hM, T0*0.1); setHand(hS, T0*6);
+  lastStep = Math.floor(T0 / BEAT[mode]);
+  refresh(new Date());
+  requestAnimationFrame(frame);
+
+  /* ---------- controls ---------- */
+  var segBtns = document.querySelectorAll(".seg button");
+  segBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      mode = b.dataset.mode;
+      segBtns.forEach(function(x){ x.classList.toggle("on", x === b); });
+      el.modeDesc.textContent = DESC[mode];
+      el.mBeat.textContent = BEATTXT[mode];
+      lastStep = mode === "sweep" ? -1 : Math.floor(Date.now()/1000 / BEAT[mode]);
+    });
+  });
+  el.soundBtn.addEventListener("click", function(){
+    soundOn = !soundOn;
+    el.soundBtn.classList.toggle("on", soundOn);
+    el.soundBtn.setAttribute("aria-pressed", String(soundOn));
+    if (soundOn){ ensureCtx(); playTick(true); }
+  });
+
+  /* ---------- gentle 3D tilt toward the cursor ---------- */
+  var stage = $("stage"), col = stage.parentElement;
+  if (window.matchMedia("(pointer:fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    col.addEventListener("mousemove", function(e){
+      var r = col.getBoundingClientRect(),
+          x = ((e.clientX - r.left) / r.width  - 0.5) * 2,
+          y = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+      stage.style.transform = "rotateY(" + (x*7).toFixed(2) + "deg) rotateX(" + (-y*7).toFixed(2) + "deg)";
+    });
+    col.addEventListener("mouseleave", function(){
+      stage.style.transform = "rotateX(0deg) rotateY(0deg)";
+    });
+  }
+})();
+</script>
+</body>
+</html>

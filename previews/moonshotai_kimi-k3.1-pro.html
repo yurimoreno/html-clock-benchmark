@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      font-family: system-ui, sans-serif;
+    }
+
+    .clock {
+      position: relative;
+      width: min(82vmin, 420px);
+      aspect-ratio: 1;
+      border: 10px solid #e2e8f0;
+      border-radius: 50%;
+      background: #f8fafc;
+      box-shadow:
+        0 25px 60px rgb(0 0 0 / 45%),
+        inset 0 0 20px rgb(15 23 42 / 10%);
+    }
+
+    .tick {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .tick::before {
+      content: "";
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      width: 2px;
+      height: 8px;
+      border-radius: 2px;
+      background: #94a3b8;
+      transform: translateX(-50%);
+    }
+
+    .tick.major::before {
+      width: 4px;
+      height: 14px;
+      background: #334155;
+    }
+
+    .number {
+      position: absolute;
+      z-index: 1;
+      color: #0f172a;
+      font-size: clamp(0.8rem, 4vmin, 1.3rem);
+      font-weight: 700;
+      transform: translate(-50%, -50%);
+      user-select: none;
+    }
+
+    .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      border-radius: 999px;
+      transform-origin: 50% 100%;
+      will-change: transform;
+    }
+
+    .hour {
+      z-index: 2;
+      width: 8px;
+      height: 23%;
+      margin-left: -4px;
+      background: #0f172a;
+    }
+
+    .minute {
+      z-index: 3;
+      width: 5px;
+      height: 32%;
+      margin-left: -2.5px;
+      background: #334155;
+    }
+
+    .second {
+      z-index: 4;
+      width: 2px;
+      height: 38%;
+      margin-left: -1px;
+      background: #e11d48;
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 5;
+      width: 18px;
+      height: 18px;
+      border: 4px solid #f8fafc;
+      border-radius: 50%;
+      background: #e11d48;
+      box-shadow: 0 0 0 2px #e11d48;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <div
+    class="clock"
+    id="clock"
+    role="img"
+    aria-label="Analog clock showing the current time"
+  >
+    <div class="hand hour" id="hourHand"></div>
+    <div class="hand minute" id="minuteHand"></div>
+    <div class="hand second" id="secondHand"></div>
+    <div class="center"></div>
+  </div>
+
+  <script>
+    const clock = document.getElementById("clock");
+    const hourHand = document.getElementById("hourHand");
+    const minuteHand = document.getElementById("minuteHand");
+    const secondHand = document.getElementById("secondHand");
+
+    // Create the 60 minute/second tick marks.
+    for (let i = 0; i < 60; i++) {
+      const tick = document.createElement("div");
+      tick.className = `tick${i % 5 === 0 ? " major" : ""}`;
+      tick.style.transform = `rotate(${i * 6}deg)`;
+      clock.appendChild(tick);
+    }
+
+    // Position the numbers around the clock face.
+    for (let number = 1; number <= 12; number++) {
+      const angle = number * 30 * Math.PI / 180;
+      const label = document.createElement("div");
+
+      label.className = "number";
+      label.textContent = number;
+      label.style.left = `${50 + 37 * Math.sin(angle)}%`;
+      label.style.top = `${50 - 37 * Math.cos(angle)}%`;
+
+      clock.appendChild(label);
+    }
+
+    let previousSecond = -1;
+
+    function updateClock() {
+      const now = new Date();
+
+      // Include milliseconds for a smoothly moving second hand.
+      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+      const minutes = now.getMinutes() + seconds / 60;
+      const hours = (now.getHours() % 12) + minutes / 60;
+
+      secondHand.style.transform = `rotate(${seconds * 6}deg)`;
+      minuteHand.style.transform = `rotate(${minutes * 6}deg)`;
+      hourHand.style.transform = `rotate(${hours * 30}deg)`;
+
+      if (now.getSeconds() !== previousSecond) {
+        previousSecond = now.getSeconds();
+        clock.setAttribute(
+          "aria-label",
+          `Analog clock showing ${now.toLocaleTimeString()}`
+        );
+      }
+
+      requestAnimationFrame(updateClock);
+    }
+
+    updateClock();
+  </script>
+</body>
+</html>
